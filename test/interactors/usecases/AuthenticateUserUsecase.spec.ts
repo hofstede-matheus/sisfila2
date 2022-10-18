@@ -5,23 +5,38 @@ import {
   InvalidPasswordError,
 } from '../../../src/domain/errors';
 import {
+  AUTHENTICATION_SERVICE_PROVIDER,
+  ENCRYPTATION_SERVICE_PROVIDER,
   USER_REPOSITORY_PROVIDER,
   VALID_EMAIL,
   VALID_USER,
 } from '../../helpers';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 import { AuthenticateUserUsecase } from '../../../src/interactors/usecases/AuthenticateUserUsecase';
+import { EncryptionService } from '../../../src/domain/services/EncryptionService';
+import { AuthenticationService } from '../../../src/domain/services/AuthenticationService';
 
 describe('AuthenticateUserUsecase', () => {
   let useCase: AuthenticateUserUsecase;
   let repository: UserRepository;
+  let encryptionService: EncryptionService;
+  let authenticationService: AuthenticationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [USER_REPOSITORY_PROVIDER, AuthenticateUserUsecase],
+      providers: [
+        USER_REPOSITORY_PROVIDER,
+        AuthenticateUserUsecase,
+        ENCRYPTATION_SERVICE_PROVIDER,
+        AUTHENTICATION_SERVICE_PROVIDER,
+      ],
     }).compile();
 
     repository = module.get<UserRepository>(UserRepository);
+    encryptionService = module.get<EncryptionService>(EncryptionService);
+    authenticationService = module.get<AuthenticationService>(
+      AuthenticationService,
+    );
     useCase = module.get<AuthenticateUserUsecase>(AuthenticateUserUsecase);
   });
 
@@ -55,6 +70,10 @@ describe('AuthenticateUserUsecase', () => {
       return VALID_USER;
     });
 
+    jest.spyOn(encryptionService, 'check').mockImplementation(async () => {
+      return false;
+    });
+
     const response = await useCase.execute(
       VALID_USER.email,
       'another_password',
@@ -66,6 +85,14 @@ describe('AuthenticateUserUsecase', () => {
   it('should authenticate user with valid credentials', async () => {
     jest.spyOn(repository, 'findByEmail').mockImplementation(async () => {
       return VALID_USER;
+    });
+
+    jest.spyOn(encryptionService, 'check').mockImplementation(async () => {
+      return true;
+    });
+
+    jest.spyOn(authenticationService, 'generate').mockImplementation(() => {
+      return 'valid_token';
     });
 
     const response = await useCase.execute(
