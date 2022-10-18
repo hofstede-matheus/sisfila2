@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { UsersModule } from '../../src/modules/users.module';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
-import { VALID_EMAIL } from '../helpers';
+import { VALID_EMAIL, VALID_USER } from '../helpers';
 
 describe('users', () => {
   let app: INestApplication;
@@ -28,6 +28,19 @@ describe('users', () => {
       } as CreateUserRequest)
       .set('Accept', 'application/json')
       .expect(201);
+
+    expect(body).toStrictEqual({ token: 'valid_token' });
+  });
+
+  it('shoud be able to authenticate a user', async () => {
+    const { body } = await request(app.getHttpServer())
+      .post('/users/auth')
+      .send({
+        email: VALID_USER.email,
+        password: VALID_USER.password,
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
 
     expect(body).toStrictEqual({ token: 'valid_token' });
   });
