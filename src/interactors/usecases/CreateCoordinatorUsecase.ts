@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserEntity } from '../../domain/entities/User.entity';
-import { InvalidUserTypeError } from '../../domain/errors/User.errors';
+import { InvalidUserTypeError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';

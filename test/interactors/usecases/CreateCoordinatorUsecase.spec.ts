@@ -4,7 +4,7 @@ import {
   InvalidNameError,
   InvalidPasswordError,
   InvalidUserTypeError,
-} from '../../../src/domain/errors/User.errors';
+} from '../../../src/domain/errors';
 import { CreateCoordinatorUsecase } from '../../../src/interactors/usecases/CreateCoordinatorUsecase';
 import { INVALID_EMAIL, VALID_EMAIL } from '../../helpers';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';

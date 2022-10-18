@@ -4,7 +4,7 @@ import {
   InvalidNameError,
   InvalidPasswordError,
   InvalidUserTypeError,
-} from '../../domain/errors/User.errors';
+} from '../../domain/errors';
 import { DomainError } from '../../shared/helpers/errors';
 
 export class PresentationException extends HttpException {

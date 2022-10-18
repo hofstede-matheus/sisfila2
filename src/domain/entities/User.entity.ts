@@ -7,7 +7,7 @@ import {
   InvalidNameError,
   InvalidPasswordError,
   InvalidUserTypeError,
-} from '../errors/User.errors';
+} from '../errors';
 
 export interface UserEntity {
   readonly id: string;
