@@ -7,15 +7,21 @@ import {
 } from '../../../src/domain/errors/User.errors';
 import { CreateCoordinatorUsecase } from '../../../src/interactors/usecases/CreateCoordinatorUsecase';
 import { INVALID_EMAIL, VALID_EMAIL } from '../../helpers';
+import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 
 describe('CreateCoordinatorUsecase', () => {
   let useCase: CreateCoordinatorUsecase;
+  let repository: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [],
-      providers: [CreateCoordinatorUsecase],
+      providers: [
+        { provide: UserRepository, useValue: { create: jest.fn() } },
+        CreateCoordinatorUsecase,
+      ],
     }).compile();
+
+    repository = module.get<UserRepository>(UserRepository);
     useCase = module.get<CreateCoordinatorUsecase>(CreateCoordinatorUsecase);
   });
 
@@ -27,7 +33,7 @@ describe('CreateCoordinatorUsecase', () => {
       'TYPE_COORDINATOR',
     );
     expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toEqual(new InvalidNameError('Invalid name'));
+    expect(response.value).toEqual(new InvalidNameError());
   });
 
   it('shoud not create an user with invalid email', async () => {
@@ -38,7 +44,7 @@ describe('CreateCoordinatorUsecase', () => {
       'TYPE_COORDINATOR',
     );
     expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toEqual(new InvalidEmailError('Invalid name'));
+    expect(response.value).toEqual(new InvalidEmailError());
   });
 
   it('shoud not create an user with invalid password', async () => {
@@ -49,7 +55,7 @@ describe('CreateCoordinatorUsecase', () => {
       'TYPE_COORDINATOR',
     );
     expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toEqual(new InvalidPasswordError('Invalid name'));
+    expect(response.value).toEqual(new InvalidPasswordError());
   });
 
   it('shoud not create an user with invalid type', async () => {
@@ -60,10 +66,14 @@ describe('CreateCoordinatorUsecase', () => {
       'invalid type',
     );
     expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toEqual(new InvalidUserTypeError('Invalid name'));
+    expect(response.value).toEqual(new InvalidUserTypeError());
   });
 
   it('shoud create an user with valid data', async () => {
+    jest.spyOn(repository, 'create').mockImplementation(async () => {
+      return 'valid_token';
+    });
+
     const response = await useCase.execute(
       'valid name',
       VALID_EMAIL,

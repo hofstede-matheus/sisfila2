@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import * as Joi from 'joi';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainEntity, staticImplements } from '../../shared/helpers/entity';
 import { DomainError } from '../../shared/helpers/errors';
@@ -32,7 +32,7 @@ export class UserEntity {
   ) {}
 
   public static build(
-    username: string,
+    name: string,
     email: string,
     password: string,
     userType: UserEntityTypes,
@@ -40,27 +40,26 @@ export class UserEntity {
     const schema = Joi.object({
       name: Joi.string()
         .min(2)
-        .alphanum()
         .required()
-        .error((error) => new InvalidNameError(error.toString())),
+        .error(() => new InvalidNameError()),
       email: Joi.string()
         .email()
         .required()
-        .error((error) => new InvalidEmailError(error.toString())),
+        .error(() => new InvalidEmailError()),
       password: Joi.string()
         .min(8)
         .required()
-        .error((error) => new InvalidPasswordError(error.toString())),
+        .error(() => new InvalidPasswordError()),
       userType: Joi.string()
         .min(8)
         .valid('TYPE_COORDINATOR', 'TYPE_ATTENDENT')
         .required()
-        .error((error) => new InvalidUserTypeError(error.toString())),
+        .error(() => new InvalidUserTypeError()),
     });
 
     const validation = schema.validate({ name, email, password, userType });
     if (validation.error) return left(validation.error);
 
-    return right(new UserEntity(username, email, password, userType));
+    return right(new UserEntity(name, email, password, userType));
   }
 }
