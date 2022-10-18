@@ -1,8 +1,8 @@
 import { Either } from './either';
-import { DomainException } from './errors';
+import { DomainError } from './errors';
 
 export interface DomainEntity<T> {
-  build(...args: any[]): Either<DomainException, T>;
+  build(...args: any[]): Either<DomainError, T>;
 }
 
 /* class decorator */
