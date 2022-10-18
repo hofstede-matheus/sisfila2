@@ -53,7 +53,7 @@ export class UserEntity {
         .error((error) => new InvalidPasswordError(error.toString())),
       userType: Joi.string()
         .min(8)
-        .valid('TYPE_COORDINATOR')
+        .valid('TYPE_COORDINATOR', 'TYPE_ATTENDENT')
         .required()
         .error((error) => new InvalidUserTypeError(error.toString())),
     });

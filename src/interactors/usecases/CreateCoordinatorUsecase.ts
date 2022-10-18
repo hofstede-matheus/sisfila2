@@ -10,7 +10,7 @@ export class CreateCoordinatorUsecase implements UseCase {
     name: string,
     email: string,
     password: string,
-    userType: UserEntityTypes,
+    userType: string,
   ): Promise<Either<DomainError, any>> {
     throw new Error('Method not implemented.');
   }
