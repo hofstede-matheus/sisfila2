@@ -6,7 +6,11 @@ import {
   InvalidUserTypeError,
 } from '../../../src/domain/errors';
 import { CreateCoordinatorUsecase } from '../../../src/interactors/usecases/CreateCoordinatorUsecase';
-import { INVALID_EMAIL, VALID_EMAIL } from '../../helpers';
+import {
+  INVALID_EMAIL,
+  USER_REPOSITORY_PROVIDER,
+  VALID_EMAIL,
+} from '../../helpers';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 
 describe('CreateCoordinatorUsecase', () => {
@@ -15,10 +19,7 @@ describe('CreateCoordinatorUsecase', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        { provide: UserRepository, useValue: { create: jest.fn() } },
-        CreateCoordinatorUsecase,
-      ],
+      providers: [USER_REPOSITORY_PROVIDER, CreateCoordinatorUsecase],
     }).compile();
 
     repository = module.get<UserRepository>(UserRepository);
