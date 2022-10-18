@@ -1,6 +1,6 @@
 import { Either } from './either';
-import { DomainException } from './errors';
+import { DomainError } from './errors';
 
 export interface UseCase {
-  execute(...args: any[]): Promise<Either<DomainException, any>>;
+  execute(...args: any[]): Promise<Either<DomainError, any>>;
 }
