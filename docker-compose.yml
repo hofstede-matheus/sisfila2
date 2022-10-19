@@ -6,7 +6,7 @@ services:
     ports:
       - '5435:5432'
     volumes:
-      - 'postgres_data_sisfila2:/var/lib/postgresql/data'
+      - 'postgres_data:/var/lib/postgresql/data'
       - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_USER=sisfila2
@@ -14,5 +14,5 @@ services:
       - POSTGRES_DB=sisfila2
 
 volumes:
-  postgres_data_sisfila2:
+  postgres_data:
     driver: local
