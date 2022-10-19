@@ -30,6 +30,10 @@ describe('users', () => {
     await app.init();
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   it('shoud be able to create user', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/users')
