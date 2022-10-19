@@ -1,4 +1,8 @@
-module.exports = {
+import { DataSource } from 'typeorm';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+export const connectionSource = new DataSource({
   type: 'postgres',
   host: process.env.DATABASE_HOST,
   port: +process.env.DATABASE_PORT,
@@ -8,8 +12,5 @@ module.exports = {
   migrations: ['src/data/typeorm/migrations/*.ts'],
   entities: ['src/data/typeorm/entities/*.ts'],
   synchronize: false,
-  cli: {
-    migrationsDir: 'src/data/typeorm/migrations',
-  },
   logging: process.env.DATABASE_LOGGING === 'true',
-};
+});
