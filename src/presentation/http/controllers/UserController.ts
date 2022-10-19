@@ -1,5 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
 import { CreateCoordinatorUsecase } from '../../../interactors/usecases/CreateCoordinatorUsecase';
+import {
+  AuthenticateUserRequest,
+  AuthenticateUserResponse,
+} from '../dto/AuthenticateUser';
 import { CreateUserRequest, CreateUserResponse } from '../dto/CreateUser';
 import { toPresentationError } from '../errors';
 
@@ -7,6 +12,7 @@ import { toPresentationError } from '../errors';
 export class UserController {
   constructor(
     private readonly createCoordinatorUsecase: CreateCoordinatorUsecase,
+    private readonly authenticateUserUsecase: AuthenticateUserUsecase,
   ) {}
 
   @Post()
@@ -18,6 +24,21 @@ export class UserController {
       body.email,
       body.password,
       body.userType,
+    );
+
+    if (token.isLeft()) throw toPresentationError(token.value);
+
+    return { token: token.value };
+  }
+
+  @Post('auth')
+  @HttpCode(200)
+  async authenticateUser(
+    @Body() body: AuthenticateUserRequest,
+  ): Promise<AuthenticateUserResponse> {
+    const token = await this.authenticateUserUsecase.execute(
+      body.email,
+      body.password,
     );
 
     if (token.isLeft()) throw toPresentationError(token.value);

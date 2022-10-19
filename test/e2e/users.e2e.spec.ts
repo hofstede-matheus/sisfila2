@@ -4,14 +4,27 @@ import { UsersModule } from '../../src/modules/users.module';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
 import { VALID_EMAIL, VALID_USER } from '../helpers';
+import { AuthenticateUserUsecase } from '../../src/interactors/usecases/AuthenticateUserUsecase';
+import { right } from '../../src/shared/helpers/either';
 
 describe('users', () => {
   let app: INestApplication;
+  let authenticateUserUsecase: AuthenticateUserUsecase;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [UsersModule],
+      providers: [
+        {
+          provide: AuthenticateUserUsecase,
+          useValue: { execute: jest.fn() },
+        },
+      ],
     }).compile();
+
+    authenticateUserUsecase = module.get<AuthenticateUserUsecase>(
+      AuthenticateUserUsecase,
+    );
 
     app = module.createNestApplication();
     await app.init();
@@ -33,6 +46,11 @@ describe('users', () => {
   });
 
   it('shoud be able to authenticate a user', async () => {
+    jest
+      .spyOn(authenticateUserUsecase, 'execute')
+      .mockImplementation(async () => {
+        return right('valid_token');
+      });
     const { body } = await request(app.getHttpServer())
       .post('/users/auth')
       .send({

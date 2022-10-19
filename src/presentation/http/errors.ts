@@ -1,5 +1,6 @@
 import { HttpException } from '@nestjs/common';
 import {
+  InvalidCredentialsError,
   InvalidEmailError,
   InvalidNameError,
   InvalidPasswordError,
@@ -30,7 +31,11 @@ export function toPresentationError(error: DomainError): HttpException {
     case InvalidUserTypeError:
       return new PresentationException(error, 400);
 
+    case InvalidCredentialsError:
+      return new PresentationException(error, 401);
+
     default:
+      console.error('ERROR NOT MAPPED', error);
       return new HttpException('Internal server error', 500);
   }
 }
