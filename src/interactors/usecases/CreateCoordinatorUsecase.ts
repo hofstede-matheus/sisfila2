@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UserEntity } from '../../domain/entities/User.entity';
 import { InvalidUserTypeError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
+import { EncryptionService } from '../../domain/services/EncryptionService';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
@@ -11,6 +12,8 @@ export class CreateCoordinatorUsecase implements UseCase {
   constructor(
     @Inject(UserRepository)
     private userRepository: UserRepository,
+    @Inject(EncryptionService)
+    private encryptionService: EncryptionService,
   ) {}
   async execute(
     name: string,
@@ -23,9 +26,13 @@ export class CreateCoordinatorUsecase implements UseCase {
     }
 
     const validation = UserEntity.build(name, email, password, userType);
-
     if (validation.isLeft()) return left(validation.value);
-    const user = await this.userRepository.create(validation.value);
+
+    const encryptedPassword = await this.encryptionService.encrypt(password);
+
+    const userValues = { ...validation.value, password: encryptedPassword };
+
+    const user = await this.userRepository.create(userValues);
 
     return right(user);
   }

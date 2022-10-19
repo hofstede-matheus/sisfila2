@@ -16,7 +16,18 @@ export class TypeOrmUsersRepository implements UserRepository {
 
     return userInDatabase.id;
   }
-  findByEmail(email: string): Promise<UserEntity> {
-    throw new Error('Method not implemented.');
+  async findByEmail(email: string): Promise<UserEntity> {
+    const userInDatabase = await this.usersRepository.findOne({
+      where: { email },
+    });
+    return {
+      id: userInDatabase.id,
+      name: userInDatabase.name,
+      email: userInDatabase.email,
+      password: userInDatabase.password,
+      userType: 'TYPE_COORDINATOR',
+      createdAt: userInDatabase.createdAt,
+      updatedAt: userInDatabase.updatedAt,
+    };
   }
 }

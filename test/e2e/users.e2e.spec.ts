@@ -1,19 +1,22 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { UsersModule } from '../../src/modules/users.module';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
-import { UUID_V4_REGEX_EXPRESSION, VALID_EMAIL, VALID_USER } from '../helpers';
-import { AuthenticateUserUsecase } from '../../src/interactors/usecases/AuthenticateUserUsecase';
-import { right } from '../../src/shared/helpers/either';
+import {
+  JWT_TOKEN_REGEX_EXPRESSION,
+  UUID_V4_REGEX_EXPRESSION,
+  VALID_EMAIL,
+  VALID_USER,
+} from '../helpers';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../src/data/typeorm/entities/users';
 import { ConfigModule } from '@nestjs/config';
 import { connectionSource } from '../../ormconfig';
+import { UsersModule } from '../../src/modules/users.module';
+import { CommonModule } from '../../src/modules/common.module';
 
 describe('users', () => {
   let app: INestApplication;
-  let authenticateUserUsecase: AuthenticateUserUsecase;
 
   connectionSource.initialize();
 
@@ -21,6 +24,7 @@ describe('users', () => {
     const module = await Test.createTestingModule({
       imports: [
         UsersModule,
+        CommonModule,
         ConfigModule.forRoot({
           envFilePath: '.env.test',
         }),
@@ -37,17 +41,8 @@ describe('users', () => {
           logging: process.env.DATABASE_LOGGING === 'true',
         }),
       ],
-      providers: [
-        {
-          provide: AuthenticateUserUsecase,
-          useValue: { execute: jest.fn() },
-        },
-      ],
+      providers: [],
     }).compile();
-
-    authenticateUserUsecase = module.get<AuthenticateUserUsecase>(
-      AuthenticateUserUsecase,
-    );
 
     app = module.createNestApplication();
     await app.init();
@@ -58,16 +53,10 @@ describe('users', () => {
   });
 
   afterEach(async () => {
-    await connectionSource.query(`DELETE FROM users`);
+    // await connectionSource.query(`DELETE FROM users`);
   });
 
   it('shoud be able to create user', async () => {
-    jest
-      .spyOn(authenticateUserUsecase, 'execute')
-      .mockImplementation(async () => {
-        return right('valid_token');
-      });
-
     const { body } = await request(app.getHttpServer())
       .post('/users')
       .send({
@@ -84,11 +73,17 @@ describe('users', () => {
   });
 
   it('shoud be able to authenticate a user', async () => {
-    jest
-      .spyOn(authenticateUserUsecase, 'execute')
-      .mockImplementation(async () => {
-        return right('valid_token');
-      });
+    await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        name: VALID_USER.name,
+        email: VALID_USER.email,
+        password: VALID_USER.password,
+        userType: 'TYPE_COORDINATOR',
+      } as CreateUserRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
     const { body } = await request(app.getHttpServer())
       .post('/users/auth')
       .send({
@@ -98,6 +93,7 @@ describe('users', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(body).toMatchObject({ token: 'valid_token' });
+    expect(body.token).toBeDefined();
+    expect(body.token).toMatch(JWT_TOKEN_REGEX_EXPRESSION);
   });
 });

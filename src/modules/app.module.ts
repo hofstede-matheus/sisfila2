@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../data/typeorm/entities/users';
 import { AppController } from '../presentation/http/controllers/app.controller';
+import { CommonModule } from './common.module';
+import { UsersModule } from './users.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { AppController } from '../presentation/http/controllers/app.controller';
       migrations: ['dist/data/typeorm/migrations/*.js'],
       migrationsRun: true,
     }),
+    UsersModule,
+    CommonModule,
   ],
   controllers: [AppController],
 })
