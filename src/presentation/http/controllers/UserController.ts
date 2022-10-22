@@ -1,4 +1,5 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Version } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
 import { CreateCoordinatorUsecase } from '../../../interactors/usecases/CreateCoordinatorUsecase';
 import {
@@ -15,7 +16,9 @@ export class UserController {
     private readonly authenticateUserUsecase: AuthenticateUserUsecase,
   ) {}
 
+  @Version(['1'])
   @Post()
+  @ApiResponse({ type: CreateUserResponse })
   async createUser(
     @Body() body: CreateUserRequest,
   ): Promise<CreateUserResponse> {
@@ -31,7 +34,9 @@ export class UserController {
     return { token: token.value };
   }
 
+  @Version(['1'])
   @Post('auth')
+  @ApiResponse({ type: AuthenticateUserResponse })
   @HttpCode(200)
   async authenticateUser(
     @Body() body: AuthenticateUserRequest,
