@@ -77,7 +77,7 @@ describe('CreateCoordinatorUsecase', () => {
 
   it('shoud create an user with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return 'valid_';
+      return 'valid_token';
     });
 
     const response = await useCase.execute(
