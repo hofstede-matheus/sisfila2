@@ -20,7 +20,11 @@ export const VALID_USER = {
 export const ALL_REPOSITORIES_PROVIDERS = [
   {
     provide: UserRepository,
-    useValue: { create: jest.fn(), findByEmail: jest.fn() } as UserRepository,
+    useValue: {
+      create: jest.fn(),
+      findByEmail: jest.fn(),
+      createV2: jest.fn(),
+    } as UserRepository,
   },
 ];
 

@@ -95,7 +95,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
       return undefined;
     });
 
-    jest.spyOn(repository, 'create').mockImplementation(async () => {
+    jest.spyOn(repository, 'createV2').mockImplementation(async () => {
       return 'valid_id';
     });
 
