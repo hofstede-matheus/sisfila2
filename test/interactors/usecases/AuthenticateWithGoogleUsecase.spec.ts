@@ -62,12 +62,41 @@ describe('AuthenticateWithGoogleUsecase', () => {
   });
 
   it('should be able to authenticate with valid data when user already exists', async () => {
-    jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return 'valid_id';
-    });
-
     jest.spyOn(repository, 'findByEmail').mockImplementation(async () => {
       return VALID_USER;
+    });
+
+    jest.spyOn(authenticationService, 'generate').mockImplementation(() => {
+      return 'valid_token';
+    });
+
+    jest
+      .spyOn(oauthAuthenticationService, 'getUserProfile')
+      .mockImplementation(async () => {
+        return {
+          email: VALID_USER.email,
+          email_verified: true,
+          family_name: VALID_USER.name,
+          given_name: VALID_USER.name,
+          name: VALID_USER.name,
+          hd: '@email.com',
+          locale: 'en',
+          picture: '',
+          sub: '123456789',
+        };
+      });
+    const response = await useCase.execute('valid_token', 'valid_audience');
+    expect(response.isRight()).toBeTruthy();
+    expect(response.value).toEqual('valid_token');
+  });
+
+  it('should be able to authenticate with valid data when user NOT exists', async () => {
+    jest.spyOn(repository, 'findByEmail').mockImplementation(async () => {
+      return undefined;
+    });
+
+    jest.spyOn(repository, 'create').mockImplementation(async () => {
+      return 'valid_id';
     });
 
     jest.spyOn(authenticationService, 'generate').mockImplementation(() => {
