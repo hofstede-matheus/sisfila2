@@ -61,7 +61,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
     expect(response.value).toEqual(new InvalidOauthDataError());
   });
 
-  it('should be able to authenticate with valid data', async () => {
+  it('should be able to authenticate with valid data when user already exists', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
       return 'valid_id';
     });
