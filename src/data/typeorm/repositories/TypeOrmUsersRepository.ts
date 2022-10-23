@@ -9,8 +9,16 @@ export class TypeOrmUsersRepository implements UserRepository {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
-  async create(user: UserEntity): Promise<string> {
-    const userEntity = this.usersRepository.create(user);
+  async create(
+    name: string,
+    email: string,
+    password?: string,
+  ): Promise<string> {
+    const userEntity = this.usersRepository.create({
+      name,
+      email,
+      password,
+    });
 
     const userInDatabase = await this.usersRepository.save(userEntity);
 

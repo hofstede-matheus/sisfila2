@@ -23,7 +23,6 @@ export const ALL_REPOSITORIES_PROVIDERS = [
     useValue: {
       create: jest.fn(),
       findByEmail: jest.fn(),
-      createV2: jest.fn(),
     } as UserRepository,
   },
 ];
@@ -31,7 +30,10 @@ export const ALL_REPOSITORIES_PROVIDERS = [
 export const ALL_SERVICES_PROVIDERS = [
   {
     provide: EncryptionService,
-    useValue: { check: jest.fn(), encrypt: jest.fn() } as EncryptionService,
+    useValue: {
+      check: jest.fn(),
+      encrypt: jest.fn(),
+    } as EncryptionService,
   },
   {
     provide: AuthenticationService,

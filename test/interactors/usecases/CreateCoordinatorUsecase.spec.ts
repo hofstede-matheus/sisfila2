@@ -7,8 +7,9 @@ import {
 } from '../../../src/domain/errors';
 import { CreateCoordinatorUsecase } from '../../../src/interactors/usecases/CreateCoordinatorUsecase';
 import {
+  ALL_REPOSITORIES_PROVIDERS,
+  ALL_SERVICES_PROVIDERS,
   INVALID_EMAIL,
-  USER_REPOSITORY_PROVIDER,
   VALID_EMAIL,
 } from '../../helpers';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
@@ -19,7 +20,11 @@ describe('CreateCoordinatorUsecase', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [USER_REPOSITORY_PROVIDER, CreateCoordinatorUsecase],
+      providers: [
+        ...ALL_REPOSITORIES_PROVIDERS,
+        ...ALL_SERVICES_PROVIDERS,
+        CreateCoordinatorUsecase,
+      ],
     }).compile();
 
     repository = module.get<UserRepository>(UserRepository);
@@ -72,7 +77,7 @@ describe('CreateCoordinatorUsecase', () => {
 
   it('shoud create an user with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return 'valid_id';
+      return 'valid_';
     });
 
     const response = await useCase.execute(

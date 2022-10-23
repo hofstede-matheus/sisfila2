@@ -5,9 +5,8 @@ import {
   InvalidPasswordError,
 } from '../../../src/domain/errors';
 import {
-  AUTHENTICATION_SERVICE_PROVIDER,
-  ENCRYPTATION_SERVICE_PROVIDER,
-  USER_REPOSITORY_PROVIDER,
+  ALL_REPOSITORIES_PROVIDERS,
+  ALL_SERVICES_PROVIDERS,
   VALID_EMAIL,
   VALID_USER,
 } from '../../helpers';
@@ -25,10 +24,9 @@ describe('AuthenticateUserUsecase', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        USER_REPOSITORY_PROVIDER,
+        ...ALL_REPOSITORIES_PROVIDERS,
+        ...ALL_SERVICES_PROVIDERS,
         AuthenticateUserUsecase,
-        ENCRYPTATION_SERVICE_PROVIDER,
-        AUTHENTICATION_SERVICE_PROVIDER,
       ],
     }).compile();
 

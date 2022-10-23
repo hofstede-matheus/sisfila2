@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserEntity } from '../../domain/entities/User.entity';
 import { InvalidOauthDataError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { AuthenticationService } from '../../domain/services/AuthenticationService';
@@ -44,7 +43,7 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
       const user = await this.userRepository.findByEmail(userData.email);
 
       if (!user) {
-        const newUserId = await this.userRepository.createV2(
+        const newUserId = await this.userRepository.create(
           userData.name,
           userData.email,
         );

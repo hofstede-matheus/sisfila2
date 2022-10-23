@@ -30,9 +30,11 @@ export class CreateCoordinatorUsecase implements UseCase {
 
     const encryptedPassword = await this.encryptionService.encrypt(password);
 
-    const userValues = { ...validation.value, password: encryptedPassword };
-
-    const user = await this.userRepository.create(userValues);
+    const user = await this.userRepository.create(
+      validation.value.name,
+      validation.value.email,
+      encryptedPassword,
+    );
 
     return right(user);
   }
