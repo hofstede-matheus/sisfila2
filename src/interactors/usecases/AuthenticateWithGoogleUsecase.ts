@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InvalidOauthDataError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { AuthenticationService } from '../../domain/services/AuthenticationService';
 import { OauthAuthenticationService } from '../../domain/services/OAuthAuthenticationService';
-import { Either } from '../../shared/helpers/either';
+import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
 
@@ -19,10 +20,29 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
     private oauthAuthenticationService: OauthAuthenticationService,
   ) {}
 
-  execute(
+  async execute(
     oauthToken: string,
     audience: string,
-  ): Promise<Either<DomainError, any>> {
-    throw new Error('Method not implemented.');
+  ): Promise<Either<DomainError, string>> {
+    if (
+      oauthToken === '' ||
+      audience === '' ||
+      oauthToken === undefined ||
+      audience === undefined
+    )
+      return Promise.resolve(left(new InvalidOauthDataError()));
+
+    const userData = await this.oauthAuthenticationService.getUserProfile(
+      oauthToken,
+      audience,
+    );
+
+    if (!userData) return Promise.resolve(left(new InvalidOauthDataError()));
+
+    const user = await this.userRepository.findByEmail(userData.email);
+
+    const token = this.authenticationService.generate(user.id);
+
+    return right(token);
   }
 }

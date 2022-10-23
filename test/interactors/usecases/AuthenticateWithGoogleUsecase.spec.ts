@@ -5,11 +5,9 @@ import { AuthenticationService } from '../../../src/domain/services/Authenticati
 import { OauthAuthenticationService } from '../../../src/domain/services/OAuthAuthenticationService';
 import { AuthenticateWithGoogleUsecase } from '../../../src/interactors/usecases/AuthenticateWithGoogleUsecase';
 import {
-  USER_REPOSITORY_PROVIDER,
-  ENCRYPTATION_SERVICE_PROVIDER,
-  AUTHENTICATION_SERVICE_PROVIDER,
+  ALL_REPOSITORIES_PROVIDERS,
+  ALL_SERVICES_PROVIDERS,
   VALID_USER,
-  OAUTHENTICATION_SERVICE_PROVIDER,
 } from '../../helpers';
 
 describe('AuthenticateWithGoogleUsecase', () => {
@@ -21,11 +19,9 @@ describe('AuthenticateWithGoogleUsecase', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        USER_REPOSITORY_PROVIDER,
+        ...ALL_REPOSITORIES_PROVIDERS,
+        ...ALL_SERVICES_PROVIDERS,
         AuthenticateWithGoogleUsecase,
-        ENCRYPTATION_SERVICE_PROVIDER,
-        AUTHENTICATION_SERVICE_PROVIDER,
-        OAUTHENTICATION_SERVICE_PROVIDER,
       ],
     }).compile();
 
@@ -68,6 +64,10 @@ describe('AuthenticateWithGoogleUsecase', () => {
   it('should be able to authenticate with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
       return 'valid_id';
+    });
+
+    jest.spyOn(repository, 'findByEmail').mockImplementation(async () => {
+      return VALID_USER;
     });
 
     jest.spyOn(authenticationService, 'generate').mockImplementation(() => {

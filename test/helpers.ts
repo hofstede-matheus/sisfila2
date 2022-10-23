@@ -17,30 +17,32 @@ export const VALID_USER = {
   updatedAt: new Date(),
 } as UserEntity;
 
-export const USER_REPOSITORY_PROVIDER = {
-  provide: UserRepository,
-  useValue: { create: jest.fn(), findByEmail: jest.fn() } as UserRepository,
-};
+export const ALL_REPOSITORIES_PROVIDERS = [
+  {
+    provide: UserRepository,
+    useValue: { create: jest.fn(), findByEmail: jest.fn() } as UserRepository,
+  },
+];
 
-export const ENCRYPTATION_SERVICE_PROVIDER = {
-  provide: EncryptionService,
-  useValue: { check: jest.fn(), encrypt: jest.fn() } as EncryptionService,
-};
-
-export const AUTHENTICATION_SERVICE_PROVIDER = {
-  provide: AuthenticationService,
-  useValue: {
-    generate: jest.fn(),
-    decrypt: jest.fn(),
-  } as AuthenticationService,
-};
-
-export const OAUTHENTICATION_SERVICE_PROVIDER = {
-  provide: OauthAuthenticationService,
-  useValue: {
-    getUserProfile: jest.fn(),
-  } as OauthAuthenticationService,
-};
+export const ALL_SERVICES_PROVIDERS = [
+  {
+    provide: EncryptionService,
+    useValue: { check: jest.fn(), encrypt: jest.fn() } as EncryptionService,
+  },
+  {
+    provide: AuthenticationService,
+    useValue: {
+      generate: jest.fn(),
+      decrypt: jest.fn(),
+    } as AuthenticationService,
+  },
+  {
+    provide: OauthAuthenticationService,
+    useValue: {
+      getUserProfile: jest.fn(),
+    } as OauthAuthenticationService,
+  },
+];
 
 export const UUID_V4_REGEX_EXPRESSION =
   /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
