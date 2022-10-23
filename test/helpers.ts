@@ -2,6 +2,7 @@ import { UserEntity } from '../src/domain/entities/User.entity';
 import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
+import { OauthAuthenticationService } from '../src/domain/services/OAuthAuthenticationService';
 
 export const VALID_EMAIL = 'valid@email.com';
 export const INVALID_EMAIL = 'invalidemail';
@@ -32,6 +33,13 @@ export const AUTHENTICATION_SERVICE_PROVIDER = {
     generate: jest.fn(),
     decrypt: jest.fn(),
   } as AuthenticationService,
+};
+
+export const OAUTHENTICATION_SERVICE_PROVIDER = {
+  provide: OauthAuthenticationService,
+  useValue: {
+    getUserProfile: jest.fn(),
+  } as OauthAuthenticationService,
 };
 
 export const UUID_V4_REGEX_EXPRESSION =

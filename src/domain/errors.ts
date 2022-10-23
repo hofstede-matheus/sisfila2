@@ -15,3 +15,5 @@ export class InvalidUrlError extends DomainError {}
 export class InvalidDateError extends DomainError {}
 
 export class InvalidCredentialsError extends DomainError {}
+
+export class InvalidOauthDataError extends DomainError {}
