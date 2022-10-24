@@ -5,7 +5,7 @@ import { TypeOrmUsersRepository } from '../data/typeorm/repositories/TypeOrmUser
 import { UserRepository } from '../domain/repositories/UserRepository';
 import { AuthenticateUserUsecase } from '../interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticateWithGoogleUsecase } from '../interactors/usecases/AuthenticateWithGoogleUsecase';
-import { CreateCoordinatorUsecase } from '../interactors/usecases/CreateCoordinatorUsecase';
+import { CreateUserUsecase } from '../interactors/usecases/CreateUserUsecase';
 import { UserController } from '../presentation/http/controllers/UserController';
 import { CommonModule } from './common.module';
 
@@ -13,7 +13,7 @@ import { CommonModule } from './common.module';
   imports: [CommonModule, TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [
-    { provide: CreateCoordinatorUsecase, useClass: CreateCoordinatorUsecase },
+    { provide: CreateUserUsecase, useClass: CreateUserUsecase },
     { provide: AuthenticateUserUsecase, useClass: AuthenticateUserUsecase },
     {
       provide: AuthenticateWithGoogleUsecase,

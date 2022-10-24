@@ -8,7 +8,7 @@ import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
 
 @Injectable()
-export class CreateCoordinatorUsecase implements UseCase {
+export class CreateUserUsecase implements UseCase {
   constructor(
     @Inject(UserRepository)
     private userRepository: UserRepository,
@@ -19,13 +19,8 @@ export class CreateCoordinatorUsecase implements UseCase {
     name: string,
     email: string,
     password: string,
-    userType: string,
   ): Promise<Either<DomainError, string>> {
-    if (userType !== 'TYPE_COORDINATOR') {
-      return left(new InvalidUserTypeError());
-    }
-
-    const validation = UserEntity.build(name, email, password, userType);
+    const validation = UserEntity.build(name, email, password);
     if (validation.isLeft()) return left(validation.value);
 
     const encryptedPassword = await this.encryptionService.encrypt(password);

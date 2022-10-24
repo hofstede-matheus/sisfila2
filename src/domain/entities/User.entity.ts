@@ -6,7 +6,6 @@ import {
   InvalidEmailError,
   InvalidNameError,
   InvalidPasswordError,
-  InvalidUserTypeError,
 } from '../errors';
 
 export interface UserEntity {
@@ -28,14 +27,12 @@ export class UserEntity {
     readonly name: string,
     readonly email: string,
     readonly password: string,
-    readonly userType: UserEntityTypes,
   ) {}
 
   public static build(
     name: string,
     email: string,
     password: string,
-    userType: UserEntityTypes,
   ): Either<DomainError, UserEntity> {
     const schema = Joi.object({
       name: Joi.string()
@@ -50,16 +47,11 @@ export class UserEntity {
         .min(8)
         .required()
         .error(() => new InvalidPasswordError()),
-      userType: Joi.string()
-        .min(8)
-        .valid('TYPE_COORDINATOR', 'TYPE_ATTENDENT')
-        .required()
-        .error(() => new InvalidUserTypeError()),
     });
 
-    const validation = schema.validate({ name, email, password, userType });
+    const validation = schema.validate({ name, email, password });
     if (validation.error) return left(validation.error);
 
-    return right(new UserEntity(name, email, password, userType));
+    return right(new UserEntity(name, email, password));
   }
 }

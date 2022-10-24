@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post, Version } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
-import { CreateCoordinatorUsecase } from '../../../interactors/usecases/CreateCoordinatorUsecase';
+import { CreateUserUsecase } from '../../../interactors/usecases/CreateUserUsecase';
 import {
   AuthenticateUserRequest,
   AuthenticateUserResponse,
@@ -12,7 +12,7 @@ import { toPresentationError } from '../errors';
 @Controller('users')
 export class UserController {
   constructor(
-    private readonly createCoordinatorUsecase: CreateCoordinatorUsecase,
+    private readonly createCoordinatorUsecase: CreateUserUsecase,
     private readonly authenticateUserUsecase: AuthenticateUserUsecase,
   ) {}
 

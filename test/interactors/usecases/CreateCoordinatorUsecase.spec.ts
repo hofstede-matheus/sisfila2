@@ -3,9 +3,8 @@ import {
   InvalidEmailError,
   InvalidNameError,
   InvalidPasswordError,
-  InvalidUserTypeError,
 } from '../../../src/domain/errors';
-import { CreateCoordinatorUsecase } from '../../../src/interactors/usecases/CreateCoordinatorUsecase';
+import { CreateUserUsecase } from '../../../src/interactors/usecases/CreateUserUsecase';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
@@ -15,7 +14,7 @@ import {
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 
 describe('CreateCoordinatorUsecase', () => {
-  let useCase: CreateCoordinatorUsecase;
+  let useCase: CreateUserUsecase;
   let repository: UserRepository;
 
   beforeEach(async () => {
@@ -23,21 +22,16 @@ describe('CreateCoordinatorUsecase', () => {
       providers: [
         ...ALL_REPOSITORIES_PROVIDERS,
         ...ALL_SERVICES_PROVIDERS,
-        CreateCoordinatorUsecase,
+        CreateUserUsecase,
       ],
     }).compile();
 
     repository = module.get<UserRepository>(UserRepository);
-    useCase = module.get<CreateCoordinatorUsecase>(CreateCoordinatorUsecase);
+    useCase = module.get<CreateUserUsecase>(CreateUserUsecase);
   });
 
   it('shoud not create an user with invalid name', async () => {
-    const response = await useCase.execute(
-      'a',
-      VALID_EMAIL,
-      '123456',
-      'TYPE_COORDINATOR',
-    );
+    const response = await useCase.execute('a', VALID_EMAIL, '123456');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidNameError());
   });
@@ -47,32 +41,15 @@ describe('CreateCoordinatorUsecase', () => {
       'valid name',
       INVALID_EMAIL,
       '123456',
-      'TYPE_COORDINATOR',
     );
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidEmailError());
   });
 
   it('shoud not create an user with invalid password', async () => {
-    const response = await useCase.execute(
-      'valid name',
-      VALID_EMAIL,
-      '1',
-      'TYPE_COORDINATOR',
-    );
+    const response = await useCase.execute('valid name', VALID_EMAIL, '1');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidPasswordError());
-  });
-
-  it('shoud not create an user with invalid type', async () => {
-    const response = await useCase.execute(
-      'valid name',
-      VALID_EMAIL,
-      '12345678',
-      'invalid type',
-    );
-    expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toEqual(new InvalidUserTypeError());
   });
 
   it('shoud create an user with valid data', async () => {
@@ -84,7 +61,6 @@ describe('CreateCoordinatorUsecase', () => {
       'valid name',
       VALID_EMAIL,
       '12345678',
-      'TYPE_COORDINATOR',
     );
     expect(response.isRight()).toBeTruthy();
     expect(response.value).toEqual('valid_token');
