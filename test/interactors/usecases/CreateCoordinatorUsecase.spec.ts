@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
+  EmailAlreadyExistsError,
   InvalidEmailError,
   InvalidNameError,
   InvalidPasswordError,
@@ -10,6 +11,7 @@ import {
   ALL_SERVICES_PROVIDERS,
   INVALID_EMAIL,
   VALID_EMAIL,
+  VALID_USER,
 } from '../../helpers';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 
@@ -52,9 +54,26 @@ describe('CreateCoordinatorUsecase', () => {
     expect(response.value).toEqual(new InvalidPasswordError());
   });
 
+  it('shoud not create an user when email already exists', async () => {
+    jest.spyOn(repository, 'findByEmail').mockImplementation(async () => {
+      return VALID_USER;
+    });
+    const response = await useCase.execute(
+      'valid name',
+      INVALID_EMAIL,
+      '123456',
+    );
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toEqual(new EmailAlreadyExistsError());
+  });
+
   it('shoud create an user with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
       return 'valid_token';
+    });
+
+    jest.spyOn(repository, 'findByEmail').mockImplementation(async () => {
+      return undefined;
     });
 
     const response = await useCase.execute(

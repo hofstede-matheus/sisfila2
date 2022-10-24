@@ -17,3 +17,5 @@ export class InvalidDateError extends DomainError {}
 export class InvalidCredentialsError extends DomainError {}
 
 export class InvalidOauthDataError extends DomainError {}
+
+export class EmailAlreadyExistsError extends DomainError {}

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserEntity } from '../../domain/entities/User.entity';
-import { InvalidUserTypeError } from '../../domain/errors';
+import { EmailAlreadyExistsError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { EncryptionService } from '../../domain/services/EncryptionService';
 import { Either, left, right } from '../../shared/helpers/either';
@@ -24,6 +24,10 @@ export class CreateUserUsecase implements UseCase {
     if (validation.isLeft()) return left(validation.value);
 
     const encryptedPassword = await this.encryptionService.encrypt(password);
+
+    const userInDatabase = await this.userRepository.findByEmail(email);
+
+    if (userInDatabase) return left(new EmailAlreadyExistsError());
 
     const user = await this.userRepository.create(
       validation.value.name,
