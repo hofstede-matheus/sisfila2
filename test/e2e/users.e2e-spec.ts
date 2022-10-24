@@ -11,7 +11,7 @@ import {
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../src/data/typeorm/entities/users';
 import { ConfigModule } from '@nestjs/config';
-import { connectionSource } from '../../ormconfig';
+import { connectionSource } from '../../ormconfig-test';
 import { UsersModule } from '../../src/modules/users.module';
 import { CommonModule } from '../../src/modules/common.module';
 
