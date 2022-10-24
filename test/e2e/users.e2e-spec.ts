@@ -53,7 +53,7 @@ describe('users', () => {
   });
 
   afterEach(async () => {
-    // await connectionSource.query(`DELETE FROM users`);
+    await connectionSource.query(`DELETE FROM users`);
   });
 
   it('shoud be able to create user', async () => {
