@@ -1,11 +1,16 @@
 import { Body, Controller, HttpCode, Post, Version } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
+import { AuthenticateWithGoogleUsecase } from '../../../interactors/usecases/AuthenticateWithGoogleUsecase';
 import { CreateUserUsecase } from '../../../interactors/usecases/CreateUserUsecase';
 import {
   AuthenticateUserRequest,
   AuthenticateUserResponse,
 } from '../dto/AuthenticateUser';
+import {
+  AuthenticateWithGoogleRequest,
+  AuthenticateWithGoogleResponse,
+} from '../dto/AuthenticateWithGoogle';
 import { CreateUserRequest, CreateUserResponse } from '../dto/CreateUser';
 import { toPresentationError } from '../errors';
 
@@ -14,6 +19,7 @@ export class UserController {
   constructor(
     private readonly createCoordinatorUsecase: CreateUserUsecase,
     private readonly authenticateUserUsecase: AuthenticateUserUsecase,
+    private readonly authenticateWithGoogleUsecase: AuthenticateWithGoogleUsecase,
   ) {}
 
   @Version(['1'])
@@ -43,6 +49,23 @@ export class UserController {
     const token = await this.authenticateUserUsecase.execute(
       body.email,
       body.password,
+    );
+
+    if (token.isLeft()) throw toPresentationError(token.value);
+
+    return { token: token.value };
+  }
+
+  @Version(['1'])
+  @Post('auth/google')
+  @ApiResponse({ type: AuthenticateUserResponse })
+  @HttpCode(200)
+  async authenticateWithGoogle(
+    @Body() body: AuthenticateWithGoogleRequest,
+  ): Promise<AuthenticateWithGoogleResponse> {
+    const token = await this.authenticateWithGoogleUsecase.execute(
+      body.oauthToken,
+      body.audience,
     );
 
     if (token.isLeft()) throw toPresentationError(token.value);
