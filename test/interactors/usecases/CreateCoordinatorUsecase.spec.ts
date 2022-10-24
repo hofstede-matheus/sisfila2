@@ -9,15 +9,18 @@ import { CreateUserUsecase } from '../../../src/interactors/usecases/CreateUserU
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
+  checkForTokenAndUserId,
+  generateValidEmail,
   INVALID_EMAIL,
-  VALID_EMAIL,
   VALID_USER,
 } from '../../helpers';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { AuthenticationService } from '../../../src/domain/services/AuthenticationService';
 
 describe('CreateCoordinatorUsecase', () => {
   let useCase: CreateUserUsecase;
   let repository: UserRepository;
+  let authenticationService: AuthenticationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,11 +32,14 @@ describe('CreateCoordinatorUsecase', () => {
     }).compile();
 
     repository = module.get<UserRepository>(UserRepository);
+    authenticationService = module.get<AuthenticationService>(
+      AuthenticationService,
+    );
     useCase = module.get<CreateUserUsecase>(CreateUserUsecase);
   });
 
   it('shoud not create an user with invalid name', async () => {
-    const response = await useCase.execute('a', VALID_EMAIL, '123456');
+    const response = await useCase.execute('a', generateValidEmail(), '123456');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidNameError());
   });
@@ -49,7 +55,11 @@ describe('CreateCoordinatorUsecase', () => {
   });
 
   it('shoud not create an user with invalid password', async () => {
-    const response = await useCase.execute('valid name', VALID_EMAIL, '1');
+    const response = await useCase.execute(
+      'valid name',
+      generateValidEmail(),
+      '1',
+    );
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidPasswordError());
   });
@@ -69,19 +79,23 @@ describe('CreateCoordinatorUsecase', () => {
 
   it('shoud create an user with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return 'valid_token';
+      return VALID_USER;
     });
 
     jest.spyOn(repository, 'findByEmail').mockImplementation(async () => {
       return undefined;
     });
 
+    jest.spyOn(authenticationService, 'generate').mockImplementation(() => {
+      return 'valid_token';
+    });
+
     const response = await useCase.execute(
       'valid name',
-      VALID_EMAIL,
+      generateValidEmail(),
       '12345678',
     );
-    expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual('valid_token');
+
+    checkForTokenAndUserId(response);
   });
 });

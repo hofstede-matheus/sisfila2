@@ -4,6 +4,7 @@ import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
 import { OauthAuthenticationService } from '../src/domain/services/OAuthAuthenticationService';
+import { Either } from '../src/shared/helpers/either';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -59,3 +60,17 @@ export const UUID_V4_REGEX_EXPRESSION =
   /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
 
 export const JWT_TOKEN_REGEX_EXPRESSION = /^(?:[\w-]*\.){2}[\w-]*$/;
+
+export function checkForTokenAndUserId(response: any) {
+  if (response.isRight()) {
+    expect(response.isRight()).toBeTruthy();
+    expect(
+      (response.value as { token: string; user: UserEntity }).token,
+    ).toBeDefined();
+    expect(
+      (response.value as { token: string; user: UserEntity }).user.id,
+    ).toBeDefined();
+  } else {
+    throw new Error();
+  }
+}

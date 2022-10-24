@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from './shared';
 
 export class CreateUserRequest {
   @ApiProperty({
@@ -15,11 +16,6 @@ export class CreateUserRequest {
     example: '12345678',
   })
   password: string;
-
-  @ApiProperty({
-    example: 'TYPE_COORDINATOR',
-  })
-  userType: string;
 }
 
 export class CreateUserResponse {
@@ -27,4 +23,7 @@ export class CreateUserResponse {
     example: 'valid_token',
   })
   token: string;
+
+  @ApiProperty({ type: User })
+  user: User;
 }

@@ -7,8 +7,9 @@ import {
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
-  VALID_EMAIL,
+  generateValidEmail,
   VALID_USER,
+  checkForTokenAndUserId,
 } from '../../helpers';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 import { AuthenticateUserUsecase } from '../../../src/interactors/usecases/AuthenticateUserUsecase';
@@ -45,7 +46,7 @@ describe('AuthenticateUserUsecase', () => {
   });
 
   it('should not authenticate user with invalid password', async () => {
-    const response = await useCase.execute(VALID_EMAIL, '1');
+    const response = await useCase.execute(generateValidEmail(), '1');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidPasswordError());
   });
@@ -97,7 +98,7 @@ describe('AuthenticateUserUsecase', () => {
       VALID_USER.email,
       VALID_USER.password,
     );
-    expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual('valid_token');
+
+    checkForTokenAndUserId(response);
   });
 });

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UserEntity } from '../../domain/entities/User.entity';
 import { EmailAlreadyExistsError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
+import { AuthenticationService } from '../../domain/services/AuthenticationService';
 import { EncryptionService } from '../../domain/services/EncryptionService';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
@@ -14,12 +15,14 @@ export class CreateUserUsecase implements UseCase {
     private userRepository: UserRepository,
     @Inject(EncryptionService)
     private encryptionService: EncryptionService,
+    @Inject(AuthenticationService)
+    private authenticationService: AuthenticationService,
   ) {}
   async execute(
     name: string,
     email: string,
     password: string,
-  ): Promise<Either<DomainError, string>> {
+  ): Promise<Either<DomainError, { token: string; user: UserEntity }>> {
     const validation = UserEntity.build(name, email, password);
     if (validation.isLeft()) return left(validation.value);
 
@@ -35,6 +38,8 @@ export class CreateUserUsecase implements UseCase {
       encryptedPassword,
     );
 
-    return right(user);
+    const token = this.authenticationService.generate(user.id);
+
+    return right({ token: token, user });
   }
 }

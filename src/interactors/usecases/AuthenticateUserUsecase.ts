@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { UserEntity } from '../../domain/entities/User.entity';
 import { InvalidCredentialsError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { AuthenticationService } from '../../domain/services/AuthenticationService';
@@ -23,7 +24,7 @@ export class AuthenticateUserUsecase implements UseCase {
   async execute(
     email: string,
     password: string,
-  ): Promise<Either<DomainError, any>> {
+  ): Promise<Either<DomainError, { token: string; user: UserEntity }>> {
     const validation = Validator.validate({
       email: [email],
       password: [password],
@@ -44,6 +45,9 @@ export class AuthenticateUserUsecase implements UseCase {
 
     const token = await this.authenticationService.generate(user.id);
 
-    return right(token);
+    return right({
+      token,
+      user,
+    });
   }
 }

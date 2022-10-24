@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from './shared';
 
 export class AuthenticateWithGoogleRequest {
   @ApiProperty({
@@ -10,11 +11,4 @@ export class AuthenticateWithGoogleRequest {
     example: 'valid_audience',
   })
   audience: string;
-}
-
-export class AuthenticateWithGoogleResponse {
-  @ApiProperty({
-    example: 'valid_token',
-  })
-  token: string;
 }

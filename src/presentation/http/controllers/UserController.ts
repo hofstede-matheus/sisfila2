@@ -7,10 +7,7 @@ import {
   AuthenticateUserRequest,
   AuthenticateUserResponse,
 } from '../dto/AuthenticateUser';
-import {
-  AuthenticateWithGoogleRequest,
-  AuthenticateWithGoogleResponse,
-} from '../dto/AuthenticateWithGoogle';
+import { AuthenticateWithGoogleRequest } from '../dto/AuthenticateWithGoogle';
 import { CreateUserRequest, CreateUserResponse } from '../dto/CreateUser';
 import { toPresentationError } from '../errors';
 
@@ -36,7 +33,7 @@ export class UserController {
 
     if (token.isLeft()) throw toPresentationError(token.value);
 
-    return { token: token.value };
+    return { token: token.value, user: undefined };
   }
 
   @Version(['1'])
@@ -53,7 +50,7 @@ export class UserController {
 
     if (token.isLeft()) throw toPresentationError(token.value);
 
-    return { token: token.value };
+    return { token: token.value, user: undefined };
   }
 
   @Version(['1'])
@@ -62,7 +59,7 @@ export class UserController {
   @HttpCode(200)
   async authenticateWithGoogle(
     @Body() body: AuthenticateWithGoogleRequest,
-  ): Promise<AuthenticateWithGoogleResponse> {
+  ): Promise<AuthenticateUserResponse> {
     const token = await this.authenticateWithGoogleUsecase.execute(
       body.oauthToken,
       body.audience,
@@ -70,6 +67,6 @@ export class UserController {
 
     if (token.isLeft()) throw toPresentationError(token.value);
 
-    return { token: token.value };
+    return { token: token.value, user: undefined };
   }
 }

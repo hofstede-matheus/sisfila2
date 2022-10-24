@@ -12,8 +12,8 @@ export interface UserEntity {
   readonly id: string;
   readonly name: string;
   readonly email: string;
-  readonly password: string;
-  readonly userType: UserEntityTypes;
+  readonly password?: string;
+  readonly userType?: UserEntityTypes;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
@@ -26,7 +26,7 @@ export class UserEntity {
   private constructor(
     readonly name: string,
     readonly email: string,
-    readonly password: string,
+    readonly password?: string,
   ) {}
 
   public static build(

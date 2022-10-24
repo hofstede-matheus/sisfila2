@@ -7,6 +7,7 @@ import { AuthenticateWithGoogleUsecase } from '../../../src/interactors/usecases
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
+  checkForTokenAndUserId,
   VALID_USER,
 } from '../../helpers';
 
@@ -86,8 +87,8 @@ describe('AuthenticateWithGoogleUsecase', () => {
         };
       });
     const response = await useCase.execute('valid_token', 'valid_audience');
-    expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual('valid_token');
+
+    checkForTokenAndUserId(response);
   });
 
   it('should be able to authenticate with valid data when user NOT exists', async () => {
@@ -96,7 +97,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
     });
 
     jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return 'valid_id';
+      return VALID_USER;
     });
 
     jest.spyOn(authenticationService, 'generate').mockImplementation(() => {
@@ -119,7 +120,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
         };
       });
     const response = await useCase.execute('valid_token', 'valid_audience');
-    expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual('valid_token');
+
+    checkForTokenAndUserId(response);
   });
 });

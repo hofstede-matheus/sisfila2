@@ -13,7 +13,7 @@ export class TypeOrmUsersRepository implements UserRepository {
     name: string,
     email: string,
     password?: string,
-  ): Promise<string> {
+  ): Promise<UserEntity> {
     const userEntity = this.usersRepository.create({
       name,
       email,
@@ -22,7 +22,13 @@ export class TypeOrmUsersRepository implements UserRepository {
 
     const userInDatabase = await this.usersRepository.save(userEntity);
 
-    return userInDatabase.id;
+    return {
+      id: userInDatabase.id,
+      name: userInDatabase.name,
+      email: userInDatabase.email,
+      createdAt: userInDatabase.createdAt,
+      updatedAt: userInDatabase.updatedAt,
+    };
   }
   async findByEmail(email: string): Promise<UserEntity> {
     const userInDatabase = await this.usersRepository.findOne({
@@ -35,8 +41,6 @@ export class TypeOrmUsersRepository implements UserRepository {
       id: userInDatabase.id,
       name: userInDatabase.name,
       email: userInDatabase.email,
-      password: userInDatabase.password,
-      userType: 'TYPE_COORDINATOR',
       createdAt: userInDatabase.createdAt,
       updatedAt: userInDatabase.updatedAt,
     };

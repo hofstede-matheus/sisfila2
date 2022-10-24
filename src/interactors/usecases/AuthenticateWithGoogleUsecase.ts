@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { UserEntity } from '../../domain/entities/User.entity';
 import { InvalidOauthDataError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { AuthenticationService } from '../../domain/services/AuthenticationService';
@@ -23,7 +24,7 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
   async execute(
     oauthToken: string,
     audience: string,
-  ): Promise<Either<DomainError, string>> {
+  ): Promise<Either<DomainError, { token: string; user: UserEntity }>> {
     if (
       oauthToken === '' ||
       audience === '' ||
@@ -39,22 +40,17 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
 
     if (!userData) return Promise.resolve(left(new InvalidOauthDataError()));
 
-    const userId = async () => {
-      const user = await this.userRepository.findByEmail(userData.email);
+    let user = await this.userRepository.findByEmail(userData.email);
 
-      if (!user) {
-        const newUserId = await this.userRepository.create(
-          userData.name,
-          userData.email,
-        );
+    if (!user) {
+      user = await this.userRepository.create(userData.name, userData.email);
+    }
 
-        return newUserId;
-      }
-      return user.id;
-    };
+    const token = this.authenticationService.generate(user.id);
 
-    const token = this.authenticationService.generate(await userId());
-
-    return right(token);
+    return right({
+      token,
+      user,
+    });
   }
 }
