@@ -43,11 +43,13 @@ export class AuthenticateUserUsecase implements UseCase {
 
     if (!isValidPassword) return left(new InvalidCredentialsError());
 
-    const token = await this.authenticationService.generate(user.id);
+    const userWithoutPassword = { ...user, password: undefined } as UserEntity;
+
+    const token = this.authenticationService.generate(user.id);
 
     return right({
       token,
-      user,
+      user: userWithoutPassword,
     });
   }
 }

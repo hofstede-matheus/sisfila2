@@ -41,6 +41,7 @@ export class TypeOrmUsersRepository implements UserRepository {
       id: userInDatabase.id,
       name: userInDatabase.name,
       email: userInDatabase.email,
+      password: userInDatabase.password,
       createdAt: userInDatabase.createdAt,
       updatedAt: userInDatabase.updatedAt,
     };

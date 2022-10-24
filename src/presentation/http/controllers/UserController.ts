@@ -25,15 +25,15 @@ export class UserController {
   async createUser(
     @Body() body: CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const token = await this.createCoordinatorUsecase.execute(
+    const result = await this.createCoordinatorUsecase.execute(
       body.name,
       body.email,
       body.password,
     );
 
-    if (token.isLeft()) throw toPresentationError(token.value);
+    if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { token: token.value, user: undefined };
+    return { token: result.value.token, user: result.value.user };
   }
 
   @Version(['1'])
@@ -43,14 +43,14 @@ export class UserController {
   async authenticateUser(
     @Body() body: AuthenticateUserRequest,
   ): Promise<AuthenticateUserResponse> {
-    const token = await this.authenticateUserUsecase.execute(
+    const result = await this.authenticateUserUsecase.execute(
       body.email,
       body.password,
     );
 
-    if (token.isLeft()) throw toPresentationError(token.value);
+    if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { token: token.value, user: undefined };
+    return { token: result.value.token, user: result.value.user };
   }
 
   @Version(['1'])
@@ -60,13 +60,13 @@ export class UserController {
   async authenticateWithGoogle(
     @Body() body: AuthenticateWithGoogleRequest,
   ): Promise<AuthenticateUserResponse> {
-    const token = await this.authenticateWithGoogleUsecase.execute(
+    const result = await this.authenticateWithGoogleUsecase.execute(
       body.oauthToken,
       body.audience,
     );
 
-    if (token.isLeft()) throw toPresentationError(token.value);
+    if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { token: token.value, user: undefined };
+    return { token: result.value.token, user: result.value.user };
   }
 }
