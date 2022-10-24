@@ -28,6 +28,9 @@ export class TypeOrmUsersRepository implements UserRepository {
     const userInDatabase = await this.usersRepository.findOne({
       where: { email },
     });
+
+    if (!userInDatabase) return undefined;
+
     return {
       id: userInDatabase.id,
       name: userInDatabase.name,

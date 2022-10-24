@@ -1,10 +1,15 @@
+import { randomUUID } from 'crypto';
 import { UserEntity } from '../src/domain/entities/User.entity';
 import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
 import { OauthAuthenticationService } from '../src/domain/services/OAuthAuthenticationService';
 
-export const VALID_EMAIL = 'valid@email.com';
+// export const VALID_EMAIL = 'valid@email.com';
+
+export function generateValidEmail() {
+  return `${randomUUID()}@email.com`;
+}
 export const INVALID_EMAIL = 'invalidemail';
 
 export const VALID_USER = {

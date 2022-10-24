@@ -3,9 +3,9 @@ import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
 import {
+  generateValidEmail,
   JWT_TOKEN_REGEX_EXPRESSION,
   UUID_V4_REGEX_EXPRESSION,
-  VALID_EMAIL,
   VALID_USER,
 } from '../helpers';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -61,9 +61,8 @@ describe('users', () => {
       .post('/users')
       .send({
         name: 'valid name',
-        email: VALID_EMAIL,
+        email: generateValidEmail(),
         password: '12345678',
-        userType: 'TYPE_COORDINATOR',
       } as CreateUserRequest)
       .set('Accept', 'application/json')
       .expect(201);
@@ -73,13 +72,13 @@ describe('users', () => {
   });
 
   it('shoud be able to authenticate a user', async () => {
+    const validEmail = generateValidEmail();
     await request(app.getHttpServer())
       .post('/users')
       .send({
         name: VALID_USER.name,
-        email: VALID_USER.email,
+        email: validEmail,
         password: VALID_USER.password,
-        userType: 'TYPE_COORDINATOR',
       } as CreateUserRequest)
       .set('Accept', 'application/json')
       .expect(201);
@@ -87,7 +86,7 @@ describe('users', () => {
     const { body } = await request(app.getHttpServer())
       .post('/users/auth')
       .send({
-        email: VALID_USER.email,
+        email: validEmail,
         password: VALID_USER.password,
       })
       .set('Accept', 'application/json')

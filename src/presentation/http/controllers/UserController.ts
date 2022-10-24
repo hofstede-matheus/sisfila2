@@ -26,7 +26,6 @@ export class UserController {
       body.name,
       body.email,
       body.password,
-      body.userType,
     );
 
     if (token.isLeft()) throw toPresentationError(token.value);
