@@ -1,12 +1,11 @@
+import { OAuth2Client } from 'google-auth-library';
 import {
-  OauthAuthenticationService,
-  OauthUserProfile,
+  OAuthAuthenticationService,
+  OAuthUserProfile,
 } from '../../domain/services/OAuthAuthenticationService';
 
-import { OAuth2Client } from 'google-auth-library';
-
-export class GoogleOauthAuthenticationService
-  implements OauthAuthenticationService
+export class GoogleOAuthAuthenticationService
+  implements OAuthAuthenticationService
 {
   private client: OAuth2Client;
   constructor() {
@@ -18,7 +17,7 @@ export class GoogleOauthAuthenticationService
   async getUserProfile(
     token: string,
     audience: string,
-  ): Promise<OauthUserProfile> {
+  ): Promise<OAuthUserProfile> {
     const ticket = await this.client.verifyIdToken({
       idToken: token,
       audience,

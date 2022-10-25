@@ -3,7 +3,7 @@ import { UserEntity } from '../src/domain/entities/User.entity';
 import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
-import { OauthAuthenticationService } from '../src/domain/services/OAuthAuthenticationService';
+import { OAuthAuthenticationService } from '../src/domain/services/OAuthAuthenticationService';
 import { Either } from '../src/shared/helpers/either';
 
 // export const VALID_EMAIL = 'valid@email.com';
@@ -49,10 +49,10 @@ export const ALL_SERVICES_PROVIDERS = [
     } as AuthenticationService,
   },
   {
-    provide: OauthAuthenticationService,
+    provide: OAuthAuthenticationService,
     useValue: {
       getUserProfile: jest.fn(),
-    } as OauthAuthenticationService,
+    } as OAuthAuthenticationService,
   },
 ];
 

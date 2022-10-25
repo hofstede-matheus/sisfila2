@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { InvalidOauthDataError } from '../../../src/domain/errors';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../../../src/domain/services/AuthenticationService';
-import { OauthAuthenticationService } from '../../../src/domain/services/OAuthAuthenticationService';
+import { OAuthAuthenticationService } from '../../../src/domain/services/OAuthAuthenticationService';
 import { AuthenticateWithGoogleUsecase } from '../../../src/interactors/usecases/AuthenticateWithGoogleUsecase';
 import {
   ALL_REPOSITORIES_PROVIDERS,
@@ -15,7 +15,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
   let useCase: AuthenticateWithGoogleUsecase;
   let repository: UserRepository;
   let authenticationService: AuthenticationService;
-  let oauthAuthenticationService: OauthAuthenticationService;
+  let OAuthAuthenticationService: OAuthAuthenticationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,8 +30,8 @@ describe('AuthenticateWithGoogleUsecase', () => {
     authenticationService = module.get<AuthenticationService>(
       AuthenticationService,
     );
-    oauthAuthenticationService = module.get<OauthAuthenticationService>(
-      OauthAuthenticationService,
+    OAuthAuthenticationService = module.get<OAuthAuthenticationService>(
+      OAuthAuthenticationService,
     );
     useCase = module.get<AuthenticateWithGoogleUsecase>(
       AuthenticateWithGoogleUsecase,
@@ -52,7 +52,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
 
   it('should NOT be able to authenticate with invalid data', async () => {
     jest
-      .spyOn(oauthAuthenticationService, 'getUserProfile')
+      .spyOn(OAuthAuthenticationService, 'getUserProfile')
       .mockImplementation(() => {
         return undefined;
       });
@@ -72,7 +72,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
     });
 
     jest
-      .spyOn(oauthAuthenticationService, 'getUserProfile')
+      .spyOn(OAuthAuthenticationService, 'getUserProfile')
       .mockImplementation(async () => {
         return {
           email: VALID_USER.email,
@@ -105,7 +105,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
     });
 
     jest
-      .spyOn(oauthAuthenticationService, 'getUserProfile')
+      .spyOn(OAuthAuthenticationService, 'getUserProfile')
       .mockImplementation(async () => {
         return {
           email: VALID_USER.email,

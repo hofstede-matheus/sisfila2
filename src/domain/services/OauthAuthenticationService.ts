@@ -1,11 +1,11 @@
-export interface OauthAuthenticationService {
+export interface OAuthAuthenticationService {
   getUserProfile(
     token: string,
     audience: string,
-  ): Promise<OauthUserProfile | undefined>;
+  ): Promise<OAuthUserProfile | undefined>;
 }
 
-export interface OauthUserProfile {
+export interface OAuthUserProfile {
   email: string;
   email_verified: boolean;
   family_name: string;
@@ -17,4 +17,4 @@ export interface OauthUserProfile {
   sub: string;
 }
 
-export const OauthAuthenticationService = Symbol('OauthAuthenticationService');
+export const OAuthAuthenticationService = Symbol('OAuthAuthenticationService');
