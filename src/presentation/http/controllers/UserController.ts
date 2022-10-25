@@ -61,7 +61,7 @@ export class UserController {
     @Body() body: AuthenticateWithGoogleRequest,
   ): Promise<AuthenticateUserResponse> {
     const result = await this.authenticateWithGoogleUsecase.execute(
-      body.oauthToken,
+      body.idToken,
       body.audience,
     );
 
