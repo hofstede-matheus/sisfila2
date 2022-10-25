@@ -4,7 +4,7 @@ import {
   OAuthUserProfile,
 } from '../../domain/services/OAuthService';
 
-export class GoogleOAuthService implements OAuthService {
+export class GoogleOauthAuthenticationService implements OAuthService {
   private client: OAuth2Client;
   constructor() {
     this.client = new OAuth2Client(

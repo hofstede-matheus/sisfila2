@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BcryptEncryptionService } from '../data/services/BcryptEncryptionService';
-import { GoogleOAuthService } from '../data/services/GoogleOAuthService';
+import { GoogleOauthAuthenticationService } from '../data/services/GoogleOauthAuthenticationService';
 import { JWTAuthService } from '../data/services/JWTAuthService';
 import { AuthenticationService } from '../domain/services/AuthenticationService';
 import { EncryptionService } from '../domain/services/EncryptionService';
@@ -18,7 +18,7 @@ import { OAuthService } from '../domain/services/OAuthService';
     },
     {
       provide: OAuthService,
-      useClass: GoogleOAuthService,
+      useClass: GoogleOauthAuthenticationService,
     },
   ],
   exports: [EncryptionService, AuthenticationService, OAuthService],
