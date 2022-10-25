@@ -1,4 +1,4 @@
-export interface OAuthAuthenticationService {
+export interface OAuthService {
   getUserProfile(
     token: string,
     audience: string,
@@ -17,4 +17,4 @@ export interface OAuthUserProfile {
   sub: string;
 }
 
-export const OAuthAuthenticationService = Symbol('OAuthAuthenticationService');
+export const OAuthService = Symbol('OAuthService');

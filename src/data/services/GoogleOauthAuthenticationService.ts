@@ -1,12 +1,10 @@
 import { OAuth2Client } from 'google-auth-library';
 import {
-  OAuthAuthenticationService,
+  OAuthService,
   OAuthUserProfile,
-} from '../../domain/services/OAuthAuthenticationService';
+} from '../../domain/services/OAuthService';
 
-export class GoogleOAuthAuthenticationService
-  implements OAuthAuthenticationService
-{
+export class GoogleOAuthService implements OAuthService {
   private client: OAuth2Client;
   constructor() {
     this.client = new OAuth2Client(

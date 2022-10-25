@@ -3,7 +3,7 @@ import { UserEntity } from '../../domain/entities/User.entity';
 import { InvalidOauthDataError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { AuthenticationService } from '../../domain/services/AuthenticationService';
-import { OAuthAuthenticationService } from '../../domain/services/OAuthAuthenticationService';
+import { OAuthService } from '../../domain/services/OAuthService';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
@@ -17,8 +17,8 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
     @Inject(AuthenticationService)
     private authenticationService: AuthenticationService,
 
-    @Inject(OAuthAuthenticationService)
-    private OAuthAuthenticationService: OAuthAuthenticationService,
+    @Inject(OAuthService)
+    private OAuthService: OAuthService,
   ) {}
 
   async execute(
@@ -33,7 +33,7 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
     )
       return Promise.resolve(left(new InvalidOauthDataError()));
 
-    const userData = await this.OAuthAuthenticationService.getUserProfile(
+    const userData = await this.OAuthService.getUserProfile(
       oauthToken,
       audience,
     );
