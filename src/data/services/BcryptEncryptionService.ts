@@ -1,5 +1,5 @@
 import { EncryptionService } from '../../domain/services/EncryptionService';
-import { hash, compare } from 'bcrypt';
+import { hash, compare, genSalt } from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -7,8 +7,9 @@ export class BcryptEncryptionService implements EncryptionService {
   async encrypt(string: string): Promise<string> {
     // generate a new salt with:
     // await genSalt($rounds));
+    const salt = await genSalt(10);
     // arbitrary strings will not work
-    const encryptedString = await hash(string, process.env.HASH_SALT);
+    const encryptedString = await hash(string, salt);
     return encryptedString;
   }
   async check(hash: string, string: string): Promise<boolean> {
