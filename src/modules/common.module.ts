@@ -4,7 +4,7 @@ import { GoogleOauthAuthenticationService } from '../data/services/GoogleOauthAu
 import { JWTAuthService } from '../data/services/JWTAuthService';
 import { AuthenticationService } from '../domain/services/AuthenticationService';
 import { EncryptionService } from '../domain/services/EncryptionService';
-import { OAuthService } from '../domain/services/OAuthService';
+import { OAuthService } from '../domain/services/OauthAuthenticationService';
 
 @Module({
   providers: [

@@ -18,7 +18,7 @@ import { UsersModule } from './users.module';
       database: process.env.DATABASE_NAME,
       entities: [User],
       logging: process.env.DATABASE_LOGGING === 'true',
-      migrations: ['dist/data/typeorm/migrations/*.js'],
+      migrations: ['dist/src/data/typeorm/migrations/*.js'],
       migrationsRun: true,
     }),
     UsersModule,

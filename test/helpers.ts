@@ -3,7 +3,7 @@ import { UserEntity } from '../src/domain/entities/User.entity';
 import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
-import { OAuthService } from '../src/domain/services/OAuthService';
+import { OAuthService } from '../src/domain/services/OauthAuthenticationService';
 import { Either } from '../src/shared/helpers/either';
 
 // export const VALID_EMAIL = 'valid@email.com';

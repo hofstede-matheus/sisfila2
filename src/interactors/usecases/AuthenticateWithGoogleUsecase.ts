@@ -3,7 +3,7 @@ import { UserEntity } from '../../domain/entities/User.entity';
 import { InvalidOauthDataError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { AuthenticationService } from '../../domain/services/AuthenticationService';
-import { OAuthService } from '../../domain/services/OAuthService';
+import { OAuthService } from '../../domain/services/OauthAuthenticationService';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

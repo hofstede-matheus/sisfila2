@@ -2,7 +2,7 @@ import { OAuth2Client } from 'google-auth-library';
 import {
   OAuthService,
   OAuthUserProfile,
-} from '../../domain/services/OAuthService';
+} from '../../domain/services/OauthAuthenticationService';
 
 export class GoogleOauthAuthenticationService implements OAuthService {
   private client: OAuth2Client;
