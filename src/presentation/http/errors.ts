@@ -1,5 +1,6 @@
 import { HttpException } from '@nestjs/common';
 import {
+  EmailAlreadyExistsError,
   InvalidCredentialsError,
   InvalidEmailError,
   InvalidNameError,
@@ -33,6 +34,9 @@ export function toPresentationError(error: DomainError): HttpException {
 
     case InvalidCredentialsError:
       return new PresentationException(error, 401);
+
+    case EmailAlreadyExistsError:
+      return new PresentationException(error, 409);
 
     default:
       console.error('ERROR NOT MAPPED', error);

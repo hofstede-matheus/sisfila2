@@ -4,7 +4,7 @@ export class AuthenticateWithGoogleRequest {
   @ApiProperty({
     example: 'valid_oauth_token',
   })
-  idToken: string;
+  oauthToken: string;
 
   @ApiProperty({
     example: 'valid_audience',

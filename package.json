@@ -21,7 +21,7 @@
     "test:unit": "jest ./test/interactors/usecases/*.spec.ts",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm:cli": "ts-node ./node_modules/typeorm/cli.js",
-    "typeorm:cli:migragion:create": "ts-node ./node_modules/typeorm/cli.js migration:create /src/data/typeorm/migrations"
+    "typeorm:cli:migration:create": "ts-node ./node_modules/typeorm/cli.js migration:create /src/data/typeorm/migrations"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
