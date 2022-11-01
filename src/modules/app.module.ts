@@ -5,6 +5,7 @@ import { Organization } from '../data/typeorm/entities/organizations';
 import { User } from '../data/typeorm/entities/users';
 import { AppController } from '../presentation/http/controllers/app.controller';
 import { CommonModule } from './common.module';
+import { OrganizationsModule } from './organizations.module';
 import { UsersModule } from './users.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { UsersModule } from './users.module';
       migrationsRun: true,
     }),
     UsersModule,
+    OrganizationsModule,
     CommonModule,
   ],
   controllers: [AppController],
