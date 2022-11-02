@@ -3,13 +3,13 @@ import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { VALID_ORGANIZATION } from '../helpers';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../../src/data/typeorm/entities/users';
 import { ConfigModule } from '@nestjs/config';
 import { connectionSource } from '../../ormconfig-test';
 import { CommonModule } from '../../src/modules/common.module';
 import { OrganizationsModule } from '../../src/modules/organizations.module';
 import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
 import { UsersModule } from '../../src/modules/users.module';
+import { Organization } from '../../src/data/typeorm/entities/organizations';
 
 describe('organizations', () => {
   let app: INestApplication;
@@ -34,7 +34,7 @@ describe('organizations', () => {
           database: process.env.DATABASE_NAME,
           migrations: ['src/data/typeorm/migrations/*.ts'],
           migrationsRun: true,
-          entities: [User],
+          entities: [Organization],
           logging: process.env.DATABASE_LOGGING === 'true',
         }),
       ],
@@ -63,6 +63,6 @@ describe('organizations', () => {
       .set('Accept', 'application/json')
       .expect(201);
 
-    expect(body.token).toBeDefined();
+    expect(body.id).toBeDefined();
   });
 });

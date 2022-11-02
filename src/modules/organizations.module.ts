@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Organization } from '../data/typeorm/entities/organizations';
 import { TypeOrmOrganizationsRepository } from '../data/typeorm/repositories/TypeOrmOrganizationsRepository';
 import { OrganizationRepository } from '../domain/repositories/OrganizationRepository';
 import { CreateOrganizationUsecase } from '../interactors/usecases/CreateOrganizationUsecase';
+import { OrganizationController } from '../presentation/http/controllers/OrganizationController';
 import { CommonModule } from './common.module';
 
 @Module({
-  imports: [CommonModule],
+  imports: [CommonModule, TypeOrmModule.forFeature([Organization])],
+  controllers: [OrganizationController],
   providers: [
     { provide: CreateOrganizationUsecase, useClass: CreateOrganizationUsecase },
     {
@@ -13,6 +17,6 @@ import { CommonModule } from './common.module';
       useClass: TypeOrmOrganizationsRepository,
     },
   ],
-  exports: [],
+  exports: [OrganizationRepository],
 })
 export class OrganizationsModule {}
