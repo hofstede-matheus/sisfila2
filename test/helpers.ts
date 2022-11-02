@@ -1,5 +1,7 @@
 import { randomUUID } from 'crypto';
+import { OrganizationEntity } from '../src/domain/entities/Organization.entity';
 import { UserEntity } from '../src/domain/entities/User.entity';
+import { OrganizationRepository } from '../src/domain/repositories/OrganizationRepository';
 import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
@@ -23,6 +25,11 @@ export const VALID_USER = {
   updatedAt: new Date(),
 } as UserEntity;
 
+export const VALID_ORGANIZATION = {
+  name: 'Valid Name',
+  code: 'VALID',
+} as OrganizationEntity;
+
 export const ALL_REPOSITORIES_PROVIDERS = [
   {
     provide: UserRepository,
@@ -30,6 +37,13 @@ export const ALL_REPOSITORIES_PROVIDERS = [
       create: jest.fn(),
       findByEmail: jest.fn(),
     } as UserRepository,
+  },
+  {
+    provide: OrganizationRepository,
+    useValue: {
+      create: jest.fn(),
+      findByCode: jest.fn(),
+    } as OrganizationRepository,
   },
 ];
 

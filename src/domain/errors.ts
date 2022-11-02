@@ -19,3 +19,7 @@ export class InvalidCredentialsError extends DomainError {}
 export class InvalidOauthDataError extends DomainError {}
 
 export class EmailAlreadyExistsError extends DomainError {}
+
+export class InvalidCodeError extends DomainError {}
+
+export class CodeAlreadyExistsError extends DomainError {}
