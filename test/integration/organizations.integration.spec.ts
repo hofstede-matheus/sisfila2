@@ -115,7 +115,7 @@ describe('organizations', () => {
     expect(bodyOfCreateRequest.id).toBeDefined();
 
     const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
-      .post(`/organizations/${bodyOfCreateRequest.id}`)
+      .get(`/organizations/${bodyOfCreateRequest.id}`)
       .send({
         name: VALID_ORGANIZATION.name,
         code: VALID_ORGANIZATION.code,
@@ -140,7 +140,7 @@ describe('organizations', () => {
     expect(bodyOfCreateRequest.id).toBeDefined();
 
     const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
-      .post(`/organizations/${bodyOfCreateRequest.id}`)
+      .get(`/organizations/${bodyOfCreateRequest.id}`)
       .send({
         name: VALID_ORGANIZATION.name,
         code: VALID_ORGANIZATION.code,
