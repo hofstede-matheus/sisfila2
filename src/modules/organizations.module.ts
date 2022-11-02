@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmOrganizationsRepository } from '../data/typeorm/repositories/TypeOrmOrganizationsRepository';
 import { OrganizationRepository } from '../domain/repositories/OrganizationRepository';
 import { CreateOrganizationUsecase } from '../interactors/usecases/CreateOrganizationUsecase';
 import { CommonModule } from './common.module';
@@ -9,7 +10,7 @@ import { CommonModule } from './common.module';
     { provide: CreateOrganizationUsecase, useClass: CreateOrganizationUsecase },
     {
       provide: OrganizationRepository,
-      useValue: {} as OrganizationRepository,
+      useClass: TypeOrmOrganizationsRepository,
     },
   ],
   exports: [],
