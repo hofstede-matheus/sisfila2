@@ -65,4 +65,29 @@ describe('organizations', () => {
 
     expect(body.id).toBeDefined();
   });
+
+  it('shoud be able to update organization', async () => {
+    const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateRequest.id).toBeDefined();
+
+    const { body: bodyOfUpdateRequest } = await request(app.getHttpServer())
+      .put('/organizations')
+      .send({
+        id: bodyOfCreateRequest.id,
+        name: VALID_ORGANIZATION.name + '_new',
+        code: VALID_ORGANIZATION.code + '_n',
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+  });
+
+  // TODO: find one
 });
