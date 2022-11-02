@@ -79,7 +79,7 @@ describe('organizations', () => {
 
     expect(bodyOfCreateRequest.id).toBeDefined();
 
-    const { body: bodyOfUpdateRequest } = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .put('/organizations')
       .send({
         id: bodyOfCreateRequest.id,
@@ -88,7 +88,68 @@ describe('organizations', () => {
       } as UpdateOrganizationRequest)
       .set('Accept', 'application/json')
       .expect(200);
+
+    const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
+      .post(`/organizations/${bodyOfCreateRequest.id}`)
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfFindOneRequest.name).toBe(VALID_ORGANIZATION.name + '_new');
+    expect(bodyOfFindOneRequest.code).toBe(VALID_ORGANIZATION.code + '_n');
   });
 
-  // TODO: find one
+  it('shoud be able to get one organization', async () => {
+    const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateRequest.id).toBeDefined();
+
+    const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
+      .post(`/organizations/${bodyOfCreateRequest.id}`)
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfFindOneRequest.name).toBe(VALID_ORGANIZATION.name);
+    expect(bodyOfFindOneRequest.code).toBe(VALID_ORGANIZATION.code);
+  });
+
+  it('shoud be able to get all organizations', async () => {
+    const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateRequest.id).toBeDefined();
+
+    const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
+      .post(`/organizations/${bodyOfCreateRequest.id}`)
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfFindOneRequest.length).toBe(1);
+    expect(bodyOfFindOneRequest[0].name).toBe(VALID_ORGANIZATION.name);
+    expect(bodyOfFindOneRequest[0].code).toBe(VALID_ORGANIZATION.code);
+  });
 });
