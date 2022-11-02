@@ -90,7 +90,7 @@ describe('organizations', () => {
       .expect(200);
 
     const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
-      .post(`/organizations/${bodyOfCreateRequest.id}`)
+      .get(`/organizations/${bodyOfCreateRequest.id}`)
       .send({
         name: VALID_ORGANIZATION.name,
         code: VALID_ORGANIZATION.code,
@@ -140,7 +140,7 @@ describe('organizations', () => {
     expect(bodyOfCreateRequest.id).toBeDefined();
 
     const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
-      .get(`/organizations/${bodyOfCreateRequest.id}`)
+      .get(`/organizations`)
       .send({
         name: VALID_ORGANIZATION.name,
         code: VALID_ORGANIZATION.code,
@@ -151,5 +151,5 @@ describe('organizations', () => {
     expect(bodyOfFindOneRequest.length).toBe(1);
     expect(bodyOfFindOneRequest[0].name).toBe(VALID_ORGANIZATION.name);
     expect(bodyOfFindOneRequest[0].code).toBe(VALID_ORGANIZATION.code);
-  });
+  }, 99999);
 });

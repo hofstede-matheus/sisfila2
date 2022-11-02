@@ -10,8 +10,20 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
     private readonly organizationRepository: Repository<Organization>,
   ) {}
 
-  findOneByIdOrAll(id?: string): Promise<OrganizationEntity[]> {
-    throw new Error('Method not implemented.');
+  async findOneByIdOrAll(id?: string): Promise<OrganizationEntity[]> {
+    const organizations = await this.organizationRepository.findBy({ id });
+
+    const organizationsEntity = organizations.map((organization) => {
+      return {
+        id: organization.id,
+        name: organization.name,
+        code: organization.code,
+        createdAt: organization.createdAt,
+        updatedAt: organization.updatedAt,
+      };
+    });
+
+    return organizationsEntity;
   }
   async update(id: string, name?: string, code?: string): Promise<void> {
     await this.organizationRepository.update(id, {
