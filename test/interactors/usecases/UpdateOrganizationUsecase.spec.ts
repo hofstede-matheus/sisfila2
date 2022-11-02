@@ -2,19 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   OrganizationCodeAlreadyUsedError,
   InvalidCodeError,
+  InvalidIdError,
   InvalidNameError,
 } from '../../../src/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
-  UUID_V4_REGEX_EXPRESSION,
   VALID_ORGANIZATION,
 } from '../../helpers';
-import { CreateOrganizationUsecase } from '../../../src/interactors/usecases/CreateOrganizationUsecase';
 import { OrganizationRepository } from '../../../src/domain/repositories/OrganizationRepository';
+import { UpdateOrganizationUsecase } from '../../../src/interactors/usecases/UpdateOrganizationUsecase';
 
-describe('CreateOrganizationUsecase', () => {
-  let useCase: CreateOrganizationUsecase;
+describe('UpdateOrganizationUsecase', () => {
+  let useCase: UpdateOrganizationUsecase;
   let repository: OrganizationRepository;
 
   beforeEach(async () => {
@@ -22,43 +22,53 @@ describe('CreateOrganizationUsecase', () => {
       providers: [
         ...ALL_REPOSITORIES_PROVIDERS,
         ...ALL_SERVICES_PROVIDERS,
-        CreateOrganizationUsecase,
+        UpdateOrganizationUsecase,
       ],
     }).compile();
 
-    useCase = module.get<CreateOrganizationUsecase>(CreateOrganizationUsecase);
+    useCase = module.get<UpdateOrganizationUsecase>(UpdateOrganizationUsecase);
     repository = module.get<OrganizationRepository>(OrganizationRepository);
   });
 
-  it('shoud not create an organization with invalid name', async () => {
-    const response = await useCase.execute('a', 'VALI');
+  it('should not update an organization with invalid id', async () => {
+    const response = await useCase.execute('a', 'a', 'VALI');
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toEqual(new InvalidIdError());
+  });
+
+  it('should not update an organization with invalid name', async () => {
+    const response = await useCase.execute(VALID_ORGANIZATION.id, 'a', 'VALI');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidNameError());
   });
 
-  it('shoud not create an organization with invalid code', async () => {
-    const response = await useCase.execute('aa', 'A');
+  it('should not update an organization with invalid code', async () => {
+    const response = await useCase.execute(VALID_ORGANIZATION.id, 'aa', 'A');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidCodeError());
   });
 
-  it('shoud not create an organization with invalid code', async () => {
-    const response = await useCase.execute('aa', 'AAAAAAAA');
+  it('should not update an organization with invalid code', async () => {
+    const response = await useCase.execute(
+      VALID_ORGANIZATION.id,
+      'aa',
+      'AAAAAAAA',
+    );
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidCodeError());
   });
 
-  it('shoud not create an user organization when code already exists', async () => {
+  it('should not update an user organization when code already exists', async () => {
     jest.spyOn(repository, 'findByCode').mockImplementation(async () => {
       return VALID_ORGANIZATION;
     });
 
-    const response = await useCase.execute('aa', 'AAAA');
+    const response = await useCase.execute(VALID_ORGANIZATION.id, 'aa', 'AAAA');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new OrganizationCodeAlreadyUsedError());
   });
 
-  it('shoud create an user with valid data', async () => {
+  it('should update an user with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
       return VALID_ORGANIZATION.id;
     });
@@ -67,9 +77,8 @@ describe('CreateOrganizationUsecase', () => {
       return undefined;
     });
 
-    const response = await useCase.execute('aa', 'AAAA');
+    const response = await useCase.execute(VALID_ORGANIZATION.id, 'aa', 'AAAA');
 
     expect(response.isRight()).toBeTruthy();
-    expect(response.value).toMatch(UUID_V4_REGEX_EXPRESSION);
   });
 });

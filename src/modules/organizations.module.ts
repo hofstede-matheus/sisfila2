@@ -4,6 +4,7 @@ import { Organization } from '../data/typeorm/entities/organizations';
 import { TypeOrmOrganizationsRepository } from '../data/typeorm/repositories/TypeOrmOrganizationsRepository';
 import { OrganizationRepository } from '../domain/repositories/OrganizationRepository';
 import { CreateOrganizationUsecase } from '../interactors/usecases/CreateOrganizationUsecase';
+import { UpdateOrganizationUsecase } from '../interactors/usecases/UpdateOrganizationUsecase';
 import { OrganizationController } from '../presentation/http/controllers/OrganizationController';
 import { CommonModule } from './common.module';
 
@@ -12,6 +13,7 @@ import { CommonModule } from './common.module';
   controllers: [OrganizationController],
   providers: [
     { provide: CreateOrganizationUsecase, useClass: CreateOrganizationUsecase },
+    { provide: UpdateOrganizationUsecase, useClass: UpdateOrganizationUsecase },
     {
       provide: OrganizationRepository,
       useClass: TypeOrmOrganizationsRepository,

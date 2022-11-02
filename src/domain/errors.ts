@@ -22,4 +22,4 @@ export class EmailAlreadyExistsError extends DomainError {}
 
 export class InvalidCodeError extends DomainError {}
 
-export class CodeAlreadyExistsError extends DomainError {}
+export class OrganizationCodeAlreadyUsedError extends DomainError {}

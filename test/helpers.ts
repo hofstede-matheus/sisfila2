@@ -44,6 +44,7 @@ export const ALL_REPOSITORIES_PROVIDERS = [
     useValue: {
       create: jest.fn(),
       findByCode: jest.fn(),
+      update: jest.fn(),
     } as OrganizationRepository,
   },
 ];

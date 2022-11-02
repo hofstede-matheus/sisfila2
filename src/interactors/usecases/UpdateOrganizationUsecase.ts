@@ -5,33 +5,33 @@ import { OrganizationRepository } from '../../domain/repositories/OrganizationRe
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
+import { Validator } from '../../shared/helpers/validator';
 
 @Injectable()
-export class CreateOrganizationUsecase implements UseCase {
+export class UpdateOrganizationUsecase implements UseCase {
   constructor(
     @Inject(OrganizationRepository)
     private organizationRepository: OrganizationRepository,
   ) {}
   async execute(
-    name: string,
-    code: string,
-  ): Promise<Either<DomainError, string>> {
-    const validation = OrganizationEntity.build(name, code);
+    id: string,
+    name?: string,
+    code?: string,
+  ): Promise<Either<DomainError, void>> {
+    const entityValidation = OrganizationEntity.build(name, code);
+    const validation = Validator.validate({
+      id: [id],
+    });
+
+    if (entityValidation.isLeft()) return left(entityValidation.value);
     if (validation.isLeft()) return left(validation.value);
 
-    const organizationInDatabase = await this.organizationRepository.findByCode(
-      code,
-    );
+    const organization = await this.organizationRepository.findByCode(code);
 
-    if (organizationInDatabase) {
-      return left(new OrganizationCodeAlreadyUsedError());
-    }
+    if (organization) return left(new OrganizationCodeAlreadyUsedError());
 
-    const organization = await this.organizationRepository.create(
-      validation.value.name,
-      validation.value.code,
-    );
+    this.organizationRepository.update(id, name, code);
 
-    return right(organization);
+    return right();
   }
 }
