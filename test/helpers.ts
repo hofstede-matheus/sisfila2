@@ -26,6 +26,7 @@ export const VALID_USER = {
 } as UserEntity;
 
 export const VALID_ORGANIZATION = {
+  id: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
   name: 'Valid Name',
   code: 'VALID',
 } as OrganizationEntity;
