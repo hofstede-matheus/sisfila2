@@ -23,3 +23,5 @@ export class EmailAlreadyExistsError extends DomainError {}
 export class InvalidCodeError extends DomainError {}
 
 export class OrganizationCodeAlreadyUsedError extends DomainError {}
+
+export class OrganizationNotFoundError extends DomainError {}

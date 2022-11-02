@@ -8,11 +8,13 @@ export class UpdateOrganizationRequest {
 
   @ApiProperty({
     example: 'Organization Name',
+    required: false,
   })
-  name: string;
+  name?: string;
 
   @ApiProperty({
     example: 'ORG',
+    required: false,
   })
-  code: string;
+  code?: string;
 }

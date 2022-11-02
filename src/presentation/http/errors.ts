@@ -1,11 +1,13 @@
 import { HttpException } from '@nestjs/common';
 import {
   EmailAlreadyExistsError,
+  InvalidCodeError,
   InvalidCredentialsError,
   InvalidEmailError,
   InvalidNameError,
   InvalidPasswordError,
   InvalidUserTypeError,
+  OrganizationCodeAlreadyUsedError,
 } from '../../domain/errors';
 import { DomainError } from '../../shared/helpers/errors';
 
@@ -36,6 +38,12 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 401);
 
     case EmailAlreadyExistsError:
+      return new PresentationException(error, 409);
+
+    case InvalidCodeError:
+      return new PresentationException(error, 400);
+
+    case OrganizationCodeAlreadyUsedError:
       return new PresentationException(error, 409);
 
     default:

@@ -9,13 +9,15 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
     @InjectRepository(Organization)
     private readonly organizationRepository: Repository<Organization>,
   ) {}
-  update(
-    id: string,
-    name?: string,
-    code?: string,
-  ): Promise<OrganizationEntity> {
-    throw new Error('Method not implemented.');
+  async update(id: string, name?: string, code?: string): Promise<void> {
+    await this.organizationRepository.update(id, {
+      name,
+      code,
+    });
+
+    return;
   }
+
   async create(name: string, code: string): Promise<string> {
     const userEntity = this.organizationRepository.create({
       name,

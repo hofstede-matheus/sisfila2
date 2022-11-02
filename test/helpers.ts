@@ -28,7 +28,7 @@ export const VALID_USER = {
 export const VALID_ORGANIZATION = {
   id: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
   name: 'Valid Name',
-  code: 'VALID',
+  code: 'VAL',
 } as OrganizationEntity;
 
 export const ALL_REPOSITORIES_PROVIDERS = [
@@ -44,6 +44,7 @@ export const ALL_REPOSITORIES_PROVIDERS = [
     useValue: {
       create: jest.fn(),
       findByCode: jest.fn(),
+      findOneByIdOrAll: jest.fn(),
       update: jest.fn(),
     } as OrganizationRepository,
   },
