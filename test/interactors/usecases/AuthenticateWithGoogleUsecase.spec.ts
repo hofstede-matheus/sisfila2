@@ -15,7 +15,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
   let useCase: AuthenticateWithGoogleUsecase;
   let repository: UserRepository;
   let authenticationService: AuthenticationService;
-  let OAuthService: OAuthService;
+  let oAuthService: OAuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,9 +30,7 @@ describe('AuthenticateWithGoogleUsecase', () => {
     authenticationService = module.get<AuthenticationService>(
       AuthenticationService,
     );
-    OAuthService = module.get<OAuthService>(
-      OAuthService,
-    );
+    oAuthService = module.get<OAuthService>(OAuthService);
     useCase = module.get<AuthenticateWithGoogleUsecase>(
       AuthenticateWithGoogleUsecase,
     );
@@ -51,11 +49,9 @@ describe('AuthenticateWithGoogleUsecase', () => {
   });
 
   it('should NOT be able to authenticate with invalid data', async () => {
-    jest
-      .spyOn(OAuthService, 'getUserProfile')
-      .mockImplementation(() => {
-        return undefined;
-      });
+    jest.spyOn(oAuthService, 'getUserProfile').mockImplementation(() => {
+      return undefined;
+    });
 
     const response = await useCase.execute('invalid_token', 'invalid_audience');
     expect(response.isLeft()).toBeTruthy();
@@ -71,21 +67,19 @@ describe('AuthenticateWithGoogleUsecase', () => {
       return 'valid_token';
     });
 
-    jest
-      .spyOn(OAuthService, 'getUserProfile')
-      .mockImplementation(async () => {
-        return {
-          email: VALID_USER.email,
-          email_verified: true,
-          family_name: VALID_USER.name,
-          given_name: VALID_USER.name,
-          name: VALID_USER.name,
-          hd: '@email.com',
-          locale: 'en',
-          picture: '',
-          sub: '123456789',
-        };
-      });
+    jest.spyOn(oAuthService, 'getUserProfile').mockImplementation(async () => {
+      return {
+        email: VALID_USER.email,
+        email_verified: true,
+        family_name: VALID_USER.name,
+        given_name: VALID_USER.name,
+        name: VALID_USER.name,
+        hd: '@email.com',
+        locale: 'en',
+        picture: '',
+        sub: '123456789',
+      };
+    });
     const response = await useCase.execute('valid_token', 'valid_audience');
 
     checkForTokenAndUserId(response);
@@ -104,21 +98,19 @@ describe('AuthenticateWithGoogleUsecase', () => {
       return 'valid_token';
     });
 
-    jest
-      .spyOn(OAuthService, 'getUserProfile')
-      .mockImplementation(async () => {
-        return {
-          email: VALID_USER.email,
-          email_verified: true,
-          family_name: VALID_USER.name,
-          given_name: VALID_USER.name,
-          name: VALID_USER.name,
-          hd: '@email.com',
-          locale: 'en',
-          picture: '',
-          sub: '123456789',
-        };
-      });
+    jest.spyOn(oAuthService, 'getUserProfile').mockImplementation(async () => {
+      return {
+        email: VALID_USER.email,
+        email_verified: true,
+        family_name: VALID_USER.name,
+        given_name: VALID_USER.name,
+        name: VALID_USER.name,
+        hd: '@email.com',
+        locale: 'en',
+        picture: '',
+        sub: '123456789',
+      };
+    });
     const response = await useCase.execute('valid_token', 'valid_audience');
 
     checkForTokenAndUserId(response);
