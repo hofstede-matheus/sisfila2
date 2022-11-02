@@ -10,6 +10,7 @@ import { OrganizationsModule } from '../../src/modules/organizations.module';
 import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
 import { UsersModule } from '../../src/modules/users.module';
 import { Organization } from '../../src/data/typeorm/entities/organizations';
+import { UpdateOrganizationRequest } from '../../src/presentation/http/dto/UpdateOrganization';
 
 describe('organizations', () => {
   let app: INestApplication;
@@ -84,7 +85,7 @@ describe('organizations', () => {
         id: bodyOfCreateRequest.id,
         name: VALID_ORGANIZATION.name + '_new',
         code: VALID_ORGANIZATION.code + '_n',
-      } as CreateOrganizationRequest)
+      } as UpdateOrganizationRequest)
       .set('Accept', 'application/json')
       .expect(200);
   });
