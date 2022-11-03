@@ -1,0 +1,53 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import {
+  OrganizationCodeAlreadyUsedError,
+  InvalidCodeError,
+  InvalidIdError,
+  InvalidNameError,
+} from '../../../src/domain/errors';
+import {
+  ALL_REPOSITORIES_PROVIDERS,
+  ALL_SERVICES_PROVIDERS,
+  VALID_ORGANIZATION,
+} from '../../helpers';
+import { OrganizationRepository } from '../../../src/domain/repositories/OrganizationRepository';
+import { UpdateOrganizationUsecase } from '../../../src/interactors/usecases/UpdateOrganizationUsecase';
+import { RemoveOrganizationUsecase } from '../../../src/interactors/usecases/RemoveOrganizationUsecase';
+
+describe('UpdateOrganizationUsecase', () => {
+  let useCase: RemoveOrganizationUsecase;
+  let repository: OrganizationRepository;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ...ALL_REPOSITORIES_PROVIDERS,
+        ...ALL_SERVICES_PROVIDERS,
+        RemoveOrganizationUsecase,
+      ],
+    }).compile();
+
+    useCase = module.get<RemoveOrganizationUsecase>(RemoveOrganizationUsecase);
+    repository = module.get<OrganizationRepository>(OrganizationRepository);
+  });
+
+  it('should not remove an organization with invalid id', async () => {
+    const response = await useCase.execute('a');
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toEqual(new InvalidIdError());
+  });
+
+  it('should remove an organization with valid data', async () => {
+    jest.spyOn(repository, 'create').mockImplementation(async () => {
+      return VALID_ORGANIZATION.id;
+    });
+
+    jest.spyOn(repository, 'remove').mockImplementation(async () => {
+      return;
+    });
+
+    const response = await useCase.execute(VALID_ORGANIZATION.id);
+
+    expect(response.isRight()).toBeTruthy();
+  });
+});

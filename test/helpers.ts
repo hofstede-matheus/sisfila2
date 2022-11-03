@@ -46,6 +46,7 @@ export const ALL_REPOSITORIES_PROVIDERS = [
       findByCode: jest.fn(),
       findOneByIdOrAll: jest.fn(),
       update: jest.fn(),
+      remove: jest.fn(),
     } as OrganizationRepository,
   },
 ];
