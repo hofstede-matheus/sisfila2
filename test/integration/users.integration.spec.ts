@@ -5,7 +5,6 @@ import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
 import {
   generateValidEmail,
   JWT_TOKEN_REGEX_EXPRESSION,
-  UUID_V4_REGEX_EXPRESSION,
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../helpers';
@@ -59,6 +58,7 @@ describe('users', () => {
 
   afterEach(async () => {
     await connectionSource.query(`DELETE FROM users`);
+    await connectionSource.query(`DELETE FROM organizations`);
   });
 
   it('shoud be able to create user', async () => {
@@ -134,13 +134,165 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .patch(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
       .set('Accept', 'application/json')
       .expect(200);
 
     expect(bodyOfGetUserRequest.id).toBeDefined();
-    expect(bodyOfGetUserRequest.userType).toBe('TYPE_COORDINATOR');
-  });
+    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap.length).toBe(1);
+    expect(
+      bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
+    ).toBe(bodyOfCreateOrganizationRequest.id);
+    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
+      'TYPE_COORDINATOR',
+    );
+  }, 99999);
+
+  it('shoud be able to update user role in organization', async () => {
+    const validEmail = generateValidEmail();
+    const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        name: VALID_USER.name,
+        email: validEmail,
+        password: VALID_USER.password,
+      } as CreateUserRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const { body: bodyOfCreateOrganizationRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch(
+        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .send({
+        role: 'TYPE_COORDINATOR',
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
+      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetUserRequest.id).toBeDefined();
+    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap.length).toBe(1);
+    expect(
+      bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
+    ).toBe(bodyOfCreateOrganizationRequest.id);
+    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
+      'TYPE_COORDINATOR',
+    );
+
+    await request(app.getHttpServer())
+      .patch(
+        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .send({
+        role: 'TYPE_ATTENDENT',
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfSecondGetUserRequest } = await request(
+      app.getHttpServer(),
+    )
+      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfSecondGetUserRequest.id).toBeDefined();
+    expect(bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap.length).toBe(
+      1,
+    );
+    expect(
+      bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
+    ).toBe(bodyOfCreateOrganizationRequest.id);
+    expect(bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
+      'TYPE_ATTENDENT',
+    );
+  }, 99999);
+
+  it('shoud be able to unset user role in organization', async () => {
+    const validEmail = generateValidEmail();
+    const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        name: VALID_USER.name,
+        email: validEmail,
+        password: VALID_USER.password,
+      } as CreateUserRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const { body: bodyOfCreateOrganizationRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch(
+        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .send({
+        role: 'TYPE_COORDINATOR',
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
+      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetUserRequest.id).toBeDefined();
+    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap.length).toBe(1);
+    expect(
+      bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
+    ).toBe(bodyOfCreateOrganizationRequest.id);
+    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
+      'TYPE_COORDINATOR',
+    );
+
+    await request(app.getHttpServer())
+      .patch(
+        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .send({
+        role: undefined,
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfSecondGetUserRequest } = await request(
+      app.getHttpServer(),
+    )
+      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfSecondGetUserRequest.id).toBeDefined();
+    expect(bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap.length).toBe(
+      0,
+    );
+  }, 99999);
 
   // it('shoud be able to authenticate a user with google when creating a new account', async () => {
   //   const { body } = await request(app.getHttpServer())

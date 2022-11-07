@@ -16,6 +16,13 @@ export class User {
   })
   email: string;
 
+  @ApiProperty({})
+  userRolesOnOrganizationsMap: {
+    organizationName: string;
+    organizationId: string;
+    role: string;
+  }[];
+
   @ApiProperty({
     example: 'Date',
   })

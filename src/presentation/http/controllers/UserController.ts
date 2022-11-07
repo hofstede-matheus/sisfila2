@@ -1,14 +1,28 @@
-import { Body, Controller, HttpCode, Post, Version } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Version,
+} from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
+import { UserEntityTypes } from '../../../domain/entities/User.entity';
 import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticateWithGoogleUsecase } from '../../../interactors/usecases/AuthenticateWithGoogleUsecase';
 import { CreateUserUsecase } from '../../../interactors/usecases/CreateUserUsecase';
+import { FindOneOrAllUsersUsecase } from '../../../interactors/usecases/FindOneOrAllUsersUsecase';
+import { SetUserRoleInOrganizationUsecase } from '../../../interactors/usecases/SetUserRoleInOrganizationUsecase';
 import {
   AuthenticateUserRequest,
   AuthenticateUserResponse,
 } from '../dto/AuthenticateUser';
 import { AuthenticateWithGoogleRequest } from '../dto/AuthenticateWithGoogle';
 import { CreateUserRequest, CreateUserResponse } from '../dto/CreateUser';
+import { SetUserRoleInOrganizationRequest } from '../dto/SetUserRoleInOrganization';
+import { User } from '../dto/shared';
 import { toPresentationError } from '../errors';
 
 @Controller('users')
@@ -17,6 +31,8 @@ export class UserController {
     private readonly createCoordinatorUsecase: CreateUserUsecase,
     private readonly authenticateUserUsecase: AuthenticateUserUsecase,
     private readonly authenticateWithGoogleUsecase: AuthenticateWithGoogleUsecase,
+    private readonly setUserRoleInOrganizationUsecase: SetUserRoleInOrganizationUsecase,
+    private readonly findOneOrAllUsersUsecase: FindOneOrAllUsersUsecase,
   ) {}
 
   @Version(['1'])
@@ -33,7 +49,10 @@ export class UserController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { token: result.value.token, user: result.value.user };
+    return {
+      token: result.value.token,
+      user: { ...result.value.user, userRolesOnOrganizationsMap: [] },
+    };
   }
 
   @Version(['1'])
@@ -50,7 +69,10 @@ export class UserController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { token: result.value.token, user: result.value.user };
+    return {
+      token: result.value.token,
+      user: { ...result.value.user, userRolesOnOrganizationsMap: [] },
+    };
   }
 
   @Version(['1'])
@@ -67,6 +89,46 @@ export class UserController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { token: result.value.token, user: result.value.user };
+    return {
+      token: result.value.token,
+      user: { ...result.value.user, userRolesOnOrganizationsMap: [] },
+    };
+  }
+
+  @Version(['1'])
+  @Patch(':userId/organizations/:organizationId')
+  @HttpCode(200)
+  async setUserRoleInOrganization(
+    @Param('userId') userId: string,
+    @Param('organizationId') organizationId: string,
+    @Body() body: SetUserRoleInOrganizationRequest,
+  ): Promise<void> {
+    const result = await this.setUserRoleInOrganizationUsecase.execute(
+      userId,
+      organizationId,
+      body.role as UserEntityTypes,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return;
+  }
+
+  @Version(['1'])
+  @Get(':userId')
+  @HttpCode(200)
+  async getUser(@Param('userId') userId: string): Promise<User> {
+    const result = await this.findOneOrAllUsersUsecase.execute(userId);
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return {
+      id: result.value[0].id,
+      name: result.value[0].name,
+      email: result.value[0].email,
+      userRolesOnOrganizationsMap: result.value[0].userRolesOnOrganizationsMap,
+      createdAt: result.value[0].createdAt,
+      updatedAt: result.value[0].updatedAt,
+    };
   }
 }

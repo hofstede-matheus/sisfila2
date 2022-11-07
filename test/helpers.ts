@@ -37,8 +37,8 @@ export const ALL_REPOSITORIES_PROVIDERS = [
     useValue: {
       create: jest.fn(),
       findByEmail: jest.fn(),
-      findById: jest.fn(),
       setUserRoleInOrganization: jest.fn(),
+      findOneByIdOrAll: jest.fn(),
     } as UserRepository,
   },
   {

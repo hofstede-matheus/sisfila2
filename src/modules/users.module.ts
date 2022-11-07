@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Organization } from '../data/typeorm/entities/organizations';
 import { User } from '../data/typeorm/entities/users';
 import { TypeOrmUsersRepository } from '../data/typeorm/repositories/TypeOrmUsersRepository';
 import { UserRepository } from '../domain/repositories/UserRepository';
 import { AuthenticateUserUsecase } from '../interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticateWithGoogleUsecase } from '../interactors/usecases/AuthenticateWithGoogleUsecase';
 import { CreateUserUsecase } from '../interactors/usecases/CreateUserUsecase';
+import { FindOneOrAllUsersUsecase } from '../interactors/usecases/FindOneOrAllUsersUsecase';
+import { SetUserRoleInOrganizationUsecase } from '../interactors/usecases/SetUserRoleInOrganizationUsecase';
 import { UserController } from '../presentation/http/controllers/UserController';
 import { CommonModule } from './common.module';
 
 @Module({
-  imports: [CommonModule, TypeOrmModule.forFeature([User])],
+  imports: [CommonModule, TypeOrmModule.forFeature([User, Organization])],
   controllers: [UserController],
   providers: [
     { provide: CreateUserUsecase, useClass: CreateUserUsecase },
@@ -19,6 +22,11 @@ import { CommonModule } from './common.module';
       provide: AuthenticateWithGoogleUsecase,
       useClass: AuthenticateWithGoogleUsecase,
     },
+    {
+      provide: SetUserRoleInOrganizationUsecase,
+      useClass: SetUserRoleInOrganizationUsecase,
+    },
+    { provide: FindOneOrAllUsersUsecase, useClass: FindOneOrAllUsersUsecase },
     {
       provide: UserRepository,
       useClass: TypeOrmUsersRepository,

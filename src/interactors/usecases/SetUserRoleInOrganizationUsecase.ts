@@ -20,7 +20,11 @@ export class SetUserRoleInOrganizationUsecase implements UseCase {
     const validation = Validator.validate({ id: [userId, organizationId] });
     if (validation.isLeft()) return left(validation.value);
 
-    this.userRepository.setUserRoleInOrganization(userId, organizationId, role);
+    await this.userRepository.setUserRoleInOrganization(
+      userId,
+      organizationId,
+      role,
+    );
 
     return right();
   }

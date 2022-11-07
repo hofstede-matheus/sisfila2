@@ -13,7 +13,11 @@ export interface UserEntity {
   readonly name: string;
   readonly email: string;
   readonly password?: string;
-  readonly userType?: UserEntityTypes;
+  readonly userRolesOnOrganizationsMap?: {
+    organizationName: string;
+    organizationId: string;
+    role: UserEntityTypes;
+  }[];
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
