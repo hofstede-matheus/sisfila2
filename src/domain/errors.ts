@@ -25,3 +25,5 @@ export class InvalidCodeError extends DomainError {}
 export class OrganizationCodeAlreadyUsedError extends DomainError {}
 
 export class OrganizationNotFoundError extends DomainError {}
+
+export class UserNotFoundError extends DomainError {}
