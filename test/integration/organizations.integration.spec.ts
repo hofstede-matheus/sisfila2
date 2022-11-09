@@ -152,4 +152,22 @@ describe('organizations', () => {
     expect(bodyOfFindOneRequest[0].name).toBe(VALID_ORGANIZATION.name);
     expect(bodyOfFindOneRequest[0].code).toBe(VALID_ORGANIZATION.code);
   }, 99999);
+
+  it('shoud be able to remove organization', async () => {
+    const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .delete(`/organizations/${bodyOfCreateRequest.id}`)
+      .set('Accept', 'application/json')
+      .expect(204);
+  });
 });
