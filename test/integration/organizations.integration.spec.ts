@@ -151,7 +151,7 @@ describe('organizations', () => {
     expect(bodyOfFindOneRequest.length).toBe(1);
     expect(bodyOfFindOneRequest[0].name).toBe(VALID_ORGANIZATION.name);
     expect(bodyOfFindOneRequest[0].code).toBe(VALID_ORGANIZATION.code);
-  }, 99999);
+  });
 
   it('shoud be able to remove organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
