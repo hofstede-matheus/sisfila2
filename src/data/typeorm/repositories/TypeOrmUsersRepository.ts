@@ -1,6 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../../../domain/entities/User.entity';
+import {
+  UserEntity,
+  UserEntityTypes,
+} from '../../../domain/entities/User.entity';
 import { UserRepository } from '../../../domain/repositories/UserRepository';
 import { User } from '../entities/users';
 
@@ -9,6 +12,16 @@ export class TypeOrmUsersRepository implements UserRepository {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
+  findById(id: string): Promise<UserEntity> {
+    throw new Error('Method not implemented.');
+  }
+  setUserRoleInOrganization(
+    userId: string,
+    organizationId: string,
+    role: UserEntityTypes,
+  ): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   async create(
     name: string,
     email: string,
