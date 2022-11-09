@@ -6,6 +6,7 @@ import {
   generateValidEmail,
   JWT_TOKEN_REGEX_EXPRESSION,
   UUID_V4_REGEX_EXPRESSION,
+  VALID_ORGANIZATION,
   VALID_USER,
 } from '../helpers';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,6 +15,9 @@ import { ConfigModule } from '@nestjs/config';
 import { connectionSource } from '../../ormconfig-test';
 import { UsersModule } from '../../src/modules/users.module';
 import { CommonModule } from '../../src/modules/common.module';
+import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
+import { OrganizationsModule } from '../../src/modules/organizations.module';
+import { Organization } from '../../src/data/typeorm/entities/organizations';
 
 describe('users', () => {
   let app: INestApplication;
@@ -24,6 +28,7 @@ describe('users', () => {
     const module = await Test.createTestingModule({
       imports: [
         UsersModule,
+        OrganizationsModule,
         CommonModule,
         ConfigModule.forRoot({
           envFilePath: '.env.test',
@@ -37,7 +42,7 @@ describe('users', () => {
           database: process.env.DATABASE_NAME,
           migrations: ['src/data/typeorm/migrations/*.ts'],
           migrationsRun: true,
-          entities: [User],
+          entities: [User, Organization],
           logging: process.env.DATABASE_LOGGING === 'true',
         }),
       ],
@@ -93,6 +98,48 @@ describe('users', () => {
 
     expect(body.token).toBeDefined();
     expect(body.token).toMatch(JWT_TOKEN_REGEX_EXPRESSION);
+  });
+
+  it('shoud be able to set user role in organization', async () => {
+    const validEmail = generateValidEmail();
+    const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        name: VALID_USER.name,
+        email: validEmail,
+        password: VALID_USER.password,
+      } as CreateUserRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const { body: bodyOfCreateOrganizationRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch(
+        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .send({
+        role: 'TYPE_COORDINATOR',
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
+      .patch(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetUserRequest.id).toBeDefined();
+    expect(bodyOfGetUserRequest.userType).toBe('TYPE_COORDINATOR');
   });
 
   // it('shoud be able to authenticate a user with google when creating a new account', async () => {

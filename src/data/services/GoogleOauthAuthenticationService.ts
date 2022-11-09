@@ -7,9 +7,7 @@ import {
 export class GoogleOauthAuthenticationService implements OAuthService {
   private client: OAuth2Client;
   constructor() {
-    this.client = new OAuth2Client(
-      '1097277391121-m941rehh4v7jit0s0clvbnhr5gm2ue5c.apps.googleusercontent.com',
-    );
+    this.client = new OAuth2Client(process.env.OAUTH_CLIENT_ID ?? undefined);
   }
 
   async getUserProfile(
