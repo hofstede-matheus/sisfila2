@@ -5,6 +5,7 @@ import { TypeOrmOrganizationsRepository } from '../data/typeorm/repositories/Typ
 import { OrganizationRepository } from '../domain/repositories/OrganizationRepository';
 import { CreateOrganizationUsecase } from '../interactors/usecases/CreateOrganizationUsecase';
 import { FindOneOrAllOrganizationsUsecase } from '../interactors/usecases/FindOneOrAllOrganizationsUsecase';
+import { RemoveOrganizationUsecase } from '../interactors/usecases/RemoveOrganizationUsecase';
 import { UpdateOrganizationUsecase } from '../interactors/usecases/UpdateOrganizationUsecase';
 import { OrganizationController } from '../presentation/http/controllers/OrganizationController';
 import { CommonModule } from './common.module';
@@ -18,6 +19,10 @@ import { CommonModule } from './common.module';
     {
       provide: FindOneOrAllOrganizationsUsecase,
       useClass: FindOneOrAllOrganizationsUsecase,
+    },
+    {
+      provide: RemoveOrganizationUsecase,
+      useClass: RemoveOrganizationUsecase,
     },
     {
       provide: OrganizationRepository,

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -10,6 +11,7 @@ import {
 import { ApiResponse } from '@nestjs/swagger';
 import { CreateOrganizationUsecase } from '../../../interactors/usecases/CreateOrganizationUsecase';
 import { FindOneOrAllOrganizationsUsecase } from '../../../interactors/usecases/FindOneOrAllOrganizationsUsecase';
+import { RemoveOrganizationUsecase } from '../../../interactors/usecases/RemoveOrganizationUsecase';
 import { UpdateOrganizationUsecase } from '../../../interactors/usecases/UpdateOrganizationUsecase';
 import {
   CreateOrganizationRequest,
@@ -25,6 +27,7 @@ export class OrganizationController {
     private readonly createOrganizationUsecase: CreateOrganizationUsecase,
     private readonly updateOrganizationUsecase: UpdateOrganizationUsecase,
     private readonly findOneOrAllOrganizationsUsecase: FindOneOrAllOrganizationsUsecase,
+    private readonly removeOrganizationUsecase: RemoveOrganizationUsecase,
   ) {}
 
   @Version(['1'])
@@ -89,5 +92,13 @@ export class OrganizationController {
     }));
 
     return organizations;
+  }
+
+  @Version(['1'])
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise<void> {
+    const result = await this.removeOrganizationUsecase.execute(id);
+
+    if (result.isLeft()) throw toPresentationError(result.value);
   }
 }

@@ -168,6 +168,6 @@ describe('organizations', () => {
     await request(app.getHttpServer())
       .delete(`/organizations/${bodyOfCreateRequest.id}`)
       .set('Accept', 'application/json')
-      .expect(204);
+      .expect(200);
   });
 });

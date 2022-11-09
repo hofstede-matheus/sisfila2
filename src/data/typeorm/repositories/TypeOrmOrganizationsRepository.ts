@@ -11,7 +11,8 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
   ) {}
 
   remove(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    this.organizationRepository.delete(id);
+    return;
   }
 
   async findOneByIdOrAll(id?: string): Promise<OrganizationEntity[]> {
