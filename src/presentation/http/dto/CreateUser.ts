@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from './shared';
+import { User } from './_shared';
 
 export class CreateUserRequest {
   @ApiProperty({

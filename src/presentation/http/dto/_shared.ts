@@ -16,7 +16,15 @@ export class User {
   })
   email: string;
 
-  @ApiProperty({})
+  @ApiProperty({
+    example: [
+      {
+        organizationName: 'name',
+        organizationId: '73be6348-a46d-4371-8a28-70988f39f7b7',
+        role: 'TYPE_COORDINATOR',
+      },
+    ],
+  })
   userRolesOnOrganizationsMap: {
     organizationName: string;
     organizationId: string;

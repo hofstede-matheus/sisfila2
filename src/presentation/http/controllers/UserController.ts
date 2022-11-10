@@ -22,7 +22,7 @@ import {
 import { AuthenticateWithGoogleRequest } from '../dto/AuthenticateWithGoogle';
 import { CreateUserRequest, CreateUserResponse } from '../dto/CreateUser';
 import { SetUserRoleInOrganizationRequest } from '../dto/SetUserRoleInOrganization';
-import { User } from '../dto/shared';
+import { User } from '../dto/_shared';
 import { toPresentationError } from '../errors';
 
 @Controller('users')
@@ -116,6 +116,7 @@ export class UserController {
 
   @Version(['1'])
   @Get(':userId')
+  @ApiResponse({ type: User })
   @HttpCode(200)
   async getUser(@Param('userId') userId: string): Promise<User> {
     const result = await this.findOneOrAllUsersUsecase.execute(userId);

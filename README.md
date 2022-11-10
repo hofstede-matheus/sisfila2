@@ -26,6 +26,9 @@ docker-compose up db
 npm run start:dev
 ```
 
+## Documentação swagger
+<http:localhost:3000/docs>
+
 ## Teste
 
 ```bash

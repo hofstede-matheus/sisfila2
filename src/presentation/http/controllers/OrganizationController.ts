@@ -17,7 +17,7 @@ import {
   CreateOrganizationRequest,
   CreateOrganizationResponse,
 } from '../dto/CreateOrganization';
-import { Organization } from '../dto/shared';
+import { Organization } from '../dto/_shared';
 import { UpdateOrganizationRequest } from '../dto/UpdateOrganization';
 import { toPresentationError } from '../errors';
 
@@ -77,7 +77,7 @@ export class OrganizationController {
 
   @Version(['1'])
   @Get()
-  @ApiResponse({ type: Array<Organization> })
+  @ApiResponse({ type: [Organization] })
   async getAll(): Promise<Organization[]> {
     const result = await this.findOneOrAllOrganizationsUsecase.execute();
 
