@@ -8,6 +8,7 @@ import {
 } from '../../helpers';
 import { SetUserRoleInOrganizationUsecase } from '../../../src/interactors/usecases/SetUserRoleInOrganizationUsecase';
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { UserEntityTypes } from '../../../src/domain/entities/User.entity';
 
 describe('SetUserRoleInOrganizationUsecase', () => {
   let useCase: SetUserRoleInOrganizationUsecase;
@@ -41,6 +42,16 @@ describe('SetUserRoleInOrganizationUsecase', () => {
       VALID_USER.id,
       'invalid_id',
       'TYPE_ATTENDENT',
+    );
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toEqual(new InvalidIdError());
+  });
+
+  it('should not be able to set user role with invalid role', async () => {
+    const response = await useCase.execute(
+      VALID_USER.id,
+      VALID_ORGANIZATION.id,
+      'invalid_type' as UserEntityTypes,
     );
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidIdError());

@@ -17,7 +17,10 @@ export class SetUserRoleInOrganizationUsecase implements UseCase {
     organizationId: string,
     role: UserEntityTypes | undefined,
   ): Promise<Either<DomainError, void>> {
-    const validation = Validator.validate({ id: [userId, organizationId] });
+    const validation = Validator.validate({
+      id: [userId, organizationId],
+      userEntityTypes: [role],
+    });
     if (validation.isLeft()) return left(validation.value);
 
     await this.userRepository.setUserRoleInOrganization(

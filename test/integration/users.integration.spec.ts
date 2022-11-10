@@ -54,6 +54,7 @@ describe('users', () => {
 
   afterAll(async () => {
     await app.close();
+    await connectionSource.destroy();
   });
 
   afterEach(async () => {

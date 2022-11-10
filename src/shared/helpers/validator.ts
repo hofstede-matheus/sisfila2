@@ -5,6 +5,7 @@ import {
   InvalidIdError,
   InvalidPasswordError,
   InvalidUrlError,
+  InvalidValueError,
 } from '../../domain/errors';
 import { Either, left, right } from './either';
 import { DomainError } from './errors';
@@ -32,6 +33,7 @@ interface ValidatorParams {
   url?: OrUndefined<string>;
   password?: OrUndefined<string>;
   date?: OrUndefined<string>;
+  userEntityTypes?: OrUndefined<string>;
 }
 
 export class Validator {
@@ -73,6 +75,14 @@ export class Validator {
       date: Joi.array()
         .sparse()
         .items(Joi.date().error(() => new InvalidDateError())),
+
+      userEntityTypes: Joi.array()
+        .sparse()
+        .items(
+          Joi.string()
+            .valid('TYPE_COORDINATOR', 'TYPE_ATTENDENT')
+            .error(() => new InvalidValueError()),
+        ),
     });
 
     const validation = schema.validate({ ...input });

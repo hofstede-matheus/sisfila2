@@ -48,6 +48,7 @@ describe('organizations', () => {
 
   afterAll(async () => {
     await app.close();
+    await connectionSource.destroy();
   });
 
   afterEach(async () => {
@@ -127,6 +128,24 @@ describe('organizations', () => {
     expect(bodyOfFindOneRequest.code).toBe(VALID_ORGANIZATION.code);
   });
 
+  it('shoud be able to remove organization', async () => {
+    const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
+      .post('/organizations')
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .delete(`/organizations/${bodyOfCreateRequest.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+  });
+
   it('shoud be able to get all organizations', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
       .post('/organizations')
@@ -151,23 +170,5 @@ describe('organizations', () => {
     expect(bodyOfFindOneRequest.length).toBe(1);
     expect(bodyOfFindOneRequest[0].name).toBe(VALID_ORGANIZATION.name);
     expect(bodyOfFindOneRequest[0].code).toBe(VALID_ORGANIZATION.code);
-  });
-
-  it('shoud be able to remove organization', async () => {
-    const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
-      .post('/organizations')
-      .send({
-        name: VALID_ORGANIZATION.name,
-        code: VALID_ORGANIZATION.code,
-      } as CreateOrganizationRequest)
-      .set('Accept', 'application/json')
-      .expect(201);
-
-    expect(bodyOfCreateRequest.id).toBeDefined();
-
-    await request(app.getHttpServer())
-      .delete(`/organizations/${bodyOfCreateRequest.id}`)
-      .set('Accept', 'application/json')
-      .expect(200);
   });
 });
