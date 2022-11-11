@@ -66,7 +66,7 @@ export class TypeOrmUsersRepository implements UserRepository {
 
     if (!organization) return;
 
-    if (!role) {
+    if (role === undefined) {
       await this.usersRepository.query(
         `
         delete from users_role_in_organizations where user_id = $1 and organization_id = $2

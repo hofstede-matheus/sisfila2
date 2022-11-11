@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class SetUserRoleInOrganizationRequest {
   @ApiProperty({
-    example: 'TYPE_COORDINATOR',
+    examples: ['TYPE_COORDINATOR', 'TYPE_ATTENDENT', undefined],
   })
-  role: string;
+  role: string | undefined;
 }
