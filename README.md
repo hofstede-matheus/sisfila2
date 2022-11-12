@@ -6,7 +6,7 @@ Sisfila é uma aplicação para gerenciamento de filas de atendimento. Apesar de
 
 ## Configuração inicial
 ```bash
-## não necessário fazer caso o banco e a aplicação sejam inicializadas pelo docker-compose
+## não necessário caso o banco e a aplicação sejam inicializadas pelo docker-compose
 
 ## algumas variáveis do .env podem precisar de modificação
 
