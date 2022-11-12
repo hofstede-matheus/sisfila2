@@ -4,6 +4,7 @@ import { UserEntity } from '../src/domain/entities/User.entity';
 import { OrganizationRepository } from '../src/domain/repositories/OrganizationRepository';
 import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
+import { AuthorizationService } from '../src/domain/services/AuthorizationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
 import { OAuthService } from '../src/domain/services/OauthAuthenticationService';
 import { Either } from '../src/shared/helpers/either';
@@ -73,6 +74,12 @@ export const ALL_SERVICES_PROVIDERS = [
     useValue: {
       getUserProfile: jest.fn(),
     } as OAuthService,
+  },
+  {
+    provide: AuthorizationService,
+    useValue: {
+      checkIfUserHasRightsInOrganization: jest.fn(),
+    } as AuthorizationService,
   },
 ];
 
