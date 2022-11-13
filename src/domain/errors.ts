@@ -29,3 +29,5 @@ export class OrganizationNotFoundError extends DomainError {}
 export class UserNotFoundError extends DomainError {}
 
 export class InvalidValueError extends DomainError {}
+
+export class InvalidPriorityError extends DomainError {}

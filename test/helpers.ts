@@ -7,7 +7,6 @@ import { AuthenticationService } from '../src/domain/services/AuthenticationServ
 import { AuthorizationService } from '../src/domain/services/AuthorizationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
 import { OAuthService } from '../src/domain/services/OauthAuthenticationService';
-import { Either } from '../src/shared/helpers/either';
 
 // export const VALID_EMAIL = 'valid@email.com';
 

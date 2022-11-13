@@ -58,7 +58,7 @@ describe('CreateOrganizationUsecase', () => {
     expect(response.value).toEqual(new OrganizationCodeAlreadyUsedError());
   });
 
-  it('shoud create an user with valid data', async () => {
+  it('shoud create an organization with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
       return VALID_ORGANIZATION.id;
     });
