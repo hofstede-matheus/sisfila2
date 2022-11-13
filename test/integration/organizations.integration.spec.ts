@@ -53,9 +53,13 @@ describe('organizations', () => {
 
   afterEach(async () => {
     await connectionSource.query(`DELETE FROM organizations`);
+
+    await connectionSource.query(`DELETE FROM services`);
+    await connectionSource.query(`DELETE FROM queues`);
+    await connectionSource.query(`DELETE FROM groups`);
   });
 
-  it('shoud be able to create organization', async () => {
+  it('shoud be able to create organization with default service, queue and group', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/organizations')
       .send({
@@ -66,6 +70,33 @@ describe('organizations', () => {
       .expect(201);
 
     expect(body.id).toBeDefined();
+
+    const { body: bodyOfGetDefaultServiceRequest } = await request(
+      app.getHttpServer(),
+    )
+      .get(`/services/organizations/${body.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetDefaultServiceRequest.services[0].id).toBeDefined();
+
+    const { body: bodyOfGetDefaultQueueRequest } = await request(
+      app.getHttpServer(),
+    )
+      .get(`/queues/organizations/${body.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetDefaultQueueRequest.queues[0].id).toBeDefined();
+
+    const { body: bodyOfGetDefaultGroupRequest } = await request(
+      app.getHttpServer(),
+    )
+      .get(`/groups/organizations/${body.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetDefaultGroupRequest.groups[0].id).toBeDefined();
   });
 
   it('shoud be able to update organization', async () => {

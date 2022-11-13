@@ -1,7 +1,10 @@
 import { randomUUID } from 'crypto';
 import { OrganizationEntity } from '../src/domain/entities/Organization.entity';
 import { UserEntity } from '../src/domain/entities/User.entity';
+import { GroupRepository } from '../src/domain/repositories/GroupRepository';
 import { OrganizationRepository } from '../src/domain/repositories/OrganizationRepository';
+import { QueueRepository } from '../src/domain/repositories/QueueRepository';
+import { ServiceRepository } from '../src/domain/repositories/ServiceRepository';
 import { UserRepository } from '../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../src/domain/services/AuthenticationService';
 import { AuthorizationService } from '../src/domain/services/AuthorizationService';
@@ -50,6 +53,25 @@ export const ALL_REPOSITORIES_PROVIDERS = [
       update: jest.fn(),
       remove: jest.fn(),
     } as OrganizationRepository,
+  },
+  {
+    provide: ServiceRepository,
+    useValue: {
+      findByOrganizationId: jest.fn(),
+    } as ServiceRepository,
+  },
+  {
+    provide: QueueRepository,
+    useValue: {
+      findByOrganizationId: jest.fn(),
+      findByServiceId: jest.fn(),
+    } as QueueRepository,
+  },
+  {
+    provide: GroupRepository,
+    useValue: {
+      findByOrganizationId: jest.fn(),
+    } as GroupRepository,
   },
 ];
 
