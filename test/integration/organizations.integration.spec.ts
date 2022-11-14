@@ -11,6 +11,13 @@ import { CreateOrganizationRequest } from '../../src/presentation/http/dto/Creat
 import { UsersModule } from '../../src/modules/users.module';
 import { Organization } from '../../src/data/typeorm/entities/organizations';
 import { UpdateOrganizationRequest } from '../../src/presentation/http/dto/UpdateOrganization';
+import { ServicesModule } from '../../src/modules/services.module';
+import { Service } from '../../src/data/typeorm/entities/services';
+import { User } from '../../src/data/typeorm/entities/users';
+import { QueuesModule } from '../../src/modules/queues.module';
+import { Queue } from '../../src/data/typeorm/entities/queues';
+import { GroupsModule } from '../../src/modules/groups.module';
+import { Group } from '../../src/data/typeorm/entities/groups';
 
 describe('organizations', () => {
   let app: INestApplication;
@@ -22,6 +29,9 @@ describe('organizations', () => {
       imports: [
         OrganizationsModule,
         UsersModule,
+        ServicesModule,
+        QueuesModule,
+        GroupsModule,
         CommonModule,
         ConfigModule.forRoot({
           envFilePath: '.env.test',
@@ -35,7 +45,7 @@ describe('organizations', () => {
           database: process.env.DATABASE_NAME,
           migrations: ['src/data/typeorm/migrations/*.ts'],
           migrationsRun: true,
-          entities: [Organization],
+          entities: [Organization, Service, User, Queue, Group],
           logging: process.env.DATABASE_LOGGING === 'true',
         }),
       ],
@@ -78,7 +88,7 @@ describe('organizations', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(bodyOfGetDefaultServiceRequest.services[0].id).toBeDefined();
+    expect(bodyOfGetDefaultServiceRequest[0].id).toBeDefined();
 
     const { body: bodyOfGetDefaultQueueRequest } = await request(
       app.getHttpServer(),
@@ -87,7 +97,7 @@ describe('organizations', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(bodyOfGetDefaultQueueRequest.queues[0].id).toBeDefined();
+    expect(bodyOfGetDefaultQueueRequest[0].id).toBeDefined();
 
     const { body: bodyOfGetDefaultGroupRequest } = await request(
       app.getHttpServer(),
@@ -96,8 +106,8 @@ describe('organizations', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(bodyOfGetDefaultGroupRequest.groups[0].id).toBeDefined();
-  });
+    expect(bodyOfGetDefaultGroupRequest[0].id).toBeDefined();
+  }, 9999999);
 
   it('shoud be able to update organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())

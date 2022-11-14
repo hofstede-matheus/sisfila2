@@ -15,6 +15,8 @@ export interface QueueEntity {
   readonly priority: number;
   readonly code: string;
   readonly description?: string;
+  readonly organizationId: string;
+  readonly serviceId: string;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

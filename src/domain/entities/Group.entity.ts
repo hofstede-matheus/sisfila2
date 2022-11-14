@@ -2,16 +2,12 @@ import Joi from 'joi';
 import { Either, left, right } from '../../shared/helpers/either';
 import { staticImplements, DomainEntity } from '../../shared/helpers/entity';
 import { DomainError } from '../../shared/helpers/errors';
-import {
-  InvalidNameError,
-  InvalidPriorityError,
-  InvalidCodeError,
-} from '../errors';
+import { InvalidNameError } from '../errors';
 
 export interface GroupEntity {
   readonly id: string;
-
   readonly name: string;
+  readonly organizationId: string;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

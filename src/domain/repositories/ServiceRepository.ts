@@ -1,9 +1,15 @@
 import { ServiceEntity } from '../entities/Service.entity';
 
 export interface ServiceRepository {
-  findByOrganizationId(
+  findByOrganizationId(organizationId: string): Promise<ServiceEntity[]>;
+  create(
+    name: string,
+    guestEnrollment: boolean,
+    opensAt: Date,
+    closesAt: Date,
     organizationId: string,
-  ): Promise<ServiceEntity | undefined>;
+    subscriptionToken: string,
+  ): Promise<string>;
 }
 
 export const ServiceRepository = Symbol('ServiceRepository');

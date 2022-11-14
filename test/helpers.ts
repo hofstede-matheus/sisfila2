@@ -58,6 +58,7 @@ export const ALL_REPOSITORIES_PROVIDERS = [
     provide: ServiceRepository,
     useValue: {
       findByOrganizationId: jest.fn(),
+      create: jest.fn(),
     } as ServiceRepository,
   },
   {
@@ -65,12 +66,14 @@ export const ALL_REPOSITORIES_PROVIDERS = [
     useValue: {
       findByOrganizationId: jest.fn(),
       findByServiceId: jest.fn(),
+      create: jest.fn(),
     } as QueueRepository,
   },
   {
     provide: GroupRepository,
     useValue: {
       findByOrganizationId: jest.fn(),
+      create: jest.fn(),
     } as GroupRepository,
   },
 ];

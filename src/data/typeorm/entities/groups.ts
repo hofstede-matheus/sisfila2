@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity('groups')
-export class Groups {
+export class Group {
   @PrimaryGeneratedColumn()
   id: string;
 

@@ -7,11 +7,12 @@ import { InvalidNameError, InvalidDateError } from '../errors';
 export interface ServiceEntity {
   readonly id: string;
 
-  readonly subscription_token?: string;
+  readonly subscriptionToken?: string;
   readonly name: string;
-  readonly guest_enrollment: boolean;
-  readonly opens_at: Date;
-  readonly closes_at: Date;
+  readonly guestEnrollment: boolean;
+  readonly opensAt: Date;
+  readonly closesAt: Date;
+  readonly organizationId: string;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
@@ -21,9 +22,9 @@ export interface ServiceEntity {
 export class ServiceEntity {
   private constructor(
     readonly name: string,
-    readonly guest_enrollment: boolean,
-    readonly opens_at: Date,
-    readonly closes_at: Date,
+    readonly guestEnrollment: boolean,
+    readonly opensAt: Date,
+    readonly closesAt: Date,
   ) {}
 
   public static build(

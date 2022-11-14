@@ -31,3 +31,9 @@ export class UserNotFoundError extends DomainError {}
 export class InvalidValueError extends DomainError {}
 
 export class InvalidPriorityError extends DomainError {}
+
+export class ServiceNotFoundError extends DomainError {}
+
+export class QueueNotFoundError extends DomainError {}
+
+export class GroupNotFoundError extends DomainError {}

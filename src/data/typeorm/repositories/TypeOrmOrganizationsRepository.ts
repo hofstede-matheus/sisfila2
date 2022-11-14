@@ -7,16 +7,16 @@ import { Organization } from '../entities/organizations';
 export class TypeOrmOrganizationsRepository implements OrganizationRepository {
   constructor(
     @InjectRepository(Organization)
-    private readonly organizationRepository: Repository<Organization>,
+    private readonly organizationsRepository: Repository<Organization>,
   ) {}
 
   remove(id: string): Promise<void> {
-    this.organizationRepository.delete(id);
+    this.organizationsRepository.delete(id);
     return;
   }
 
   async findOneByIdOrAll(id?: string): Promise<OrganizationEntity[]> {
-    const organizations = await this.organizationRepository.findBy({ id });
+    const organizations = await this.organizationsRepository.findBy({ id });
 
     const organizationsEntity = organizations.map((organization) => {
       return {
@@ -31,7 +31,7 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
     return organizationsEntity;
   }
   async update(id: string, name?: string, code?: string): Promise<void> {
-    await this.organizationRepository.update(id, {
+    await this.organizationsRepository.update(id, {
       name,
       code,
     });
@@ -40,17 +40,17 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
   }
 
   async create(name: string, code: string): Promise<string> {
-    const userEntity = this.organizationRepository.create({
+    const userEntity = this.organizationsRepository.create({
       name,
       code,
     });
 
-    const userInDatabase = await this.organizationRepository.save(userEntity);
+    const userInDatabase = await this.organizationsRepository.save(userEntity);
 
     return userInDatabase.id;
   }
   async findByCode(code: string): Promise<OrganizationEntity> {
-    const userInDatabase = await this.organizationRepository.findOne({
+    const userInDatabase = await this.organizationsRepository.findOne({
       where: { code },
     });
 
