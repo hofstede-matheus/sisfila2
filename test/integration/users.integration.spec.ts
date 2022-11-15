@@ -5,18 +5,12 @@ import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
 import {
   generateValidEmail,
   JWT_TOKEN_REGEX_EXPRESSION,
+  TEST_CONFIG,
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../helpers';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../../src/data/typeorm/entities/users';
-import { ConfigModule } from '@nestjs/config';
 import { connectionSource } from '../../ormconfig-test';
-import { UsersModule } from '../../src/modules/users.module';
-import { CommonModule } from '../../src/modules/common.module';
 import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
-import { OrganizationsModule } from '../../src/modules/organizations.module';
-import { Organization } from '../../src/data/typeorm/entities/organizations';
 
 describe('users', () => {
   let app: INestApplication;
@@ -25,26 +19,7 @@ describe('users', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [
-        UsersModule,
-        OrganizationsModule,
-        CommonModule,
-        ConfigModule.forRoot({
-          envFilePath: '.env.test',
-        }),
-        TypeOrmModule.forRoot({
-          type: 'postgres',
-          host: process.env.DATABASE_HOST,
-          port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
-          username: process.env.DATABASE_USER,
-          password: process.env.DATABASE_PASSWORD,
-          database: process.env.DATABASE_NAME,
-          migrations: ['src/data/typeorm/migrations/*.ts'],
-          migrationsRun: true,
-          entities: [User, Organization],
-          logging: process.env.DATABASE_LOGGING === 'true',
-        }),
-      ],
+      imports: TEST_CONFIG,
       providers: [],
     }).compile();
 

@@ -1,23 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { VALID_ORGANIZATION } from '../helpers';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { TEST_CONFIG, VALID_ORGANIZATION } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
-import { CommonModule } from '../../src/modules/common.module';
-import { OrganizationsModule } from '../../src/modules/organizations.module';
 import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
-import { UsersModule } from '../../src/modules/users.module';
-import { Organization } from '../../src/data/typeorm/entities/organizations';
 import { UpdateOrganizationRequest } from '../../src/presentation/http/dto/UpdateOrganization';
-import { ServicesModule } from '../../src/modules/services.module';
-import { Service } from '../../src/data/typeorm/entities/services';
-import { User } from '../../src/data/typeorm/entities/users';
-import { QueuesModule } from '../../src/modules/queues.module';
-import { Queue } from '../../src/data/typeorm/entities/queues';
-import { GroupsModule } from '../../src/modules/groups.module';
-import { Group } from '../../src/data/typeorm/entities/groups';
 
 describe('organizations', () => {
   let app: INestApplication;
@@ -26,29 +13,7 @@ describe('organizations', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [
-        OrganizationsModule,
-        UsersModule,
-        ServicesModule,
-        QueuesModule,
-        GroupsModule,
-        CommonModule,
-        ConfigModule.forRoot({
-          envFilePath: '.env.test',
-        }),
-        TypeOrmModule.forRoot({
-          type: 'postgres',
-          host: process.env.DATABASE_HOST,
-          port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
-          username: process.env.DATABASE_USER,
-          password: process.env.DATABASE_PASSWORD,
-          database: process.env.DATABASE_NAME,
-          migrations: ['src/data/typeorm/migrations/*.ts'],
-          migrationsRun: true,
-          entities: [Organization, Service, User, Queue, Group],
-          logging: process.env.DATABASE_LOGGING === 'true',
-        }),
-      ],
+      imports: TEST_CONFIG,
       providers: [],
     }).compile();
 

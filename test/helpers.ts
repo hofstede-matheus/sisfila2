@@ -1,4 +1,11 @@
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
+import { Group } from '../src/data/typeorm/entities/groups';
+import { Organization } from '../src/data/typeorm/entities/organizations';
+import { Queue } from '../src/data/typeorm/entities/queues';
+import { Service } from '../src/data/typeorm/entities/services';
+import { User } from '../src/data/typeorm/entities/users';
 import { OrganizationEntity } from '../src/domain/entities/Organization.entity';
 import { UserEntity } from '../src/domain/entities/User.entity';
 import { GroupRepository } from '../src/domain/repositories/GroupRepository';
@@ -10,6 +17,9 @@ import { AuthenticationService } from '../src/domain/services/AuthenticationServ
 import { AuthorizationService } from '../src/domain/services/AuthorizationService';
 import { EncryptionService } from '../src/domain/services/EncryptionService';
 import { OAuthService } from '../src/domain/services/OauthAuthenticationService';
+import { CommonModule } from '../src/modules/common.module';
+import { OrganizationsModule } from '../src/modules/organizations.module';
+import { UsersModule } from '../src/modules/users.module';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -76,6 +86,29 @@ export const ALL_REPOSITORIES_PROVIDERS = [
       create: jest.fn(),
     } as GroupRepository,
   },
+];
+
+export const ALL_TYPEORM_ENTITIES = [Organization, Service, User, Queue, Group];
+
+export const TEST_CONFIG = [
+  UsersModule,
+  OrganizationsModule,
+  CommonModule,
+  ConfigModule.forRoot({
+    envFilePath: '.env.test',
+  }),
+  TypeOrmModule.forRoot({
+    type: 'postgres',
+    host: process.env.DATABASE_HOST,
+    port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
+    username: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
+    migrations: ['src/data/typeorm/migrations/*.ts'],
+    migrationsRun: true,
+    entities: ALL_TYPEORM_ENTITIES,
+    logging: process.env.DATABASE_LOGGING === 'true',
+  }),
 ];
 
 export const ALL_SERVICES_PROVIDERS = [
