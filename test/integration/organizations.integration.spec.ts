@@ -72,7 +72,7 @@ describe('organizations', () => {
       .expect(200);
 
     expect(bodyOfGetDefaultGroupRequest[0].id).toBeDefined();
-  }, 9999999);
+  });
 
   it('shoud be able to update organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())

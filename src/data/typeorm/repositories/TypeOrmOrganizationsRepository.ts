@@ -9,6 +9,22 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
     @InjectRepository(Organization)
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
+  findOneByIdOrAllAsAdmin({
+    organizationId,
+  }: {
+    organizationId?: string;
+  }): Promise<OrganizationEntity[]> {
+    throw new Error('Method not implemented.');
+  }
+  findOneByIdOrAllAsUser({
+    organizationId,
+    userId,
+  }: {
+    organizationId?: string;
+    userId?: string;
+  }): Promise<OrganizationEntity[]> {
+    throw new Error('Method not implemented.');
+  }
 
   remove(id: string): Promise<void> {
     this.organizationsRepository.delete(id);

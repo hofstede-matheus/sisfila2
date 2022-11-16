@@ -62,7 +62,9 @@ export class OrganizationController {
   @Get(':id')
   @ApiResponse({ type: Organization })
   async getOne(@Param('id') id: string): Promise<Organization> {
-    const result = await this.findOneOrAllOrganizationsUsecase.execute(id);
+    const result = await this.findOneOrAllOrganizationsUsecase.execute({
+      organizationId: id,
+    });
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
@@ -79,7 +81,7 @@ export class OrganizationController {
   @Get()
   @ApiResponse({ type: [Organization] })
   async getAll(): Promise<Organization[]> {
-    const result = await this.findOneOrAllOrganizationsUsecase.execute();
+    const result = await this.findOneOrAllOrganizationsUsecase.execute({});
 
     if (result.isLeft()) throw toPresentationError(result.value);
 

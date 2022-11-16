@@ -14,6 +14,7 @@ export interface UserEntity {
   readonly email: string;
   readonly password?: string;
   readonly userRolesOnOrganizationsMap?: UserRolesOnOrganizationsMap[];
+  readonly isSuperAdmin: boolean;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

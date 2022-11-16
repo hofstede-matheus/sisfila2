@@ -20,6 +20,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ name: 'is_super_admin' })
+  isSuperAdmin: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

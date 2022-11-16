@@ -45,6 +45,7 @@ export class TypeOrmUsersRepository implements UserRepository {
         ),
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        isSuperAdmin: user.isSuperAdmin,
       };
     });
 
@@ -119,6 +120,7 @@ export class TypeOrmUsersRepository implements UserRepository {
       email: userInDatabase.email,
       createdAt: userInDatabase.createdAt,
       updatedAt: userInDatabase.updatedAt,
+      isSuperAdmin: userInDatabase.isSuperAdmin,
     };
   }
   async findByEmail(email: string): Promise<UserEntity> {
@@ -135,6 +137,7 @@ export class TypeOrmUsersRepository implements UserRepository {
       password: userInDatabase.password,
       createdAt: userInDatabase.createdAt,
       updatedAt: userInDatabase.updatedAt,
+      isSuperAdmin: userInDatabase.isSuperAdmin,
     };
   }
 }

@@ -36,6 +36,7 @@ export const VALID_USER = {
   userType: 'TYPE_COORDINATOR',
   createdAt: new Date(),
   updatedAt: new Date(),
+  isSuperAdmin: false,
 } as UserEntity;
 
 export const VALID_ORGANIZATION = {
@@ -59,9 +60,10 @@ export const ALL_REPOSITORIES_PROVIDERS = [
     useValue: {
       create: jest.fn(),
       findByCode: jest.fn(),
-      findOneByIdOrAll: jest.fn(),
       update: jest.fn(),
       remove: jest.fn(),
+      findOneByIdOrAllAsAdmin: jest.fn(),
+      findOneByIdOrAllAsUser: jest.fn(),
     } as OrganizationRepository,
   },
   {
