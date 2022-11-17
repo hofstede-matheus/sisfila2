@@ -4,6 +4,7 @@ import {
   InvalidCodeError,
   InvalidCredentialsError,
   InvalidEmailError,
+  InvalidIdError,
   InvalidNameError,
   InvalidPasswordError,
   InvalidUserTypeError,
@@ -45,6 +46,9 @@ export function toPresentationError(error: DomainError): HttpException {
 
     case OrganizationCodeAlreadyUsedError:
       return new PresentationException(error, 409);
+
+    case InvalidIdError:
+      return new PresentationException(error, 400);
 
     default:
       console.error('ERROR NOT MAPPED', error);

@@ -56,6 +56,7 @@ describe('FindOneOrAllUsersUsecase', () => {
           password: VALID_USER.password,
           createdAt: VALID_USER.createdAt,
           updatedAt: VALID_USER.updatedAt,
+          isSuperAdmin: VALID_USER.isSuperAdmin,
         },
       ];
     });
@@ -76,6 +77,7 @@ describe('FindOneOrAllUsersUsecase', () => {
           password: VALID_USER.password,
           createdAt: VALID_USER.createdAt,
           updatedAt: VALID_USER.updatedAt,
+          isSuperAdmin: VALID_USER.isSuperAdmin,
         },
         {
           id: VALID_USER.id,
@@ -84,6 +86,7 @@ describe('FindOneOrAllUsersUsecase', () => {
           password: VALID_USER.password,
           createdAt: VALID_USER.createdAt,
           updatedAt: VALID_USER.updatedAt,
+          isSuperAdmin: VALID_USER.isSuperAdmin,
         },
       ];
     });

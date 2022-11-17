@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from '../data/typeorm/entities/organizations';
 import { User } from '../data/typeorm/entities/users';
@@ -9,7 +14,9 @@ import { AuthenticateWithGoogleUsecase } from '../interactors/usecases/Authentic
 import { CreateUserUsecase } from '../interactors/usecases/CreateUserUsecase';
 import { FindOneOrAllUsersUsecase } from '../interactors/usecases/FindOneOrAllUsersUsecase';
 import { SetUserRoleInOrganizationUsecase } from '../interactors/usecases/SetUserRoleInOrganizationUsecase';
+import { QueueController } from '../presentation/http/controllers/QueueController';
 import { UserController } from '../presentation/http/controllers/UserController';
+import { AuthenticationMiddleware } from '../presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from './common.module';
 
 @Module({
@@ -34,4 +41,24 @@ import { CommonModule } from './common.module';
   ],
   exports: [UserRepository],
 })
-export class UsersModule {}
+export class UsersModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthenticationMiddleware)
+      .exclude(
+        {
+          path: 'users',
+          method: RequestMethod.POST,
+        },
+        {
+          path: 'users/auth',
+          method: RequestMethod.POST,
+        },
+        {
+          path: 'users/auth/google',
+          method: RequestMethod.POST,
+        },
+      )
+      .forRoutes(UserController);
+  }
+}

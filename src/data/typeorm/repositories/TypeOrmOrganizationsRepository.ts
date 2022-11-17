@@ -9,21 +9,60 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
     @InjectRepository(Organization)
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
-  findOneByIdOrAllAsAdmin({
+
+  async findOneByIdOrAllAsAdmin({
     organizationId,
   }: {
     organizationId?: string;
   }): Promise<OrganizationEntity[]> {
-    throw new Error('Method not implemented.');
+    const organizations = await this.organizationsRepository.findBy({
+      id: organizationId,
+    });
+
+    const organizationsEntity = organizations.map((organization) => {
+      return {
+        id: organization.id,
+        name: organization.name,
+        code: organization.code,
+        createdAt: organization.createdAt,
+        updatedAt: organization.updatedAt,
+      };
+    });
+
+    return organizationsEntity;
   }
-  findOneByIdOrAllAsUser({
+  async findOneByIdOrAllAsUser({
     organizationId,
     userId,
   }: {
     organizationId?: string;
     userId?: string;
   }): Promise<OrganizationEntity[]> {
-    throw new Error('Method not implemented.');
+    const queryBuilder = this.organizationsRepository
+      .createQueryBuilder('organizations')
+      .innerJoin(
+        'users_role_in_organizations',
+        'urio',
+        'urio.organization_id = organizations.id',
+      )
+      .where('urio.user_id = :userId', { userId });
+
+    if (organizationId)
+      queryBuilder.where('urio.organization_id = :organizationId', {
+        organizationId,
+      });
+
+    const organizations = await queryBuilder.getMany();
+
+    return organizations.map((organization) => {
+      return {
+        id: organization.id,
+        name: organization.name,
+        code: organization.code,
+        createdAt: organization.createdAt,
+        updatedAt: organization.updatedAt,
+      };
+    });
   }
 
   remove(id: string): Promise<void> {

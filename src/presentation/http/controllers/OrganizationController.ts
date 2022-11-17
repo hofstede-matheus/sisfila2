@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   Version,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
@@ -20,6 +21,7 @@ import {
 import { Organization } from '../dto/_shared';
 import { UpdateOrganizationRequest } from '../dto/UpdateOrganization';
 import { toPresentationError } from '../errors';
+import { Request } from 'express';
 
 @Controller('organizations')
 export class OrganizationController {
@@ -80,8 +82,10 @@ export class OrganizationController {
   @Version(['1'])
   @Get()
   @ApiResponse({ type: [Organization] })
-  async getAll(): Promise<Organization[]> {
-    const result = await this.findOneOrAllOrganizationsUsecase.execute({});
+  async getAll(@Req() request: Request): Promise<Organization[]> {
+    const result = await this.findOneOrAllOrganizationsUsecase.execute({
+      userId: request.user.sub,
+    });
 
     if (result.isLeft()) throw toPresentationError(result.value);
 

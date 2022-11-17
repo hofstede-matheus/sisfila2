@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from '../data/typeorm/entities/organizations';
 import { TypeOrmOrganizationsRepository } from '../data/typeorm/repositories/TypeOrmOrganizationsRepository';
@@ -9,15 +14,18 @@ import { FindOneOrAllOrganizationsUsecase } from '../interactors/usecases/FindOn
 import { RemoveOrganizationUsecase } from '../interactors/usecases/RemoveOrganizationUsecase';
 import { UpdateOrganizationUsecase } from '../interactors/usecases/UpdateOrganizationUsecase';
 import { OrganizationController } from '../presentation/http/controllers/OrganizationController';
+import { AuthenticationMiddleware } from '../presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from './common.module';
 import { GroupsModule } from './groups.module';
 import { QueuesModule } from './queues.module';
 import { ServicesModule } from './services.module';
+import { UsersModule } from './users.module';
 
 @Module({
   imports: [
     CommonModule,
     TypeOrmModule.forFeature([Organization]),
+    UsersModule,
     ServicesModule,
     QueuesModule,
     GroupsModule,
@@ -41,4 +49,8 @@ import { ServicesModule } from './services.module';
   ],
   exports: [OrganizationRepository],
 })
-export class OrganizationsModule {}
+export class OrganizationsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthenticationMiddleware).forRoutes(OrganizationController);
+  }
+}

@@ -20,6 +20,8 @@ import { OAuthService } from '../src/domain/services/OauthAuthenticationService'
 import { CommonModule } from '../src/modules/common.module';
 import { OrganizationsModule } from '../src/modules/organizations.module';
 import { UsersModule } from '../src/modules/users.module';
+import * as request from 'supertest';
+import { CreateUserRequest } from '../src/presentation/http/dto/CreateUser';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -159,4 +161,23 @@ export function checkForTokenAndUserId(response: any) {
   } else {
     throw new Error();
   }
+}
+
+export async function generateUser(
+  app,
+): Promise<{ token: string; email: string; id: string }> {
+  const { body } = await request(app.getHttpServer())
+    .post('/users')
+    .send({
+      name: VALID_USER.name,
+      email: generateValidEmail(),
+      password: VALID_USER.password,
+    } as CreateUserRequest)
+    .set('Accept', 'application/json')
+    .expect(201);
+  return {
+    id: body.user.id,
+    email: body.user.email,
+    token: `bearer ${body.token}`,
+  };
 }
