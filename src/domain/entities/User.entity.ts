@@ -13,18 +13,11 @@ export interface UserEntity {
   readonly name: string;
   readonly email: string;
   readonly password?: string;
-  readonly userRolesOnOrganizationsMap?: UserRolesOnOrganizationsMap[];
   readonly isSuperAdmin: boolean;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
 }
-
-export type UserRolesOnOrganizationsMap = {
-  organizationName: string;
-  organizationId: string;
-  role: UserEntityTypes;
-};
 
 export type UserEntityTypes = 'TYPE_COORDINATOR' | 'TYPE_ATTENDENT';
 

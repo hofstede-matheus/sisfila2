@@ -51,7 +51,7 @@ export class UserController {
 
     return {
       token: result.value.token,
-      user: { ...result.value.user, userRolesOnOrganizationsMap: [] },
+      user: { ...result.value.user },
     };
   }
 
@@ -71,7 +71,7 @@ export class UserController {
 
     return {
       token: result.value.token,
-      user: { ...result.value.user, userRolesOnOrganizationsMap: [] },
+      user: { ...result.value.user },
     };
   }
 
@@ -91,7 +91,7 @@ export class UserController {
 
     return {
       token: result.value.token,
-      user: { ...result.value.user, userRolesOnOrganizationsMap: [] },
+      user: { ...result.value.user },
     };
   }
 
@@ -127,7 +127,6 @@ export class UserController {
       id: result.value[0].id,
       name: result.value[0].name,
       email: result.value[0].email,
-      userRolesOnOrganizationsMap: result.value[0].userRolesOnOrganizationsMap,
       createdAt: result.value[0].createdAt,
       updatedAt: result.value[0].updatedAt,
     };

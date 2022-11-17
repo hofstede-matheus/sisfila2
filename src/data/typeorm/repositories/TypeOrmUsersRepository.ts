@@ -34,15 +34,6 @@ export class TypeOrmUsersRepository implements UserRepository {
         id: user.id,
         name: user.name,
         email: user.email,
-        userRolesOnOrganizationsMap: rolesFromUserInOrganizations.map(
-          (role: { organization_id: string; role: string; name: string }) => {
-            return {
-              organizationId: role.organization_id,
-              organizationName: role.name,
-              role: role.role as UserEntityTypes,
-            };
-          },
-        ),
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         isSuperAdmin: user.isSuperAdmin,

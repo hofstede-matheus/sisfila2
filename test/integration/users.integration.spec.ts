@@ -122,13 +122,6 @@ describe('users', () => {
       .expect(200);
 
     expect(bodyOfGetUserRequest.id).toBeDefined();
-    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap.length).toBe(1);
-    expect(
-      bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
-    ).toBe(bodyOfCreateOrganizationRequest.id);
-    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
-      'TYPE_COORDINATOR',
-    );
   });
 
   it('shoud be able to update user role in organization', async () => {
@@ -174,13 +167,6 @@ describe('users', () => {
       .expect(200);
 
     expect(bodyOfGetUserRequest.id).toBeDefined();
-    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap.length).toBe(1);
-    expect(
-      bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
-    ).toBe(bodyOfCreateOrganizationRequest.id);
-    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
-      'TYPE_COORDINATOR',
-    );
 
     await request(app.getHttpServer())
       .patch(
@@ -202,15 +188,6 @@ describe('users', () => {
       .expect(200);
 
     expect(bodyOfSecondGetUserRequest.id).toBeDefined();
-    expect(bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap.length).toBe(
-      1,
-    );
-    expect(
-      bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
-    ).toBe(bodyOfCreateOrganizationRequest.id);
-    expect(bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
-      'TYPE_ATTENDENT',
-    );
   });
 
   it('shoud be able to unset user role in organization', async () => {
@@ -256,13 +233,6 @@ describe('users', () => {
       .expect(200);
 
     expect(bodyOfGetUserRequest.id).toBeDefined();
-    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap.length).toBe(1);
-    expect(
-      bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].organizationId,
-    ).toBe(bodyOfCreateOrganizationRequest.id);
-    expect(bodyOfGetUserRequest.userRolesOnOrganizationsMap[0].role).toBe(
-      'TYPE_COORDINATOR',
-    );
 
     await request(app.getHttpServer())
       .patch(
@@ -284,9 +254,6 @@ describe('users', () => {
       .expect(200);
 
     expect(bodyOfSecondGetUserRequest.id).toBeDefined();
-    expect(bodyOfSecondGetUserRequest.userRolesOnOrganizationsMap.length).toBe(
-      0,
-    );
   });
 
   // it('shoud be able to authenticate a user with google when creating a new account', async () => {
