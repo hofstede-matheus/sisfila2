@@ -1,10 +1,10 @@
 import { Controller, Get, Param, Version } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { Queue } from '../dto/_shared';
-import { toPresentationError } from '../errors';
-import { FindOneOrAllQueuesUsecase } from '../../../interactors/usecases/FindOneOrAllQueuesUsecase';
+import { FindOneOrAllQueuesUsecase } from '../../../../interactors/usecases/FindOneOrAllQueuesUsecase';
+import { Queue } from '../../dto/_shared';
+import { toPresentationError } from '../../errors';
 
-@Controller('queues')
+@Controller({ path: 'queues', version: '1' })
 export class QueueController {
   constructor(
     private readonly findOneOrAllQueuesUsecase: FindOneOrAllQueuesUsecase,

@@ -14,8 +14,7 @@ import { AuthenticateWithGoogleUsecase } from '../interactors/usecases/Authentic
 import { CreateUserUsecase } from '../interactors/usecases/CreateUserUsecase';
 import { FindOneOrAllUsersUsecase } from '../interactors/usecases/FindOneOrAllUsersUsecase';
 import { SetUserRoleInOrganizationUsecase } from '../interactors/usecases/SetUserRoleInOrganizationUsecase';
-import { QueueController } from '../presentation/http/controllers/QueueController';
-import { UserController } from '../presentation/http/controllers/UserController';
+import { UserController } from '../presentation/http/controllers/v1/UserController';
 import { AuthenticationMiddleware } from '../presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from './common.module';
 
@@ -47,18 +46,18 @@ export class UsersModule implements NestModule {
       .apply(AuthenticationMiddleware)
       .exclude(
         {
-          path: 'users',
+          path: 'v1/users',
           method: RequestMethod.POST,
         },
         {
-          path: 'users/auth',
+          path: 'v1/users/auth',
           method: RequestMethod.POST,
         },
         {
-          path: 'users/auth/google',
+          path: 'v1/users/auth/google',
           method: RequestMethod.POST,
         },
       )
-      .forRoutes(UserController);
+      .forRoutes({ path: 'v1/users', method: RequestMethod.ALL });
   }
 }

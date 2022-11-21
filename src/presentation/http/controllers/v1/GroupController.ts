@@ -1,10 +1,10 @@
 import { Controller, Get, Param, Version } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { Group, Queue } from '../dto/_shared';
-import { toPresentationError } from '../errors';
-import { FindOneOrAllGroupsUsecase } from '../../../interactors/usecases/FindOneOrAllGroupsUsecase';
+import { Group } from '../../dto/_shared';
+import { toPresentationError } from '../../errors';
+import { FindOneOrAllGroupsUsecase } from '../../../../interactors/usecases/FindOneOrAllGroupsUsecase';
 
-@Controller('groups')
+@Controller({ path: 'groups', version: '1' })
 export class GroupController {
   constructor(
     private readonly findOneOrAllGroupsUsecase: FindOneOrAllGroupsUsecase,

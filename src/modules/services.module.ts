@@ -1,12 +1,15 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Service } from '../data/typeorm/entities/services';
-import { TypeOrmOrganizationsRepository } from '../data/typeorm/repositories/TypeOrmOrganizationsRepository';
 import { TypeOrmServicesRepository } from '../data/typeorm/repositories/TypeOrmServicesRepository';
 import { ServiceRepository } from '../domain/repositories/ServiceRepository';
 import { FindOneOrAllServicesUsecase } from '../interactors/usecases/FindOneOrAllServicesUsecase';
-import { QueueController } from '../presentation/http/controllers/QueueController';
-import { ServiceController } from '../presentation/http/controllers/ServiceController';
+import { ServiceController } from '../presentation/http/controllers/v1/ServiceController';
 import { AuthenticationMiddleware } from '../presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from './common.module';
 
@@ -27,6 +30,8 @@ import { CommonModule } from './common.module';
 })
 export class ServicesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).forRoutes(ServiceController);
+    consumer
+      .apply(AuthenticationMiddleware)
+      .forRoutes({ path: 'v1/services', method: RequestMethod.ALL });
   }
 }

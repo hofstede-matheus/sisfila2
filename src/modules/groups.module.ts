@@ -1,11 +1,15 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Group } from '../data/typeorm/entities/groups';
 import { TypeOrmGroupsRepository } from '../data/typeorm/repositories/TypeOrmGroupsRepository';
 import { GroupRepository } from '../domain/repositories/GroupRepository';
 import { FindOneOrAllGroupsUsecase } from '../interactors/usecases/FindOneOrAllGroupsUsecase';
-import { GroupController } from '../presentation/http/controllers/GroupController';
-import { OrganizationController } from '../presentation/http/controllers/OrganizationController';
+import { GroupController } from '../presentation/http/controllers/v1/GroupController';
 import { AuthenticationMiddleware } from '../presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from './common.module';
 
@@ -26,6 +30,8 @@ import { CommonModule } from './common.module';
 })
 export class GroupsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).forRoutes(GroupController);
+    consumer
+      .apply(AuthenticationMiddleware)
+      .forRoutes({ path: 'v1/groups', method: RequestMethod.ALL });
   }
 }

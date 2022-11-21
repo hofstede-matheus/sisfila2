@@ -22,6 +22,9 @@ import { OrganizationsModule } from '../src/modules/organizations.module';
 import { UsersModule } from '../src/modules/users.module';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../src/presentation/http/dto/CreateUser';
+import { INestApplication, VersioningType } from '@nestjs/common';
+import { appendFile } from 'fs';
+import { Test } from '@nestjs/testing';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -167,7 +170,7 @@ export async function generateUser(
   app,
 ): Promise<{ token: string; email: string; id: string }> {
   const { body } = await request(app.getHttpServer())
-    .post('/users')
+    .post('/v1/users')
     .send({
       name: VALID_USER.name,
       email: generateValidEmail(),
@@ -180,4 +183,17 @@ export async function generateUser(
     email: body.user.email,
     token: `bearer ${body.token}`,
   };
+}
+
+export async function generateTestingApp(): Promise<INestApplication> {
+  const module = await Test.createTestingModule({
+    imports: TEST_CONFIG,
+    providers: [],
+  }).compile();
+
+  const app = module.createNestApplication();
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+  return app;
 }

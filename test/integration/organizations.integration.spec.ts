@@ -1,7 +1,10 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { generateUser, TEST_CONFIG, VALID_ORGANIZATION } from '../helpers';
+import {
+  generateTestingApp,
+  generateUser,
+  VALID_ORGANIZATION,
+} from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
 import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
 import { UpdateOrganizationRequest } from '../../src/presentation/http/dto/UpdateOrganization';
@@ -13,12 +16,7 @@ describe('organizations', () => {
   connectionSource.initialize();
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      imports: TEST_CONFIG,
-      providers: [],
-    }).compile();
-
-    app = module.createNestApplication();
+    app = await generateTestingApp();
     await app.init();
 
     USER = await generateUser(app);
@@ -37,9 +35,9 @@ describe('organizations', () => {
     await connectionSource.query(`DELETE FROM groups`);
   });
 
-  it('shoud be able to create organization with default service, queue and group', async () => {
+  it('should be able to create organization with default service, queue and group', async () => {
     const { body } = await request(app.getHttpServer())
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -53,7 +51,7 @@ describe('organizations', () => {
     const { body: bodyOfGetDefaultServiceRequest } = await request(
       app.getHttpServer(),
     )
-      .get(`/services/organizations/${body.id}`)
+      .get(`/v1/services/organizations/${body.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -63,7 +61,7 @@ describe('organizations', () => {
     const { body: bodyOfGetDefaultQueueRequest } = await request(
       app.getHttpServer(),
     )
-      .get(`/queues/organizations/${body.id}`)
+      .get(`/v1/queues/organizations/${body.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -73,7 +71,7 @@ describe('organizations', () => {
     const { body: bodyOfGetDefaultGroupRequest } = await request(
       app.getHttpServer(),
     )
-      .get(`/groups/organizations/${body.id}`)
+      .get(`/v1/groups/organizations/${body.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -83,7 +81,7 @@ describe('organizations', () => {
 
   it('shoud be able to update organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -95,7 +93,7 @@ describe('organizations', () => {
     expect(bodyOfCreateRequest.id).toBeDefined();
 
     await request(app.getHttpServer())
-      .patch(`/users/${USER.id}/organizations/${bodyOfCreateRequest.id}`)
+      .patch(`/v1/users/${USER.id}/organizations/${bodyOfCreateRequest.id}`)
       .set('Authorization', USER.token)
       .send({
         role: 'TYPE_COORDINATOR',
@@ -104,7 +102,7 @@ describe('organizations', () => {
       .expect(200);
 
     await request(app.getHttpServer())
-      .put('/organizations')
+      .put('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         id: bodyOfCreateRequest.id,
@@ -115,7 +113,7 @@ describe('organizations', () => {
       .expect(200);
 
     const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
-      .get(`/organizations/${bodyOfCreateRequest.id}`)
+      .get(`/v1/organizations/${bodyOfCreateRequest.id}`)
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -130,7 +128,7 @@ describe('organizations', () => {
 
   it('shoud be able to get one organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -142,7 +140,7 @@ describe('organizations', () => {
     expect(bodyOfCreateRequest.id).toBeDefined();
 
     await request(app.getHttpServer())
-      .patch(`/users/${USER.id}/organizations/${bodyOfCreateRequest.id}`)
+      .patch(`/v1/users/${USER.id}/organizations/${bodyOfCreateRequest.id}`)
       .set('Authorization', USER.token)
       .send({
         role: 'TYPE_COORDINATOR',
@@ -151,7 +149,7 @@ describe('organizations', () => {
       .expect(200);
 
     const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
-      .get(`/organizations/${bodyOfCreateRequest.id}`)
+      .get(`/v1/organizations/${bodyOfCreateRequest.id}`)
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -166,7 +164,7 @@ describe('organizations', () => {
 
   it('shoud be able to remove organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -178,7 +176,7 @@ describe('organizations', () => {
     expect(bodyOfCreateRequest.id).toBeDefined();
 
     await request(app.getHttpServer())
-      .delete(`/organizations/${bodyOfCreateRequest.id}`)
+      .delete(`/v1/organizations/${bodyOfCreateRequest.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -186,7 +184,7 @@ describe('organizations', () => {
 
   it('shoud be able to get all organizations', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -198,7 +196,7 @@ describe('organizations', () => {
     expect(bodyOfCreateRequest.id).toBeDefined();
 
     await request(app.getHttpServer())
-      .patch(`/users/${USER.id}/organizations/${bodyOfCreateRequest.id}`)
+      .patch(`/v1/users/${USER.id}/organizations/${bodyOfCreateRequest.id}`)
       .set('Authorization', USER.token)
       .send({
         role: 'TYPE_COORDINATOR',
@@ -207,7 +205,7 @@ describe('organizations', () => {
       .expect(200);
 
     const { body: bodyOfFindOneRequest } = await request(app.getHttpServer())
-      .get(`/organizations`)
+      .get(`/v1/organizations`)
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,

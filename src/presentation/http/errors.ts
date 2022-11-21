@@ -8,6 +8,7 @@ import {
   InvalidNameError,
   InvalidPasswordError,
   InvalidUserTypeError,
+  InvalidValueError,
   OrganizationCodeAlreadyUsedError,
 } from '../../domain/errors';
 import { DomainError } from '../../shared/helpers/errors';
@@ -48,6 +49,9 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 409);
 
     case InvalidIdError:
+      return new PresentationException(error, 400);
+
+    case InvalidValueError:
       return new PresentationException(error, 400);
 
     default:

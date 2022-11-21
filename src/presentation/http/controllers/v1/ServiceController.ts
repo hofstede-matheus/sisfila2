@@ -1,10 +1,10 @@
 import { Controller, Get, Param, Version } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { Service } from '../dto/_shared';
-import { toPresentationError } from '../errors';
-import { FindOneOrAllServicesUsecase } from '../../../interactors/usecases/FindOneOrAllServicesUsecase';
+import { FindOneOrAllServicesUsecase } from '../../../../interactors/usecases/FindOneOrAllServicesUsecase';
+import { Service } from '../../dto/_shared';
+import { toPresentationError } from '../../errors';
 
-@Controller('services')
+@Controller({ path: 'services', version: '1' })
 export class ServiceController {
   constructor(
     private readonly findOneOrAllServicesUsecase: FindOneOrAllServicesUsecase,

@@ -9,23 +9,23 @@ import {
   Version,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { UserEntityTypes } from '../../../domain/entities/User.entity';
-import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
-import { AuthenticateWithGoogleUsecase } from '../../../interactors/usecases/AuthenticateWithGoogleUsecase';
-import { CreateUserUsecase } from '../../../interactors/usecases/CreateUserUsecase';
-import { FindOneOrAllUsersUsecase } from '../../../interactors/usecases/FindOneOrAllUsersUsecase';
-import { SetUserRoleInOrganizationUsecase } from '../../../interactors/usecases/SetUserRoleInOrganizationUsecase';
+import { UserEntityTypes } from '../../../../domain/entities/User.entity';
+import { AuthenticateUserUsecase } from '../../../../interactors/usecases/AuthenticateUserUsecase';
+import { AuthenticateWithGoogleUsecase } from '../../../../interactors/usecases/AuthenticateWithGoogleUsecase';
+import { CreateUserUsecase } from '../../../../interactors/usecases/CreateUserUsecase';
+import { FindOneOrAllUsersUsecase } from '../../../../interactors/usecases/FindOneOrAllUsersUsecase';
+import { SetUserRoleInOrganizationUsecase } from '../../../../interactors/usecases/SetUserRoleInOrganizationUsecase';
 import {
-  AuthenticateUserRequest,
   AuthenticateUserResponse,
-} from '../dto/AuthenticateUser';
-import { AuthenticateWithGoogleRequest } from '../dto/AuthenticateWithGoogle';
-import { CreateUserRequest, CreateUserResponse } from '../dto/CreateUser';
-import { SetUserRoleInOrganizationRequest } from '../dto/SetUserRoleInOrganization';
-import { User } from '../dto/_shared';
-import { toPresentationError } from '../errors';
+  AuthenticateUserRequest,
+} from '../../dto/AuthenticateUser';
+import { AuthenticateWithGoogleRequest } from '../../dto/AuthenticateWithGoogle';
+import { CreateUserResponse, CreateUserRequest } from '../../dto/CreateUser';
+import { SetUserRoleInOrganizationRequest } from '../../dto/SetUserRoleInOrganization';
+import { User } from '../../dto/_shared';
+import { toPresentationError } from '../../errors';
 
-@Controller('users')
+@Controller({ path: 'users', version: '1' })
 export class UserController {
   constructor(
     private readonly createCoordinatorUsecase: CreateUserUsecase,

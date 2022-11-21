@@ -1,12 +1,11 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
 import {
+  generateTestingApp,
   generateUser,
   generateValidEmail,
   JWT_TOKEN_REGEX_EXPRESSION,
-  TEST_CONFIG,
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../helpers';
@@ -20,12 +19,7 @@ describe('users', () => {
   connectionSource.initialize();
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      imports: TEST_CONFIG,
-      providers: [],
-    }).compile();
-
-    app = module.createNestApplication();
+    app = await generateTestingApp();
     await app.init();
     USER = await generateUser(app);
   });
@@ -42,7 +36,7 @@ describe('users', () => {
 
   it('shoud be able to create user', async () => {
     const { body } = await request(app.getHttpServer())
-      .post('/users')
+      .post('/v1/users')
       .send({
         name: 'valid name',
         email: generateValidEmail(),
@@ -57,7 +51,7 @@ describe('users', () => {
   it('shoud be able to authenticate a user', async () => {
     const validEmail = generateValidEmail();
     await request(app.getHttpServer())
-      .post('/users')
+      .post('/v1/users')
       .send({
         name: VALID_USER.name,
         email: validEmail,
@@ -67,7 +61,7 @@ describe('users', () => {
       .expect(201);
 
     const { body } = await request(app.getHttpServer())
-      .post('/users/auth')
+      .post('/v1/users/auth')
       .send({
         email: validEmail,
         password: VALID_USER.password,
@@ -82,7 +76,7 @@ describe('users', () => {
   it('shoud be able to set user role in organization', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
-      .post('/users')
+      .post('/v1/users')
       .set('Authorization', USER.token)
       .send({
         name: VALID_USER.name,
@@ -95,7 +89,7 @@ describe('users', () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -106,7 +100,7 @@ describe('users', () => {
 
     await request(app.getHttpServer())
       .patch(
-        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
       )
       .set('Authorization', USER.token)
       .send({
@@ -116,7 +110,7 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -127,7 +121,7 @@ describe('users', () => {
   it('shoud be able to update user role in organization', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
-      .post('/users')
+      .post('/v1/users')
       .set('Authorization', USER.token)
       .send({
         name: VALID_USER.name,
@@ -140,7 +134,7 @@ describe('users', () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -151,7 +145,7 @@ describe('users', () => {
 
     await request(app.getHttpServer())
       .patch(
-        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
       )
       .set('Authorization', USER.token)
       .send({
@@ -161,7 +155,7 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -170,7 +164,7 @@ describe('users', () => {
 
     await request(app.getHttpServer())
       .patch(
-        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
       )
       .set('Authorization', USER.token)
       .send({
@@ -182,7 +176,7 @@ describe('users', () => {
     const { body: bodyOfSecondGetUserRequest } = await request(
       app.getHttpServer(),
     )
-      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -193,7 +187,7 @@ describe('users', () => {
   it('shoud be able to unset user role in organization', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
-      .post('/users')
+      .post('/v1/users')
       .set('Authorization', USER.token)
       .send({
         name: VALID_USER.name,
@@ -206,7 +200,7 @@ describe('users', () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
-      .post('/organizations')
+      .post('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         name: VALID_ORGANIZATION.name,
@@ -217,7 +211,7 @@ describe('users', () => {
 
     await request(app.getHttpServer())
       .patch(
-        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
       )
       .set('Authorization', USER.token)
       .send({
@@ -227,7 +221,7 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -236,7 +230,7 @@ describe('users', () => {
 
     await request(app.getHttpServer())
       .patch(
-        `/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
       )
       .set('Authorization', USER.token)
       .send({
@@ -248,7 +242,7 @@ describe('users', () => {
     const { body: bodyOfSecondGetUserRequest } = await request(
       app.getHttpServer(),
     )
-      .get(`/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);

@@ -7,23 +7,23 @@ import {
   Post,
   Put,
   Req,
-  Version,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { CreateOrganizationUsecase } from '../../../interactors/usecases/CreateOrganizationUsecase';
-import { FindOneOrAllOrganizationsUsecase } from '../../../interactors/usecases/FindOneOrAllOrganizationsUsecase';
-import { RemoveOrganizationUsecase } from '../../../interactors/usecases/RemoveOrganizationUsecase';
-import { UpdateOrganizationUsecase } from '../../../interactors/usecases/UpdateOrganizationUsecase';
-import {
-  CreateOrganizationRequest,
-  CreateOrganizationResponse,
-} from '../dto/CreateOrganization';
-import { Organization } from '../dto/_shared';
-import { UpdateOrganizationRequest } from '../dto/UpdateOrganization';
-import { toPresentationError } from '../errors';
-import { Request } from 'express';
 
-@Controller('organizations')
+import { Request } from 'express';
+import { CreateOrganizationUsecase } from '../../../../interactors/usecases/CreateOrganizationUsecase';
+import { FindOneOrAllOrganizationsUsecase } from '../../../../interactors/usecases/FindOneOrAllOrganizationsUsecase';
+import { RemoveOrganizationUsecase } from '../../../../interactors/usecases/RemoveOrganizationUsecase';
+import { UpdateOrganizationUsecase } from '../../../../interactors/usecases/UpdateOrganizationUsecase';
+import {
+  CreateOrganizationResponse,
+  CreateOrganizationRequest,
+} from '../../dto/CreateOrganization';
+import { UpdateOrganizationRequest } from '../../dto/UpdateOrganization';
+import { Organization } from '../../dto/_shared';
+import { toPresentationError } from '../../errors';
+
+@Controller({ path: 'organizations', version: '1' })
 export class OrganizationController {
   constructor(
     private readonly createOrganizationUsecase: CreateOrganizationUsecase,
@@ -32,7 +32,6 @@ export class OrganizationController {
     private readonly removeOrganizationUsecase: RemoveOrganizationUsecase,
   ) {}
 
-  @Version(['1'])
   @Post()
   @ApiResponse({ type: CreateOrganizationResponse })
   async createUser(
@@ -48,7 +47,6 @@ export class OrganizationController {
     return { id: result.value };
   }
 
-  @Version(['1'])
   @Put()
   async updateUser(@Body() body: UpdateOrganizationRequest): Promise<void> {
     const result = await this.updateOrganizationUsecase.execute(
@@ -60,7 +58,6 @@ export class OrganizationController {
     if (result.isLeft()) throw toPresentationError(result.value);
   }
 
-  @Version(['1'])
   @Get(':id')
   @ApiResponse({ type: Organization })
   async getOne(@Param('id') id: string): Promise<Organization> {
@@ -79,7 +76,6 @@ export class OrganizationController {
     };
   }
 
-  @Version(['1'])
   @Get()
   @ApiResponse({ type: [Organization] })
   async getAll(@Req() request: Request): Promise<Organization[]> {
@@ -100,7 +96,6 @@ export class OrganizationController {
     return organizations;
   }
 
-  @Version(['1'])
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
     const result = await this.removeOrganizationUsecase.execute(id);

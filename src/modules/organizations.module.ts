@@ -8,12 +8,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from '../data/typeorm/entities/organizations';
 import { TypeOrmOrganizationsRepository } from '../data/typeorm/repositories/TypeOrmOrganizationsRepository';
 import { OrganizationRepository } from '../domain/repositories/OrganizationRepository';
-import { ServiceRepository } from '../domain/repositories/ServiceRepository';
 import { CreateOrganizationUsecase } from '../interactors/usecases/CreateOrganizationUsecase';
 import { FindOneOrAllOrganizationsUsecase } from '../interactors/usecases/FindOneOrAllOrganizationsUsecase';
 import { RemoveOrganizationUsecase } from '../interactors/usecases/RemoveOrganizationUsecase';
 import { UpdateOrganizationUsecase } from '../interactors/usecases/UpdateOrganizationUsecase';
-import { OrganizationController } from '../presentation/http/controllers/OrganizationController';
+import { OrganizationController } from '../presentation/http/controllers/v1/OrganizationController';
 import { AuthenticationMiddleware } from '../presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from './common.module';
 import { GroupsModule } from './groups.module';
@@ -51,6 +50,8 @@ import { UsersModule } from './users.module';
 })
 export class OrganizationsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).forRoutes(OrganizationController);
+    consumer
+      .apply(AuthenticationMiddleware)
+      .forRoutes({ path: 'v1/organizations', method: RequestMethod.ALL });
   }
 }
