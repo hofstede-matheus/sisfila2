@@ -19,16 +19,6 @@ export class TypeOrmUsersRepository implements UserRepository {
   async findOneByIdOrAll(id?: string): Promise<UserEntity[]> {
     const users = await this.usersRepository.findBy({ id });
 
-    const rolesFromUserInOrganizations: [] = await this.usersRepository.query(
-      `
-      select * 
-      from users_role_in_organizations
-      inner join organizations on users_role_in_organizations.organization_id = organizations.id
-      where user_id = $1
-      `,
-      [id],
-    );
-
     const usersEntities: UserEntity[] = users.map((user) => {
       return {
         id: user.id,

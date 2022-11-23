@@ -1,5 +1,6 @@
 import { HttpException } from '@nestjs/common';
 import {
+  ClientAlreadyExistsError,
   EmailAlreadyExistsError,
   InvalidCodeError,
   InvalidCredentialsError,
@@ -52,6 +53,9 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 400);
 
     case InvalidValueError:
+      return new PresentationException(error, 400);
+
+    case ClientAlreadyExistsError:
       return new PresentationException(error, 400);
 
     default:

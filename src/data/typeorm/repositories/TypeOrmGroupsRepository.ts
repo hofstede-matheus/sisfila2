@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { getRepository, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { GroupEntity } from '../../../domain/entities/Group.entity';
 import { GroupRepository } from '../../../domain/repositories/GroupRepository';
 import { Group } from '../entities/groups';

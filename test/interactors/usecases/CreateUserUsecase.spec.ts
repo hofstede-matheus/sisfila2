@@ -17,7 +17,7 @@ import {
 import { UserRepository } from '../../../src/domain/repositories/UserRepository';
 import { AuthenticationService } from '../../../src/domain/services/AuthenticationService';
 
-describe('CreateCoordinatorUsecase', () => {
+describe('CreateUserUsecase', () => {
   let useCase: CreateUserUsecase;
   let repository: UserRepository;
   let authenticationService: AuthenticationService;

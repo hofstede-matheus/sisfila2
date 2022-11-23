@@ -22,9 +22,12 @@ import { OrganizationsModule } from '../src/modules/organizations.module';
 import { UsersModule } from '../src/modules/users.module';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../src/presentation/http/dto/CreateUser';
-import { INestApplication, VersioningType } from '@nestjs/common';
-import { appendFile } from 'fs';
+import { INestApplication, Provider, VersioningType } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { ClientEntity } from '../src/domain/entities/Client.entity';
+import { ClientRepository } from '../src/domain/repositories/ClientRepository';
+import { ClientsModule } from '../src/modules/clients.module';
+import { Client } from '../src/data/typeorm/entities/clients';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -50,7 +53,16 @@ export const VALID_ORGANIZATION = {
   code: 'VAL',
 } as OrganizationEntity;
 
-export const ALL_REPOSITORIES_PROVIDERS = [
+export const VALID_CLIENT = {
+  id: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  name: 'Valid Name',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  registrationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+} as ClientEntity;
+
+export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
   {
     provide: UserRepository,
     useValue: {
@@ -93,13 +105,28 @@ export const ALL_REPOSITORIES_PROVIDERS = [
       create: jest.fn(),
     } as GroupRepository,
   },
+  {
+    provide: ClientRepository,
+    useValue: {
+      create: jest.fn(),
+      findByRegistrationIdFromOrganization: jest.fn(),
+    } as ClientRepository,
+  },
 ];
 
-export const ALL_TYPEORM_ENTITIES = [Organization, Service, User, Queue, Group];
+export const ALL_TYPEORM_ENTITIES = [
+  Organization,
+  Service,
+  User,
+  Queue,
+  Group,
+  Client,
+];
 
 export const TEST_CONFIG = [
   UsersModule,
   OrganizationsModule,
+  ClientsModule,
   CommonModule,
   ConfigModule.forRoot({
     envFilePath: '.env.test',
@@ -118,7 +145,7 @@ export const TEST_CONFIG = [
   }),
 ];
 
-export const ALL_SERVICES_PROVIDERS = [
+export const ALL_SERVICES_PROVIDERS: Provider[] = [
   {
     provide: EncryptionService,
     useValue: {

@@ -35,7 +35,6 @@ export class UserController {
     private readonly findOneOrAllUsersUsecase: FindOneOrAllUsersUsecase,
   ) {}
 
-  @Version(['1'])
   @Post()
   @ApiResponse({ type: CreateUserResponse })
   async createUser(
@@ -55,7 +54,6 @@ export class UserController {
     };
   }
 
-  @Version(['1'])
   @Post('auth')
   @ApiResponse({ type: AuthenticateUserResponse })
   @HttpCode(200)
@@ -75,7 +73,6 @@ export class UserController {
     };
   }
 
-  @Version(['1'])
   @Post('auth/google')
   @ApiResponse({ type: AuthenticateUserResponse })
   @HttpCode(200)
@@ -95,7 +92,6 @@ export class UserController {
     };
   }
 
-  @Version(['1'])
   @Patch(':userId/organizations/:organizationId')
   @HttpCode(200)
   async setUserRoleInOrganizationById(
@@ -115,7 +111,6 @@ export class UserController {
     return;
   }
 
-  @Version(['1'])
   @Patch('email/:userEmail/organizations/:organizationId')
   @HttpCode(200)
   async setUserRoleInOrganizationByEmail(
@@ -135,7 +130,6 @@ export class UserController {
     return;
   }
 
-  @Version(['1'])
   @Get(':userId')
   @ApiResponse({ type: User })
   @HttpCode(200)

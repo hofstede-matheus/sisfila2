@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import * as Joi from 'joi';
 import { Either, left, right } from '../../shared/helpers/either';
 import { staticImplements, DomainEntity } from '../../shared/helpers/entity';
 import { DomainError } from '../../shared/helpers/errors';
