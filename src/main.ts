@@ -7,7 +7,7 @@ const API_PORT = process.env.API_PORT ?? 3000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({ origin: true });
 
   app.enableVersioning({
     type: VersioningType.URI,

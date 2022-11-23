@@ -13,18 +13,33 @@ export class SetUserRoleInOrganizationUsecase implements UseCase {
     private userRepository: UserRepository,
   ) {}
   async execute(
-    userId: string,
     organizationId: string,
     role: UserEntityTypes | undefined,
+    userId?: string,
+    userEmail?: string,
   ): Promise<Either<DomainError, void>> {
     const validation = Validator.validate({
       id: [userId, organizationId],
       userEntityTypes: [role],
+      email: [userEmail],
     });
     if (validation.isLeft()) return left(validation.value);
 
+    if (userId) {
+      await this.userRepository.setUserRoleInOrganization(
+        userId,
+        organizationId,
+        role,
+      );
+      return right();
+    }
+
+    const { id: userToUpdateId } = await this.userRepository.findByEmail(
+      userEmail,
+    );
+
     await this.userRepository.setUserRoleInOrganization(
-      userId,
+      userToUpdateId,
       organizationId,
       role,
     );

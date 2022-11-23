@@ -98,15 +98,36 @@ export class UserController {
   @Version(['1'])
   @Patch(':userId/organizations/:organizationId')
   @HttpCode(200)
-  async setUserRoleInOrganization(
+  async setUserRoleInOrganizationById(
     @Param('userId') userId: string,
     @Param('organizationId') organizationId: string,
     @Body() body: SetUserRoleInOrganizationRequest,
   ): Promise<void> {
     const result = await this.setUserRoleInOrganizationUsecase.execute(
-      userId,
       organizationId,
       body.role as UserEntityTypes,
+      userId,
+      undefined,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return;
+  }
+
+  @Version(['1'])
+  @Patch('email/:userEmail/organizations/:organizationId')
+  @HttpCode(200)
+  async setUserRoleInOrganizationByEmail(
+    @Param('organizationId') organizationId: string,
+    @Param('userEmail') userEmail: string,
+    @Body() body: SetUserRoleInOrganizationRequest,
+  ): Promise<void> {
+    const result = await this.setUserRoleInOrganizationUsecase.execute(
+      organizationId,
+      body.role as UserEntityTypes,
+      undefined,
+      userEmail,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);

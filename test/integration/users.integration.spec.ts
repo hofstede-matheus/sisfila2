@@ -184,7 +184,7 @@ describe('users', () => {
     expect(bodyOfSecondGetUserRequest.id).toBeDefined();
   });
 
-  it('shoud be able to unset user role in organization', async () => {
+  it('shoud be able to unset user role in organization by id', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
       .post('/v1/users')
@@ -231,6 +231,72 @@ describe('users', () => {
     await request(app.getHttpServer())
       .patch(
         `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .set('Authorization', USER.token)
+      .send({
+        role: undefined,
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfSecondGetUserRequest } = await request(
+      app.getHttpServer(),
+    )
+      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+      .set('Authorization', USER.token)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfSecondGetUserRequest.id).toBeDefined();
+  });
+
+  it('shoud be able to unset user role in organization by email', async () => {
+    const validEmail = generateValidEmail();
+    const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
+      .post('/v1/users')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_USER.name,
+        email: validEmail,
+        password: VALID_USER.password,
+      } as CreateUserRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const { body: bodyOfCreateOrganizationRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/organizations')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch(
+        `/v1/users/email/${bodyOfCreateUserRequest.user.email}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .set('Authorization', USER.token)
+      .send({
+        role: 'TYPE_COORDINATOR',
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
+      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+      .set('Authorization', USER.token)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetUserRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .patch(
+        `/v1/users/email/${bodyOfCreateUserRequest.user.email}/organizations/${bodyOfCreateOrganizationRequest.id}`,
       )
       .set('Authorization', USER.token)
       .send({
