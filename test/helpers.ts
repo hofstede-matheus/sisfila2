@@ -110,6 +110,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
     useValue: {
       create: jest.fn(),
       findByRegistrationIdFromOrganization: jest.fn(),
+      findOneByIdOrAllAsAdmin: jest.fn(),
+      findOneByIdOrAllAsUser: jest.fn(),
     } as ClientRepository,
   },
 ];

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { GroupEntity } from '../../domain/entities/Group.entity';
-import { GroupNotFoundError, QueueNotFoundError } from '../../domain/errors';
+import { GroupNotFoundError } from '../../domain/errors';
 import { GroupRepository } from '../../domain/repositories/GroupRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';

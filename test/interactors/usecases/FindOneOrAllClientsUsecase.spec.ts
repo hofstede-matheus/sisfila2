@@ -1,0 +1,201 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import {
+  ClientNotFoundError,
+  InvalidIdError,
+} from '../../../src/domain/errors';
+import {
+  ALL_REPOSITORIES_PROVIDERS,
+  ALL_SERVICES_PROVIDERS,
+  VALID_CLIENT,
+  VALID_ORGANIZATION,
+  VALID_USER,
+} from '../../helpers';
+import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { FindOneOrAllClientsUsecase } from '../../../src/interactors/usecases/FindOneOrAllClientsUsecase';
+import { ClientRepository } from '../../../src/domain/repositories/ClientRepository';
+import { ClientEntity } from '../../../src/domain/entities/Client.entity';
+
+describe('FindOneOrAllClientsUsecase', () => {
+  let useCase: FindOneOrAllClientsUsecase;
+  let clientRepository: ClientRepository;
+  let userRepository: UserRepository;
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ...ALL_REPOSITORIES_PROVIDERS,
+        ...ALL_SERVICES_PROVIDERS,
+        FindOneOrAllClientsUsecase,
+      ],
+    }).compile();
+
+    useCase = module.get(FindOneOrAllClientsUsecase);
+    clientRepository = module.get<ClientRepository>(ClientRepository);
+    userRepository = module.get<UserRepository>(UserRepository);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should not be able to find an client with invalid id', async () => {
+    const response = await useCase.execute({
+      organizationId: 'invalid_id',
+      userId: VALID_USER.id,
+      clientId: VALID_CLIENT.id,
+    });
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toBeInstanceOf(InvalidIdError);
+  });
+
+  it('should not be able to find an client with invalid user id', async () => {
+    const response = await useCase.execute({
+      organizationId: VALID_ORGANIZATION.id,
+      userId: 'invalid_id',
+      clientId: VALID_CLIENT.id,
+    });
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toBeInstanceOf(InvalidIdError);
+  });
+
+  it('should not be able to find an client with invalid user id', async () => {
+    const response = await useCase.execute({
+      organizationId: VALID_ORGANIZATION.id,
+      userId: VALID_USER.id,
+      clientId: 'invalid_id',
+    });
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toBeInstanceOf(InvalidIdError);
+  });
+
+  it('should not be able to find an client that does not exists as user', async () => {
+    jest
+      .spyOn(clientRepository, 'findOneByIdOrAllAsUser')
+      .mockImplementation(async () => {
+        return undefined;
+      });
+
+    jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [{ ...VALID_USER, isSuperAdmin: false }];
+      });
+
+    const response = await useCase.execute({
+      organizationId: VALID_ORGANIZATION.id,
+    });
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toBeInstanceOf(ClientNotFoundError);
+  });
+
+  it('should not be able to find an client that does not exists as admin', async () => {
+    jest
+      .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
+      .mockImplementation(async () => {
+        return undefined;
+      });
+
+    jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [{ ...VALID_USER, isSuperAdmin: false }];
+      });
+
+    const response = await useCase.execute({
+      organizationId: VALID_ORGANIZATION.id,
+    });
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toBeInstanceOf(ClientNotFoundError);
+  });
+
+  it('should find one client data as user', async () => {
+    jest
+      .spyOn(clientRepository, 'findOneByIdOrAllAsUser')
+      .mockImplementation(async () => {
+        return [VALID_CLIENT];
+      });
+
+    jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [{ ...VALID_USER, isSuperAdmin: false }];
+      });
+
+    const response = await useCase.execute({
+      organizationId: VALID_ORGANIZATION.id,
+      userId: VALID_USER.id,
+      clientId: VALID_CLIENT.id,
+    });
+
+    expect(clientRepository.findOneByIdOrAllAsUser).toBeCalledTimes(1);
+
+    expect(response.isRight()).toBeTruthy();
+    expect((response.value as ClientEntity[]).length).toBe(1);
+  });
+
+  it('should find one organization data as admin', async () => {
+    jest
+      .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
+      .mockImplementation(async () => {
+        return [VALID_CLIENT];
+      });
+
+    jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [{ ...VALID_USER, isSuperAdmin: true }];
+      });
+
+    const response = await useCase.execute({
+      clientId: VALID_CLIENT.id,
+      userId: VALID_USER.id,
+    });
+
+    expect(clientRepository.findOneByIdOrAllAsAdmin).toBeCalledTimes(1);
+
+    expect(response.isRight()).toBeTruthy();
+    expect((response.value as ClientEntity[]).length).toBe(1);
+  });
+
+  it('should find all organizations data as user', async () => {
+    jest
+      .spyOn(clientRepository, 'findOneByIdOrAllAsUser')
+      .mockImplementation(async () => {
+        return [VALID_CLIENT, VALID_CLIENT];
+      });
+
+    jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [{ ...VALID_USER, isSuperAdmin: false }];
+      });
+
+    const response = await useCase.execute({ userId: VALID_USER.id });
+
+    expect(clientRepository.findOneByIdOrAllAsUser).toBeCalled();
+
+    expect(response.isRight()).toBeTruthy();
+    expect((response.value as ClientEntity[]).length).toBe(2);
+  });
+
+  it('should find all organizations data as admin', async () => {
+    jest
+      .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
+      .mockImplementation(async () => {
+        return [VALID_CLIENT, VALID_CLIENT];
+      });
+
+    jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [{ ...VALID_USER, isSuperAdmin: true }];
+      });
+
+    const response = await useCase.execute({ userId: VALID_USER.id });
+
+    expect(clientRepository.findOneByIdOrAllAsAdmin).toBeCalled();
+
+    expect(response.isRight()).toBeTruthy();
+    expect((response.value as ClientEntity[]).length).toBe(2);
+  });
+});
