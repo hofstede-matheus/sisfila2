@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Version,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { UserEntityTypes } from '../../../../domain/entities/User.entity';

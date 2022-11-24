@@ -174,3 +174,35 @@ export class Group {
   })
   organizationId: string;
 }
+
+export class Client {
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  id: string;
+
+  @ApiProperty({
+    example: 'John Doe',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: 'Date',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    example: 'Date',
+  })
+  updatedAt: Date;
+
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  organizationId: string;
+
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  registrationId: string;
+}

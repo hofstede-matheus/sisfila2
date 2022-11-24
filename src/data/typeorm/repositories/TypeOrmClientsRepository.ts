@@ -9,22 +9,79 @@ export class TypeOrmClientsRepository implements ClientRepository {
     @InjectRepository(Client)
     private readonly clientsRepository: Repository<Client>,
   ) {}
-  findOneByIdOrAllAsAdmin({
+  async findOneByIdOrAllAsAdmin({
     clientId,
   }: {
     clientId?: string;
   }): Promise<ClientEntity[]> {
-    throw new Error('Method not implemented.');
+    const queryBuilder = this.clientsRepository
+      .createQueryBuilder('clients')
+      .innerJoin('organizations', 'orgs', 'orgs.id = clients.organization_id')
+      .innerJoin(
+        'users_role_in_organizations',
+        'urio',
+        'urio.organization_id = orgs.id',
+      );
+
+    if (clientId)
+      queryBuilder.where('clients.id = :clientId', {
+        clientId,
+      });
+
+    const clients = await queryBuilder.getMany();
+
+    if (clients.length === 0) return undefined;
+
+    return clients.map((client) => {
+      return {
+        id: client.id,
+        name: client.name,
+        organizationId: client.organizationId,
+        registrationId: client.registrationId,
+        createdAt: client.createdAt,
+        updatedAt: client.updatedAt,
+      };
+    });
   }
-  findOneByIdOrAllAsUser({
+  async findOneByIdOrAllAsUser({
     organizationId,
     userId,
+    clientId,
   }: {
     organizationId?: string;
     userId?: string;
     clientId?: string;
   }): Promise<ClientEntity[]> {
-    throw new Error('Method not implemented.');
+    const queryBuilder = this.clientsRepository
+      .createQueryBuilder('clients')
+      .innerJoin('organizations', 'orgs', 'orgs.id = clients.organization_id')
+      .innerJoin(
+        'users_role_in_organizations',
+        'urio',
+        'urio.organization_id = orgs.id',
+      )
+      .where('urio.user_id = :userId', { userId })
+      .andWhere('orgs.id = :organizationId', { organizationId });
+
+    if (clientId)
+      queryBuilder.andWhere('clients.id = :clientId', {
+        clientId,
+      });
+
+    const clients = await queryBuilder.getMany();
+
+    if (clients.length === 0) return undefined;
+
+    return clients.map((client) => {
+      return {
+        id: client.id,
+        name: client.name,
+        organizationId: client.organizationId,
+        registrationId: client.registrationId,
+        createdAt: client.createdAt,
+        updatedAt: client.updatedAt,
+      };
+    });
   }
   async create(
     name: string,

@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientEntity } from '../../domain/entities/Client.entity';
 import { ClientNotFoundError } from '../../domain/errors';
 import { ClientRepository } from '../../domain/repositories/ClientRepository';
-import { OrganizationRepository } from '../../domain/repositories/OrganizationRepository';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
