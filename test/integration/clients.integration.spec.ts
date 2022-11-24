@@ -62,5 +62,5 @@ describe('clients', () => {
       .expect(201);
 
     expect(bodyOfCreateClientRequest.id).toBeDefined();
-  }, 999999999);
+  });
 });
