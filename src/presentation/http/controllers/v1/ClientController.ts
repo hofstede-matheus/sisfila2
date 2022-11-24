@@ -33,13 +33,15 @@ export class ClientController {
     return { id: result.value };
   }
 
-  @Get(':clientId')
+  @Get(':clientId/organizations/:organizationId')
   @ApiResponse({ type: Client })
-  async getOnByAdmin(
+  async getOne(
     @Param('clientId') clientId: string,
+    @Param('organizationId') organizationId: string,
     @Req() request: Request,
   ): Promise<Client> {
     const result = await this.findOneOrAllClientsUsecase.execute({
+      organizationId,
       clientId,
       userId: request.user.sub,
     });
@@ -56,15 +58,38 @@ export class ClientController {
     };
   }
 
-  @Get(':clientId/organizations/:organizationId')
-  @ApiResponse({ type: Client })
-  async getOne(
-    @Param('clientId') clientId: string,
+  @Get('organizations/:organizationId')
+  @ApiResponse({ type: [Client] })
+  async getAll(
     @Param('organizationId') organizationId: string,
+    @Req() request: Request,
+  ): Promise<Client[]> {
+    const result = await this.findOneOrAllClientsUsecase.execute({
+      organizationId,
+      userId: request.user.sub,
+    });
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    const clients: Client[] = result.value.map((client) => ({
+      id: client.id,
+      name: client.name,
+      createdAt: client.createdAt,
+      updatedAt: client.updatedAt,
+      organizationId: client.organizationId,
+      registrationId: client.registrationId,
+    }));
+
+    return clients;
+  }
+
+  @Get(':clientId')
+  @ApiResponse({ type: Client })
+  async getOnByAdmin(
+    @Param('clientId') clientId: string,
     @Req() request: Request,
   ): Promise<Client> {
     const result = await this.findOneOrAllClientsUsecase.execute({
-      organizationId,
       clientId,
       userId: request.user.sub,
     });

@@ -57,7 +57,7 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 400);
 
     case ClientAlreadyExistsError:
-      return new PresentationException(error, 400);
+      return new PresentationException(error, 409);
 
     case ClientNotFoundError:
       return new PresentationException(error, 404);

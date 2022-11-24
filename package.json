@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:unit": "jest --config ./test/jest-unit.json",
+    "test:unit": "jest --config ./test/jest-unit.json --runInBand",
     "test:integration": "jest --config ./test/jest-integration.json --runInBand --forceExit",
     "typeorm:cli": "ts-node ./node_modules/typeorm/cli.js",
     "typeorm:cli:migration:create": "ts-node ./node_modules/typeorm/cli.js migration:create"
