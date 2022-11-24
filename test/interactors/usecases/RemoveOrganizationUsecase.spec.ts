@@ -1,17 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  OrganizationCodeAlreadyUsedError,
-  InvalidCodeError,
-  InvalidIdError,
-  InvalidNameError,
-} from '../../../src/domain/errors';
+import { InvalidIdError } from '../../../src/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
   VALID_ORGANIZATION,
 } from '../../helpers';
 import { OrganizationRepository } from '../../../src/domain/repositories/OrganizationRepository';
-import { UpdateOrganizationUsecase } from '../../../src/interactors/usecases/UpdateOrganizationUsecase';
 import { RemoveOrganizationUsecase } from '../../../src/interactors/usecases/RemoveOrganizationUsecase';
 
 describe('UpdateOrganizationUsecase', () => {

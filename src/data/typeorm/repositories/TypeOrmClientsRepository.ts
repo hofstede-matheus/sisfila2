@@ -9,6 +9,9 @@ export class TypeOrmClientsRepository implements ClientRepository {
     @InjectRepository(Client)
     private readonly clientsRepository: Repository<Client>,
   ) {}
+  remove(id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   async findOneByIdOrAllAsAdmin({
     clientId,
   }: {

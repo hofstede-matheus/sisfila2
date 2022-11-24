@@ -25,6 +25,7 @@ export interface ClientRepository {
     userId?: string;
     clientId?: string;
   }): Promise<ClientEntity[] | undefined>;
+  remove(id: string): Promise<void>;
 }
 
 export const ClientRepository = Symbol('ClientRepository');
