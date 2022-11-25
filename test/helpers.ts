@@ -112,7 +112,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findByRegistrationIdFromOrganization: jest.fn(),
       findOneByIdOrAllAsAdmin: jest.fn(),
       findOneByIdOrAllAsUser: jest.fn(),
-      remove: jest.fn(),
+      removeAsUser: jest.fn(),
+      removeAsAdmin: jest.fn(),
     } as ClientRepository,
   },
 ];

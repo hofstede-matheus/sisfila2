@@ -10,6 +10,7 @@ import { TypeOrmClientsRepository } from '../data/typeorm/repositories/TypeOrmCl
 import { ClientRepository } from '../domain/repositories/ClientRepository';
 import { CreateClientUsecase } from '../interactors/usecases/CreateClientUsecase';
 import { FindOneOrAllClientsUsecase } from '../interactors/usecases/FindOneOrAllClientsUsecase';
+import { RemoveClientUsecase } from '../interactors/usecases/RemoveClientUsecase';
 import { ClientController } from '../presentation/http/controllers/v1/ClientController';
 import { AuthenticationMiddleware } from '../presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from './common.module';
@@ -30,6 +31,10 @@ import { UsersModule } from './users.module';
     {
       provide: FindOneOrAllClientsUsecase,
       useClass: FindOneOrAllClientsUsecase,
+    },
+    {
+      provide: RemoveClientUsecase,
+      useClass: RemoveClientUsecase,
     },
   ],
   exports: [ClientRepository],

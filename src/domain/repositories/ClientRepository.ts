@@ -20,12 +20,30 @@ export interface ClientRepository {
   findOneByIdOrAllAsUser({
     organizationId,
     userId,
+    clientId,
   }: {
     organizationId?: string;
     userId?: string;
     clientId?: string;
   }): Promise<ClientEntity[] | undefined>;
-  remove(id: string): Promise<void>;
+  removeAsUser({
+    organizationId,
+    userId,
+    clientId,
+  }: {
+    organizationId?: string;
+    userId?: string;
+    clientId?: string;
+  }): Promise<void>;
+
+  removeAsAdmin({
+    organizationId,
+    clientId,
+  }: {
+    organizationId?: string;
+    userId?: string;
+    clientId?: string;
+  }): Promise<void>;
 }
 
 export const ClientRepository = Symbol('ClientRepository');

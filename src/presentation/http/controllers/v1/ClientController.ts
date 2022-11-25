@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { toPresentationError } from '../../errors';
 import { CreateClientUsecase } from '../../../../interactors/usecases/CreateClientUsecase';
@@ -9,12 +17,14 @@ import {
 import { Client } from '../../dto/_shared';
 import { FindOneOrAllClientsUsecase } from '../../../../interactors/usecases/FindOneOrAllClientsUsecase';
 import { Request } from 'express';
+import { RemoveClientUsecase } from '../../../../interactors/usecases/RemoveClientUsecase';
 
 @Controller({ path: 'clients', version: '1' })
 export class ClientController {
   constructor(
     private readonly createClientUsecase: CreateClientUsecase,
     private readonly findOneOrAllClientsUsecase: FindOneOrAllClientsUsecase,
+    private readonly removeClientUsecase: RemoveClientUsecase,
   ) {}
 
   @Post()
@@ -104,5 +114,20 @@ export class ClientController {
       organizationId: result.value[0].organizationId,
       registrationId: result.value[0].registrationId,
     };
+  }
+
+  @Delete(':clientId/organizations/:organizationId')
+  async remove(
+    @Param('clientId') clientId: string,
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request,
+  ): Promise<void> {
+    const result = await this.removeClientUsecase.execute({
+      organizationId,
+      clientId,
+      userId: request.user.sub,
+    });
+
+    if (result.isLeft()) throw toPresentationError(result.value);
   }
 }

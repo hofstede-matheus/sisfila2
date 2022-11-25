@@ -9,9 +9,72 @@ export class TypeOrmClientsRepository implements ClientRepository {
     @InjectRepository(Client)
     private readonly clientsRepository: Repository<Client>,
   ) {}
-  remove(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async removeAsAdmin({
+    organizationId,
+    clientId,
+  }: {
+    organizationId?: string;
+    userId?: string;
+    clientId?: string;
+  }): Promise<void> {
+    const queryBuilder = this.clientsRepository
+      .createQueryBuilder('clients')
+      .innerJoin('organizations', 'orgs', 'orgs.id = clients.organization_id')
+      .innerJoin(
+        'users_role_in_organizations',
+        'urio',
+        'urio.organization_id = orgs.id',
+      )
+      .where('orgs.id = :organizationId', { organizationId });
+
+    queryBuilder.andWhere('clients.id = :clientId', {
+      clientId,
+    });
+
+    const client = await queryBuilder.getOne();
+
+    if (client)
+      this.clientsRepository
+        .createQueryBuilder('clients')
+        .delete()
+        .where('clients.id = :clientId', { clientId: client.id })
+        .execute();
   }
+
+  async removeAsUser({
+    organizationId,
+    userId,
+    clientId,
+  }: {
+    organizationId?: string;
+    userId?: string;
+    clientId?: string;
+  }): Promise<void> {
+    const queryBuilder = this.clientsRepository
+      .createQueryBuilder('clients')
+      .innerJoin('organizations', 'orgs', 'orgs.id = clients.organization_id')
+      .innerJoin(
+        'users_role_in_organizations',
+        'urio',
+        'urio.organization_id = orgs.id',
+      )
+      .where('urio.user_id = :userId', { userId })
+      .andWhere('orgs.id = :organizationId', { organizationId });
+
+    queryBuilder.andWhere('clients.id = :clientId', {
+      clientId,
+    });
+
+    const client = await queryBuilder.getOne();
+
+    if (client)
+      this.clientsRepository
+        .createQueryBuilder('clients')
+        .delete()
+        .where('clients.id = :clientId', { clientId: client.id })
+        .execute();
+  }
+
   async findOneByIdOrAllAsAdmin({
     clientId,
   }: {
@@ -86,6 +149,7 @@ export class TypeOrmClientsRepository implements ClientRepository {
       };
     });
   }
+
   async create(
     name: string,
     organizationId: string,
