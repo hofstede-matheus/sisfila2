@@ -58,6 +58,6 @@ export class UsersModule implements NestModule {
           method: RequestMethod.POST,
         },
       )
-      .forRoutes({ path: 'v1/users', method: RequestMethod.ALL });
+      .forRoutes({ path: 'v1/users*', method: RequestMethod.ALL });
   }
 }

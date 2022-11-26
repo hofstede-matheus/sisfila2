@@ -30,7 +30,6 @@ describe('users', () => {
   });
 
   afterEach(async () => {
-    await connectionSource.query(`DELETE FROM users`);
     await connectionSource.query(`DELETE FROM organizations`);
   });
 
@@ -110,7 +109,9 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -155,7 +156,9 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -176,7 +179,9 @@ describe('users', () => {
     const { body: bodyOfSecondGetUserRequest } = await request(
       app.getHttpServer(),
     )
-      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -188,7 +193,6 @@ describe('users', () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
       .post('/v1/users')
-      .set('Authorization', USER.token)
       .send({
         name: VALID_USER.name,
         email: validEmail,
@@ -221,7 +225,9 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -239,22 +245,19 @@ describe('users', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    const { body: bodyOfSecondGetUserRequest } = await request(
-      app.getHttpServer(),
-    )
-      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+    await request(app.getHttpServer())
+      .get(
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
-      .expect(200);
-
-    expect(bodyOfSecondGetUserRequest.id).toBeDefined();
+      .expect(404);
   });
 
   it('shoud be able to unset user role in organization by email', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
       .post('/v1/users')
-      .set('Authorization', USER.token)
       .send({
         name: VALID_USER.name,
         email: validEmail,
@@ -287,7 +290,9 @@ describe('users', () => {
       .expect(200);
 
     const { body: bodyOfGetUserRequest } = await request(app.getHttpServer())
-      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+      .get(
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
       .expect(200);
@@ -305,15 +310,13 @@ describe('users', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    const { body: bodyOfSecondGetUserRequest } = await request(
-      app.getHttpServer(),
-    )
-      .get(`/v1/users/${bodyOfCreateUserRequest.user.id}`)
+    await request(app.getHttpServer())
+      .get(
+        `/v1/users/${bodyOfCreateUserRequest.user.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
       .set('Accept', 'application/json')
-      .expect(200);
-
-    expect(bodyOfSecondGetUserRequest.id).toBeDefined();
+      .expect(404);
   });
 
   // it('shoud be able to authenticate a user with google when creating a new account', async () => {

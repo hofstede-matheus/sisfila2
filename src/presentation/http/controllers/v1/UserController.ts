@@ -131,10 +131,10 @@ export class UserController {
     return;
   }
 
-  @Get(':searchedUserId')
+  @Get(':searchedUserId/organizations/:organizationId')
   @ApiResponse({ type: User })
   @HttpCode(200)
-  async getUser(
+  async getOne(
     @Param('searchedUserId') searchedUserId: string,
     @Param('organizationId') organizationId: string,
     @Req() request: Request,

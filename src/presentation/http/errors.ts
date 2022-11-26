@@ -12,6 +12,7 @@ import {
   InvalidUserTypeError,
   InvalidValueError,
   OrganizationCodeAlreadyUsedError,
+  UserNotFoundError,
 } from '../../domain/errors';
 import { DomainError } from '../../shared/helpers/errors';
 
@@ -60,6 +61,9 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 409);
 
     case ClientNotFoundError:
+      return new PresentationException(error, 404);
+
+    case UserNotFoundError:
       return new PresentationException(error, 404);
 
     default:

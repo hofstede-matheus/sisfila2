@@ -17,24 +17,67 @@ export class TypeOrmUsersRepository implements UserRepository {
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
 
-  findOneOrAllByIdAsAdmin({
+  async findOneOrAllByIdAsAdmin({
     searchedUserId,
   }: {
     searchedUserId?: string;
   }): Promise<UserEntity[]> {
-    throw new Error('Method not implemented.');
+    const users = await this.usersRepository.findBy({ id: searchedUserId });
+
+    const usersEntities: UserEntity[] = users.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        isSuperAdmin: user.isSuperAdmin,
+      };
+    });
+
+    return usersEntities;
   }
 
-  findOneOrAllByIdAsUser({
+  async findOneOrAllByIdAsUser({
     organizationId,
-    userId,
-    clientId,
+    requestingUserId,
+    searchedUserId,
   }: {
     organizationId?: string;
-    userId?: string;
-    clientId?: string;
+    requestingUserId?: string;
+    searchedUserId?: string;
   }): Promise<UserEntity[]> {
-    throw new Error('Method not implemented.');
+    const queryBuilder = this.usersRepository
+      .createQueryBuilder('users')
+      .innerJoin(
+        'users_role_in_organizations',
+        'urio',
+        'urio.user_id = users.id',
+      )
+      .innerJoin('organizations', 'orgs', 'orgs.id = urio.organization_id')
+
+      .where('urio.user_id = :userId', { userId: requestingUserId })
+      .andWhere('orgs.id = :organizationId', { organizationId });
+
+    if (searchedUserId)
+      queryBuilder.andWhere('users.id = :userId', {
+        userId: searchedUserId,
+      });
+
+    const users = await queryBuilder.getMany();
+
+    if (users.length === 0) return undefined;
+
+    return users.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        isSuperAdmin: user.isSuperAdmin,
+      };
+    });
   }
 
   async findOneByIdOrAll(id?: string): Promise<UserEntity[]> {
