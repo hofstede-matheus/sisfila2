@@ -1,11 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OrganizationEntity } from '../../domain/entities/Organization.entity';
 import { UserEntity } from '../../domain/entities/User.entity';
-import {
-  OrganizationNotFoundError,
-  UserNotFoundError,
-} from '../../domain/errors';
-import { OrganizationRepository } from '../../domain/repositories/OrganizationRepository';
+import { UserNotFoundError } from '../../domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
@@ -18,11 +13,33 @@ export class FindOneOrAllUsersUsecase implements UseCase {
     @Inject(UserRepository)
     private userRepository: UserRepository,
   ) {}
-  async execute(id?: string): Promise<Either<DomainError, UserEntity[]>> {
-    const validation = Validator.validate({ id: [id] });
+  async execute({
+    organizationId,
+    requestingUserId,
+    searchedUserId,
+  }: {
+    organizationId?: string;
+    requestingUserId?: string;
+    searchedUserId?: string;
+  }): Promise<Either<DomainError, UserEntity[]>> {
+    const validation = Validator.validate({
+      id: [organizationId, requestingUserId, searchedUserId],
+    });
     if (validation.isLeft()) return left(validation.value);
 
-    const users = await this.userRepository.findOneByIdOrAll(id);
+    const requestingUser = await this.userRepository.findOneOrAllByIdAsAdmin({
+      searchedUserId: requestingUserId,
+    });
+
+    const users = requestingUser[0].isSuperAdmin
+      ? await this.userRepository.findOneOrAllByIdAsAdmin({
+          searchedUserId,
+        })
+      : await this.userRepository.findOneOrAllByIdAsUser({
+          organizationId,
+          requestingUserId,
+          searchedUserId,
+        });
 
     if (!users) return left(new UserNotFoundError());
     return right(users);

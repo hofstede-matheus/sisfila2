@@ -38,7 +38,7 @@ describe('FindOneOrAllClientsUsecase', () => {
     jest.clearAllMocks();
   });
 
-  it('should not be able to find an client with invalid id', async () => {
+  it('should not be able to find an client with invalid organization id', async () => {
     const response = await useCase.execute({
       organizationId: 'invalid_id',
       userId: VALID_USER.id,
@@ -58,7 +58,7 @@ describe('FindOneOrAllClientsUsecase', () => {
     expect(response.value).toBeInstanceOf(InvalidIdError);
   });
 
-  it('should not be able to find an client with invalid user id', async () => {
+  it('should not be able to find an client with invalid client id', async () => {
     const response = await useCase.execute({
       organizationId: VALID_ORGANIZATION.id,
       userId: VALID_USER.id,
@@ -98,7 +98,7 @@ describe('FindOneOrAllClientsUsecase', () => {
     jest
       .spyOn(userRepository, 'findOneByIdOrAll')
       .mockImplementation(async () => {
-        return [{ ...VALID_USER, isSuperAdmin: false }];
+        return [{ ...VALID_USER, isSuperAdmin: true }];
       });
 
     const response = await useCase.execute({
@@ -127,13 +127,13 @@ describe('FindOneOrAllClientsUsecase', () => {
       clientId: VALID_CLIENT.id,
     });
 
-    expect(clientRepository.findOneByIdOrAllAsUser).toBeCalledTimes(1);
+    expect(clientRepository.findOneOrAllByIdAsUser).toBeCalledTimes(1);
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as ClientEntity[]).length).toBe(1);
   });
 
-  it('should find one organization data as admin', async () => {
+  it('should find one client data as admin', async () => {
     jest
       .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
       .mockImplementation(async () => {
@@ -151,13 +151,13 @@ describe('FindOneOrAllClientsUsecase', () => {
       userId: VALID_USER.id,
     });
 
-    expect(clientRepository.findOneByIdOrAllAsAdmin).toBeCalledTimes(1);
+    expect(clientRepository.findOneOrAllByIdAsAdmin).toBeCalledTimes(1);
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as ClientEntity[]).length).toBe(1);
   });
 
-  it('should find all organizations data as user', async () => {
+  it('should find all client data as user', async () => {
     jest
       .spyOn(clientRepository, 'findOneByIdOrAllAsUser')
       .mockImplementation(async () => {
@@ -172,13 +172,13 @@ describe('FindOneOrAllClientsUsecase', () => {
 
     const response = await useCase.execute({ userId: VALID_USER.id });
 
-    expect(clientRepository.findOneByIdOrAllAsUser).toBeCalled();
+    expect(clientRepository.findOneOrAllByIdAsUser).toBeCalled();
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as ClientEntity[]).length).toBe(2);
   });
 
-  it('should find all organizations data as admin', async () => {
+  it('should find all client data as admin', async () => {
     jest
       .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
       .mockImplementation(async () => {
@@ -193,7 +193,7 @@ describe('FindOneOrAllClientsUsecase', () => {
 
     const response = await useCase.execute({ userId: VALID_USER.id });
 
-    expect(clientRepository.findOneByIdOrAllAsAdmin).toBeCalled();
+    expect(clientRepository.findOneOrAllByIdAsAdmin).toBeCalled();
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as ClientEntity[]).length).toBe(2);

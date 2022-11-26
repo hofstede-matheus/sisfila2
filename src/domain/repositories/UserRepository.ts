@@ -9,6 +9,21 @@ export interface UserRepository {
     role: UserEntityTypes | undefined,
   ): Promise<void>;
   findOneByIdOrAll(id?: string): Promise<UserEntity[] | undefined>;
+  findOneOrAllByIdAsAdmin({
+    searchedUserId,
+  }: {
+    searchedUserId?: string;
+  }): Promise<UserEntity[] | undefined>;
+
+  findOneOrAllByIdAsUser({
+    organizationId,
+    requestingUserId,
+    searchedUserId,
+  }: {
+    organizationId?: string;
+    requestingUserId?: string;
+    searchedUserId?: string;
+  }): Promise<UserEntity[] | undefined>;
 }
 
 export const UserRepository = Symbol('UserRepository');

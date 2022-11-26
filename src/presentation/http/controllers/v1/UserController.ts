@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { UserEntityTypes } from '../../../../domain/entities/User.entity';
@@ -23,6 +24,7 @@ import { CreateUserResponse, CreateUserRequest } from '../../dto/CreateUser';
 import { SetUserRoleInOrganizationRequest } from '../../dto/SetUserRoleInOrganization';
 import { User } from '../../dto/_shared';
 import { toPresentationError } from '../../errors';
+import { Request } from 'express';
 
 @Controller({ path: 'users', version: '1' })
 export class UserController {
@@ -129,11 +131,19 @@ export class UserController {
     return;
   }
 
-  @Get(':userId')
+  @Get(':searchedUserId')
   @ApiResponse({ type: User })
   @HttpCode(200)
-  async getUser(@Param('userId') userId: string): Promise<User> {
-    const result = await this.findOneOrAllUsersUsecase.execute(userId);
+  async getUser(
+    @Param('searchedUserId') searchedUserId: string,
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request,
+  ): Promise<User> {
+    const result = await this.findOneOrAllUsersUsecase.execute({
+      organizationId,
+      requestingUserId: request.user.sub,
+      searchedUserId,
+    });
 
     if (result.isLeft()) throw toPresentationError(result.value);
 

@@ -70,6 +70,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findByEmail: jest.fn(),
       setUserRoleInOrganization: jest.fn(),
       findOneByIdOrAll: jest.fn(),
+      findOneOrAllByIdAsAdmin: jest.fn(),
+      findOneOrAllByIdAsUser: jest.fn(),
     } as UserRepository,
   },
   {
@@ -110,8 +112,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
     useValue: {
       create: jest.fn(),
       findByRegistrationIdFromOrganization: jest.fn(),
-      findOneByIdOrAllAsAdmin: jest.fn(),
-      findOneByIdOrAllAsUser: jest.fn(),
+      findOneOrAllByIdAsAdmin: jest.fn(),
+      findOneOrAllByIdAsUser: jest.fn(),
       removeAsUser: jest.fn(),
       removeAsAdmin: jest.fn(),
     } as ClientRepository,

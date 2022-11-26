@@ -75,7 +75,7 @@ export class TypeOrmClientsRepository implements ClientRepository {
         .execute();
   }
 
-  async findOneByIdOrAllAsAdmin({
+  async findOneOrAllByIdAsAdmin({
     clientId,
   }: {
     clientId?: string;
@@ -109,7 +109,7 @@ export class TypeOrmClientsRepository implements ClientRepository {
       };
     });
   }
-  async findOneByIdOrAllAsUser({
+  async findOneOrAllByIdAsUser({
     organizationId,
     userId,
     clientId,

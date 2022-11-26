@@ -12,12 +12,13 @@ export interface ClientRepository {
     registrationId: string,
   ): Promise<ClientEntity | undefined>;
 
-  findOneByIdOrAllAsAdmin({
+  findOneOrAllByIdAsAdmin({
     clientId,
   }: {
     clientId?: string;
   }): Promise<ClientEntity[] | undefined>;
-  findOneByIdOrAllAsUser({
+
+  findOneOrAllByIdAsUser({
     organizationId,
     userId,
     clientId,
@@ -26,6 +27,7 @@ export interface ClientRepository {
     userId?: string;
     clientId?: string;
   }): Promise<ClientEntity[] | undefined>;
+
   removeAsUser({
     organizationId,
     userId,

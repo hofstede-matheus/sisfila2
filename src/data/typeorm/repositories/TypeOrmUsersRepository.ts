@@ -16,6 +16,27 @@ export class TypeOrmUsersRepository implements UserRepository {
     @InjectRepository(Organization)
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
+
+  findOneOrAllByIdAsAdmin({
+    searchedUserId,
+  }: {
+    searchedUserId?: string;
+  }): Promise<UserEntity[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  findOneOrAllByIdAsUser({
+    organizationId,
+    userId,
+    clientId,
+  }: {
+    organizationId?: string;
+    userId?: string;
+    clientId?: string;
+  }): Promise<UserEntity[]> {
+    throw new Error('Method not implemented.');
+  }
+
   async findOneByIdOrAll(id?: string): Promise<UserEntity[]> {
     const users = await this.usersRepository.findBy({ id });
 

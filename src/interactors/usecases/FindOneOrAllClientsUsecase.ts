@@ -33,10 +33,10 @@ export class FindOneOrAllClientsUsecase implements UseCase {
     const user = await this.userRepository.findOneByIdOrAll(userId);
 
     const clients = user[0].isSuperAdmin
-      ? await this.clientRepository.findOneByIdOrAllAsAdmin({
+      ? await this.clientRepository.findOneOrAllByIdAsAdmin({
           clientId,
         })
-      : await this.clientRepository.findOneByIdOrAllAsUser({
+      : await this.clientRepository.findOneOrAllByIdAsUser({
           organizationId,
           userId,
           clientId,
