@@ -49,7 +49,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
 
   it('should not be able to find an organization that does not exists', async () => {
     jest
-      .spyOn(organizationRepository, 'findOneByIdOrAllAsUser')
+      .spyOn(organizationRepository, 'findOneOrAllByIdAsUser')
       .mockImplementation(async () => {
         return undefined;
       });
@@ -69,7 +69,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
 
   it('should find one organization data as user', async () => {
     jest
-      .spyOn(organizationRepository, 'findOneByIdOrAllAsUser')
+      .spyOn(organizationRepository, 'findOneOrAllByIdAsUser')
       .mockImplementation(async () => {
         return [
           {
@@ -93,7 +93,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
       userId: VALID_USER.id,
     });
 
-    expect(organizationRepository.findOneByIdOrAllAsUser).toBeCalledTimes(1);
+    expect(organizationRepository.findOneOrAllByIdAsUser).toBeCalledTimes(1);
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as OrganizationEntity[]).length).toBe(1);
@@ -101,7 +101,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
 
   it('should find one organization data as admin', async () => {
     jest
-      .spyOn(organizationRepository, 'findOneByIdOrAllAsAdmin')
+      .spyOn(organizationRepository, 'findOneOrAllByIdAsAdmin')
       .mockImplementation(async () => {
         return [
           {
@@ -125,7 +125,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
       userId: VALID_USER.id,
     });
 
-    expect(organizationRepository.findOneByIdOrAllAsAdmin).toBeCalledTimes(1);
+    expect(organizationRepository.findOneOrAllByIdAsAdmin).toBeCalledTimes(1);
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as OrganizationEntity[]).length).toBe(1);
@@ -133,7 +133,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
 
   it('should find all organizations data as user', async () => {
     jest
-      .spyOn(organizationRepository, 'findOneByIdOrAllAsUser')
+      .spyOn(organizationRepository, 'findOneOrAllByIdAsUser')
       .mockImplementation(async () => {
         return [
           {
@@ -161,7 +161,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
 
     const response = await useCase.execute({ userId: VALID_USER.id });
 
-    expect(organizationRepository.findOneByIdOrAllAsUser).toBeCalled();
+    expect(organizationRepository.findOneOrAllByIdAsUser).toBeCalled();
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as OrganizationEntity[]).length).toBe(2);
@@ -169,7 +169,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
 
   it('should find all organizations data as admin', async () => {
     jest
-      .spyOn(organizationRepository, 'findOneByIdOrAllAsAdmin')
+      .spyOn(organizationRepository, 'findOneOrAllByIdAsAdmin')
       .mockImplementation(async () => {
         return [
           {
@@ -197,7 +197,7 @@ describe('FindOneOrAllOrganizationsUsecase', () => {
 
     const response = await useCase.execute({ userId: VALID_USER.id });
 
-    expect(organizationRepository.findOneByIdOrAllAsAdmin).toBeCalled();
+    expect(organizationRepository.findOneOrAllByIdAsAdmin).toBeCalled();
 
     expect(response.isRight()).toBeTruthy();
     expect((response.value as OrganizationEntity[]).length).toBe(2);

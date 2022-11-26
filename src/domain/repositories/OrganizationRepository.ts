@@ -3,12 +3,12 @@ import { OrganizationEntity } from '../entities/Organization.entity';
 export interface OrganizationRepository {
   create(name: string, code: string): Promise<string>;
   findByCode(code: string): Promise<OrganizationEntity | undefined>;
-  findOneByIdOrAllAsAdmin({
+  findOneOrAllByIdAsAdmin({
     organizationId,
   }: {
     organizationId?: string;
   }): Promise<OrganizationEntity[] | undefined>;
-  findOneByIdOrAllAsUser({
+  findOneOrAllByIdAsUser({
     organizationId,
     userId,
   }: {

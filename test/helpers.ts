@@ -81,8 +81,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findByCode: jest.fn(),
       update: jest.fn(),
       remove: jest.fn(),
-      findOneByIdOrAllAsAdmin: jest.fn(),
-      findOneByIdOrAllAsUser: jest.fn(),
+      findOneOrAllByIdAsAdmin: jest.fn(),
+      findOneOrAllByIdAsUser: jest.fn(),
     } as OrganizationRepository,
   },
   {

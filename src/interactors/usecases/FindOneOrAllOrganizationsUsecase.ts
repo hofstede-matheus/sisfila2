@@ -29,10 +29,10 @@ export class FindOneOrAllOrganizationsUsecase implements UseCase {
     const user = await this.userRepository.findOneByIdOrAll(userId);
 
     const organizations = user[0].isSuperAdmin
-      ? await this.organizationRepository.findOneByIdOrAllAsAdmin({
+      ? await this.organizationRepository.findOneOrAllByIdAsAdmin({
           organizationId,
         })
-      : await this.organizationRepository.findOneByIdOrAllAsUser({
+      : await this.organizationRepository.findOneOrAllByIdAsUser({
           organizationId,
           userId,
         });

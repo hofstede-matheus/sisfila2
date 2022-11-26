@@ -10,7 +10,7 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
 
-  async findOneByIdOrAllAsAdmin({
+  async findOneOrAllByIdAsAdmin({
     organizationId,
   }: {
     organizationId?: string;
@@ -31,7 +31,7 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
 
     return organizationsEntity;
   }
-  async findOneByIdOrAllAsUser({
+  async findOneOrAllByIdAsUser({
     organizationId,
     userId,
   }: {

@@ -70,7 +70,7 @@ describe('FindOneOrAllClientsUsecase', () => {
 
   it('should not be able to find an client that does not exists as user', async () => {
     jest
-      .spyOn(clientRepository, 'findOneByIdOrAllAsUser')
+      .spyOn(clientRepository, 'findOneOrAllByIdAsUser')
       .mockImplementation(async () => {
         return undefined;
       });
@@ -90,7 +90,7 @@ describe('FindOneOrAllClientsUsecase', () => {
 
   it('should not be able to find an client that does not exists as admin', async () => {
     jest
-      .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
+      .spyOn(clientRepository, 'findOneOrAllByIdAsAdmin')
       .mockImplementation(async () => {
         return undefined;
       });
@@ -110,7 +110,7 @@ describe('FindOneOrAllClientsUsecase', () => {
 
   it('should find one client data as user', async () => {
     jest
-      .spyOn(clientRepository, 'findOneByIdOrAllAsUser')
+      .spyOn(clientRepository, 'findOneOrAllByIdAsUser')
       .mockImplementation(async () => {
         return [VALID_CLIENT];
       });
@@ -135,7 +135,7 @@ describe('FindOneOrAllClientsUsecase', () => {
 
   it('should find one client data as admin', async () => {
     jest
-      .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
+      .spyOn(clientRepository, 'findOneOrAllByIdAsAdmin')
       .mockImplementation(async () => {
         return [VALID_CLIENT];
       });
@@ -159,7 +159,7 @@ describe('FindOneOrAllClientsUsecase', () => {
 
   it('should find all client data as user', async () => {
     jest
-      .spyOn(clientRepository, 'findOneByIdOrAllAsUser')
+      .spyOn(clientRepository, 'findOneOrAllByIdAsUser')
       .mockImplementation(async () => {
         return [VALID_CLIENT, VALID_CLIENT];
       });
@@ -180,7 +180,7 @@ describe('FindOneOrAllClientsUsecase', () => {
 
   it('should find all client data as admin', async () => {
     jest
-      .spyOn(clientRepository, 'findOneByIdOrAllAsAdmin')
+      .spyOn(clientRepository, 'findOneOrAllByIdAsAdmin')
       .mockImplementation(async () => {
         return [VALID_CLIENT, VALID_CLIENT];
       });
