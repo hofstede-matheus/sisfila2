@@ -45,13 +45,36 @@ export class ClientController {
 
   @Get(':clientId/organizations/:organizationId')
   @ApiResponse({ type: Client })
-  async getOne(
+  async getOneByUser(
     @Param('clientId') clientId: string,
     @Param('organizationId') organizationId: string,
     @Req() request: Request,
   ): Promise<Client> {
     const result = await this.findOneOrAllClientsUsecase.execute({
       organizationId,
+      clientId,
+      userId: request.user.sub,
+    });
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return {
+      id: result.value[0].id,
+      name: result.value[0].name,
+      createdAt: result.value[0].createdAt,
+      updatedAt: result.value[0].updatedAt,
+      organizationId: result.value[0].organizationId,
+      registrationId: result.value[0].registrationId,
+    };
+  }
+
+  @Get(':clientId')
+  @ApiResponse({ type: Client })
+  async getOneByAdmin(
+    @Param('clientId') clientId: string,
+    @Req() request: Request,
+  ): Promise<Client> {
+    const result = await this.findOneOrAllClientsUsecase.execute({
       clientId,
       userId: request.user.sub,
     });
@@ -91,29 +114,6 @@ export class ClientController {
     }));
 
     return clients;
-  }
-
-  @Get(':clientId')
-  @ApiResponse({ type: Client })
-  async getOnByAdmin(
-    @Param('clientId') clientId: string,
-    @Req() request: Request,
-  ): Promise<Client> {
-    const result = await this.findOneOrAllClientsUsecase.execute({
-      clientId,
-      userId: request.user.sub,
-    });
-
-    if (result.isLeft()) throw toPresentationError(result.value);
-
-    return {
-      id: result.value[0].id,
-      name: result.value[0].name,
-      createdAt: result.value[0].createdAt,
-      updatedAt: result.value[0].updatedAt,
-      organizationId: result.value[0].organizationId,
-      registrationId: result.value[0].registrationId,
-    };
   }
 
   @Delete(':clientId/organizations/:organizationId')
