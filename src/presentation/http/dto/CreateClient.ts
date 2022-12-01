@@ -12,7 +12,7 @@ export class CreateClientRequest {
   organizationId: string;
 
   @ApiProperty({
-    example: 'valid_uuid',
+    example: '04859541847',
   })
   registrationId: string;
 }
