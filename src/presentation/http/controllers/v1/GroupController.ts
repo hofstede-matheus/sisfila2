@@ -13,7 +13,7 @@ import { toPresentationError } from '../../errors';
 import { FindOneOrAllGroupsUsecase } from '../../../../interactors/usecases/FindOneOrAllGroupsUsecase';
 import { Request } from 'express';
 import { CreateGroupRequest, CreateGroupResponse } from '../../dto/CreateGroup';
-import { importClientsRequest } from '../../dto/ImportClients';
+import { ImportClientsRequest } from '../../dto/ImportClients';
 import { string } from 'joi';
 
 @Controller({ path: 'groups', version: '1' })
@@ -54,7 +54,7 @@ export class GroupController {
 
   @Post('import')
   async importClients(
-    @Body() body: importClientsRequest,
+    @Body() body: ImportClientsRequest,
     @Req() request: Request,
   ): Promise<Group[]> {
     const userId = request.user.sub;
