@@ -13,6 +13,7 @@ import {
   InvalidValueError,
   OrganizationCodeAlreadyUsedError,
   UserNotFoundError,
+  UserNotFromOrganizationError,
 } from '../../domain/errors';
 import { DomainError } from '../../shared/helpers/errors';
 
@@ -65,6 +66,9 @@ export function toPresentationError(error: DomainError): HttpException {
 
     case UserNotFoundError:
       return new PresentationException(error, 404);
+
+    case UserNotFromOrganizationError:
+      return new PresentationException(error, 401);
 
     default:
       console.error('ERROR NOT MAPPED', error);

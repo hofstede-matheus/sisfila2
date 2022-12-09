@@ -3,11 +3,14 @@ import { Either, left, right } from '../../shared/helpers/either';
 import { staticImplements, DomainEntity } from '../../shared/helpers/entity';
 import { DomainError } from '../../shared/helpers/errors';
 import { InvalidNameError } from '../errors';
+import { ClientEntity } from './Client.entity';
 
 export interface GroupEntity {
   readonly id: string;
   readonly name: string;
   readonly organizationId: string;
+
+  readonly clients: ClientEntity[];
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

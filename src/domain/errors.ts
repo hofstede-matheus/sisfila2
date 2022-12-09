@@ -41,3 +41,5 @@ export class GroupNotFoundError extends DomainError {}
 export class ClientAlreadyExistsError extends DomainError {}
 
 export class ClientNotFoundError extends DomainError {}
+
+export class UserNotFromOrganizationError extends DomainError {}

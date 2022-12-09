@@ -12,6 +12,10 @@ export interface ClientRepository {
     registrationId: string,
   ): Promise<ClientEntity | undefined>;
 
+  findManyIdsByRegistrationIds(
+    registrationId: string[],
+  ): Promise<string[] | undefined>;
+
   findOneOrAllByIdAsAdmin({
     clientId,
   }: {

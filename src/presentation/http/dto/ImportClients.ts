@@ -8,4 +8,7 @@ export class ImportClientsRequest {
 
   @ApiProperty({ example: 'valid_uuid' })
   groupId: string;
+
+  @ApiProperty({ example: 'valid_uuid' })
+  organizationId: string;
 }

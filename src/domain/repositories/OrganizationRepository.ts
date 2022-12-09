@@ -17,6 +17,10 @@ export interface OrganizationRepository {
   }): Promise<OrganizationEntity[] | undefined>;
   update(id: string, name?: string, code?: string): Promise<void>;
   remove(id: string): Promise<void>;
+  checkIfUserIsFromOrganization(
+    organizationId: string,
+    userId: string,
+  ): Promise<boolean>;
 }
 
 export const OrganizationRepository = Symbol('OrganizationRepository');

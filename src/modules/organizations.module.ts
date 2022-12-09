@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   MiddlewareConsumer,
   Module,
   NestModule,
@@ -24,10 +25,10 @@ import { UsersModule } from './users.module';
   imports: [
     CommonModule,
     TypeOrmModule.forFeature([Organization]),
-    UsersModule,
-    ServicesModule,
-    QueuesModule,
-    GroupsModule,
+    forwardRef(() => UsersModule),
+    forwardRef(() => ServicesModule),
+    forwardRef(() => QueuesModule),
+    forwardRef(() => GroupsModule),
   ],
   controllers: [OrganizationController],
   providers: [

@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  NotImplementedException,
-  Param,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { Group } from '../../dto/_shared';
 import { toPresentationError } from '../../errors';
@@ -14,12 +6,15 @@ import { FindOneOrAllGroupsUsecase } from '../../../../interactors/usecases/Find
 import { Request } from 'express';
 import { CreateGroupRequest, CreateGroupResponse } from '../../dto/CreateGroup';
 import { ImportClientsRequest } from '../../dto/ImportClients';
-import { string } from 'joi';
+import { CreateGroupUsecase } from '../../../../interactors/usecases/CreateGroupUsecase';
+import { ImportClientsToGroupUsecase } from '../../../../interactors/usecases/ImportClientsToGroupUsecase';
 
 @Controller({ path: 'groups', version: '1' })
 export class GroupController {
   constructor(
     private readonly findOneOrAllGroupsUsecase: FindOneOrAllGroupsUsecase,
+    private readonly createGroupUsecase: CreateGroupUsecase,
+    private readonly importClientsToGroupUsecase: ImportClientsToGroupUsecase,
   ) {}
 
   @Get('organizations/:id')
@@ -29,13 +24,14 @@ export class GroupController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    const mappedGroups: Group[] = result.value.map((service) => {
+    const mappedGroups: Group[] = result.value.map((group) => {
       return {
-        id: service.id,
-        name: service.name,
-        organizationId: service.organizationId,
-        createdAt: service.createdAt,
-        updatedAt: service.updatedAt,
+        id: group.id,
+        name: group.name,
+        organizationId: group.organizationId,
+        createdAt: group.createdAt,
+        updatedAt: group.updatedAt,
+        clients: group.clients,
       };
     });
     return mappedGroups;
@@ -46,19 +42,36 @@ export class GroupController {
   async create(
     @Body() body: CreateGroupRequest,
     @Req() request: Request,
-  ): Promise<Group[]> {
+  ): Promise<CreateGroupResponse> {
     const userId = request.user.sub;
 
-    throw new Error('Method not implemented.');
+    const result = await this.createGroupUsecase.execute(
+      body.name,
+      body.organizationId,
+      userId,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return { id: result.value };
   }
 
   @Post('import')
   async importClients(
     @Body() body: ImportClientsRequest,
     @Req() request: Request,
-  ): Promise<Group[]> {
+  ): Promise<void> {
     const userId = request.user.sub;
 
-    throw new Error('Method not implemented.');
+    const result = await this.importClientsToGroupUsecase.execute(
+      userId,
+      body.groupId,
+      body.organizationId,
+      body.clients,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return;
   }
 }

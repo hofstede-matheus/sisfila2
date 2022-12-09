@@ -9,6 +9,21 @@ export class TypeOrmClientsRepository implements ClientRepository {
     @InjectRepository(Client)
     private readonly clientsRepository: Repository<Client>,
   ) {}
+  async findManyIdsByRegistrationIds(
+    registrationId: string[],
+  ): Promise<string[]> {
+    const clientsFromDatabase = await this.clientsRepository.query(
+      `
+      select id from clients where registration_id = ANY($1)
+      `,
+      [registrationId],
+    );
+    const mappedClients = clientsFromDatabase.map((client) => {
+      return client.id;
+    });
+
+    return mappedClients;
+  }
   async removeAsAdmin({
     organizationId,
     clientId,

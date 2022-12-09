@@ -9,6 +9,22 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
     @InjectRepository(Organization)
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
+  async checkIfUserIsFromOrganization(
+    organizationId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const user = await this.organizationsRepository.query(
+      `
+      SELECT id
+      FROM users_role_in_organizations
+      WHERE user_id = $1
+      AND organization_id = $2
+    `,
+      [userId, organizationId],
+    );
+
+    return user.length === 1;
+  }
 
   async findOneOrAllByIdAsAdmin({
     organizationId,
