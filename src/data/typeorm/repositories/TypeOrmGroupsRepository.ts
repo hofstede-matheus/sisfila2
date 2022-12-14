@@ -17,7 +17,7 @@ export class TypeOrmGroupsRepository implements GroupRepository {
     clientsIds: string[],
   ): Promise<void> {
     for (const clientId of clientsIds) {
-      this.groupsRepository.query(
+      await this.groupsRepository.query(
         `INSERT INTO clients_in_groups (client_id, group_id) VALUES ($1, $2)`,
         [clientId, groupId],
       );

@@ -9,6 +9,11 @@ export class TypeOrmClientsRepository implements ClientRepository {
     @InjectRepository(Client)
     private readonly clientsRepository: Repository<Client>,
   ) {}
+
+  async attachClientToQueue(clientId: string, queueId: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   async findManyIdsByRegistrationIds(
     registrationId: string[],
   ): Promise<string[]> {

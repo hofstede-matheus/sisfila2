@@ -52,7 +52,7 @@ export class ImportClientsToGroupUsecase implements UseCase {
     for (const client of newClientsToGroup) {
       const newClient = await this.clientRepository.create(
         client.name,
-        client.registrationId,
+        client.organizationId,
         client.registrationId,
       );
       newClientsIds.push(newClient.id);
@@ -64,7 +64,7 @@ export class ImportClientsToGroupUsecase implements UseCase {
         clients.map((client) => client.registrationId),
       );
 
-    this.groupRepository.attachClientsToGroup(groupId, [
+    await this.groupRepository.attachClientsToGroup(groupId, [
       ...newClientsIds,
       ...clientsIdsInDatabase,
     ]);

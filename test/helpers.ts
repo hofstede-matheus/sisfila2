@@ -99,6 +99,10 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findByOrganizationId: jest.fn(),
       findByServiceId: jest.fn(),
       create: jest.fn(),
+      attachGroupToQueue: jest.fn(),
+      attachGroupsToQueue: jest.fn(),
+      attachClientToQueue: jest.fn(),
+      findById: jest.fn(),
     } as QueueRepository,
   },
   {
@@ -119,6 +123,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       removeAsUser: jest.fn(),
       removeAsAdmin: jest.fn(),
       findManyIdsByRegistrationIds: jest.fn(),
+      attachClientToQueue: jest.fn(),
     } as ClientRepository,
   },
 ];

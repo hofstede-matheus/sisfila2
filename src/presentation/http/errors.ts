@@ -3,6 +3,7 @@ import {
   ClientAlreadyExistsError,
   ClientNotFoundError,
   EmailAlreadyExistsError,
+  InvalidClientError,
   InvalidCodeError,
   InvalidCredentialsError,
   InvalidEmailError,
@@ -68,6 +69,9 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 404);
 
     case UserNotFromOrganizationError:
+      return new PresentationException(error, 401);
+
+    case InvalidClientError:
       return new PresentationException(error, 401);
 
     default:

@@ -8,11 +8,11 @@ import {
 } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
 import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
-import { CreateGroupRequest } from '../../src/presentation/http/dto/CreateGroup';
 import { CreateClientRequest } from '../../src/presentation/http/dto/CreateClient';
+import { CreateGroupRequest } from '../../src/presentation/http/dto/CreateGroup';
 import { ImportClientsRequest } from '../../src/presentation/http/dto/ImportClients';
 
-describe('groups', () => {
+describe('queue', () => {
   let app: INestApplication;
   let USER: { token: string; email: string; id: string };
   let USER2: { token: string; email: string; id: string };
@@ -39,9 +39,10 @@ describe('groups', () => {
     await connectionSource.query(`DELETE FROM organizations`);
     await connectionSource.query(`DELETE FROM clients`);
     await connectionSource.query(`DELETE FROM groups`);
+    await connectionSource.query(`DELETE FROM queues`);
   });
 
-  it('shoud be able to create group', async () => {
+  it('client should be able to enter queue', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
@@ -53,98 +54,6 @@ describe('groups', () => {
       } as CreateOrganizationRequest)
       .set('Accept', 'application/json')
       .expect(201);
-
-    expect(bodyOfCreateOrganizationRequest.id).toBeDefined();
-
-    await request(app.getHttpServer())
-      .patch(
-        `/v1/users/${USER.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
-      )
-      .set('Authorization', USER.token)
-      .send({
-        role: 'TYPE_COORDINATOR',
-      })
-      .set('Accept', 'application/json')
-      .expect(200);
-
-    const { body: bodyOfCreateGroupRequest } = await request(
-      app.getHttpServer(),
-    )
-      .post('/v1/groups')
-      .set('Authorization', USER.token)
-      .send({
-        name: VALID_CLIENT.name,
-        organizationId: bodyOfCreateOrganizationRequest.id,
-      } as CreateGroupRequest)
-      .set('Accept', 'application/json')
-      .expect(201);
-
-    expect(bodyOfCreateGroupRequest.id).toBeDefined();
-  });
-
-  it('shoud be able to get group', async () => {
-    const { body: bodyOfCreateOrganizationRequest } = await request(
-      app.getHttpServer(),
-    )
-      .post('/v1/organizations')
-      .set('Authorization', USER.token)
-      .send({
-        name: VALID_ORGANIZATION.name,
-        code: VALID_ORGANIZATION.code,
-      } as CreateOrganizationRequest)
-      .set('Accept', 'application/json')
-      .expect(201);
-
-    expect(bodyOfCreateOrganizationRequest.id).toBeDefined();
-
-    await request(app.getHttpServer())
-      .patch(
-        `/v1/users/${USER.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
-      )
-      .set('Authorization', USER.token)
-      .send({
-        role: 'TYPE_COORDINATOR',
-      })
-      .set('Accept', 'application/json')
-      .expect(200);
-
-    const { body: bodyOfCreateGroupRequest } = await request(
-      app.getHttpServer(),
-    )
-      .post('/v1/groups')
-      .set('Authorization', USER.token)
-      .send({
-        name: VALID_CLIENT.name,
-        organizationId: bodyOfCreateOrganizationRequest.id,
-      } as CreateGroupRequest)
-      .set('Accept', 'application/json')
-      .expect(201);
-
-    expect(bodyOfCreateGroupRequest.id).toBeDefined();
-
-    const { body: bodyOfGetGroupRequest } = await request(app.getHttpServer())
-      .get(`/v1/groups/organizations/${bodyOfCreateOrganizationRequest.id}`)
-      .set('Authorization', USER.token)
-      .set('Accept', 'application/json')
-      .expect(200);
-
-    expect(bodyOfGetGroupRequest[0].id).toBeDefined();
-  });
-
-  it('shoud be able to import clients to group', async () => {
-    const { body: bodyOfCreateOrganizationRequest } = await request(
-      app.getHttpServer(),
-    )
-      .post('/v1/organizations')
-      .set('Authorization', USER.token)
-      .send({
-        name: VALID_ORGANIZATION.name,
-        code: VALID_ORGANIZATION.code,
-      } as CreateOrganizationRequest)
-      .set('Accept', 'application/json')
-      .expect(201);
-
-    await connectionSource.query(`DELETE FROM groups`);
 
     expect(bodyOfCreateOrganizationRequest.id).toBeDefined();
 
@@ -181,12 +90,48 @@ describe('groups', () => {
       .send({
         name: VALID_CLIENT.name,
         organizationId: bodyOfCreateOrganizationRequest.id,
-        registrationId: '123456789',
+        registrationId: '12345678',
       } as CreateClientRequest)
       .set('Accept', 'application/json')
       .expect(201);
 
     expect(bodyOfCreateClientRequest.id).toBeDefined();
+
+    const { body: bodyOfCreateServiceRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/services')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        subscriptionToken: '12345678',
+        guestEnrollment: true,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        opensAt: new Date(),
+        closesAt: new Date(),
+      })
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateServiceRequest.id).toBeDefined();
+
+    const { body: bodyOfCreateQueueRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post(`/v1/queues/`)
+      .set('Authorization', USER.token)
+      .send({
+        name: 'queue',
+        description: 'queue',
+        priority: 1,
+        code: 'queue',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        serviceId: bodyOfCreateServiceRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateGroupRequest.id).toBeDefined();
 
     await request(app.getHttpServer())
       .post(`/v1/groups/import`)
@@ -196,7 +141,7 @@ describe('groups', () => {
         clients: [
           {
             name: VALID_CLIENT.name,
-            registrationId: '123456789',
+            registrationId: '12345678',
             organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
@@ -204,16 +149,35 @@ describe('groups', () => {
       .set('Accept', 'application/json')
       .expect(201);
 
-    const { body: bodyOfGetGroupRequest } = await request(app.getHttpServer())
-      .get(`/v1/groups/organizations/${bodyOfCreateOrganizationRequest.id}`)
+    await request(app.getHttpServer())
+      .patch(
+        `/v1/queues/${bodyOfCreateQueueRequest.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
       .set('Authorization', USER.token)
+      .send({
+        groups: [bodyOfCreateGroupRequest.id],
+      })
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(bodyOfGetGroupRequest[0].id).toBe(bodyOfCreateGroupRequest.id);
+    // CLIENT WITHOUT AUTH
 
-    expect(bodyOfGetGroupRequest[0].clients[0].id).toBe(
-      bodyOfCreateClientRequest.id,
-    );
-  }, 99999);
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '12345678',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: bodyOfCreateQueueRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfGetQueueRequest } = await request(app.getHttpServer())
+      .get(`/v1/queues/${bodyOfCreateQueueRequest.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetQueueRequest.clients.length).toBe(1);
+    expect(bodyOfGetQueueRequest.clients[0].id).toBeDefined();
+  });
 });

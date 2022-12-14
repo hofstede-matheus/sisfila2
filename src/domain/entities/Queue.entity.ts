@@ -18,8 +18,22 @@ export interface QueueEntity {
   readonly organizationId: string;
   readonly serviceId: string;
 
+  readonly clientsInQueue?: ClientInQueue[];
+
   readonly createdAt: Date;
   readonly updatedAt: Date;
+}
+
+export interface ClientInQueue {
+  readonly id: string;
+  readonly name: string;
+  readonly organizationId: string;
+  readonly registrationId: string;
+
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+  readonly calledDate?: Date;
+  readonly attendedByUserId?: string;
 }
 
 @staticImplements<DomainEntity<QueueEntity>>()

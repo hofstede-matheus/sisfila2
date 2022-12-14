@@ -50,6 +50,8 @@ export interface ClientRepository {
     userId?: string;
     clientId?: string;
   }): Promise<void>;
+
+  attachClientToQueue(clientId: string, queueId: string): Promise<void>;
 }
 
 export const ClientRepository = Symbol('ClientRepository');

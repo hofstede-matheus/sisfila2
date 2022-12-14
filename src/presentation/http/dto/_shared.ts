@@ -27,6 +27,38 @@ export class User {
   updatedAt: Date;
 }
 
+export class Client {
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  id: string;
+
+  @ApiProperty({
+    example: 'John Doe',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: 'Date',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    example: 'Date',
+  })
+  updatedAt: Date;
+
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  organizationId: string;
+
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  registrationId: string;
+}
+
 export class Organization {
   @ApiProperty({
     example: '73be6348-a46d-4371-8a28-70988f39f7b7',
@@ -146,38 +178,11 @@ export class Queue {
     example: '73be6348-a46d-4371-8a28-70988f39f7b7',
   })
   serviceId: string;
-}
-
-export class Client {
-  @ApiProperty({
-    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
-  })
-  id: string;
 
   @ApiProperty({
-    example: 'John Doe',
+    type: [Client],
   })
-  name: string;
-
-  @ApiProperty({
-    example: 'Date',
-  })
-  createdAt: Date;
-
-  @ApiProperty({
-    example: 'Date',
-  })
-  updatedAt: Date;
-
-  @ApiProperty({
-    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
-  })
-  organizationId: string;
-
-  @ApiProperty({
-    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
-  })
-  registrationId: string;
+  clients: Client[];
 }
 
 export class Group {
@@ -207,5 +212,5 @@ export class Group {
   organizationId: string;
 
   @ApiProperty({ type: [Client] })
-  clients: Client[];
+  clients?: Client[];
 }
