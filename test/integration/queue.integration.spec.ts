@@ -82,7 +82,7 @@ describe('queue', () => {
 
     expect(bodyOfCreateGroupRequest.id).toBeDefined();
 
-    const { body: bodyOfCreateClientRequest } = await request(
+    const { body: bodyOfCreateClient1Request } = await request(
       app.getHttpServer(),
     )
       .post('/v1/clients')
@@ -95,7 +95,37 @@ describe('queue', () => {
       .set('Accept', 'application/json')
       .expect(201);
 
-    expect(bodyOfCreateClientRequest.id).toBeDefined();
+    expect(bodyOfCreateClient1Request.id).toBeDefined();
+
+    const { body: bodyOfCreateClient2Request } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/clients')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        registrationId: '123456789',
+      } as CreateClientRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateClient2Request.id).toBeDefined();
+
+    const { body: bodyOfCreateClient3Request } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/clients')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        registrationId: '1234567890',
+      } as CreateClientRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateClient3Request.id).toBeDefined();
 
     const { body: bodyOfCreateServiceRequest } = await request(
       app.getHttpServer(),
@@ -144,6 +174,16 @@ describe('queue', () => {
             registrationId: '12345678',
             organizationId: bodyOfCreateOrganizationRequest.id,
           },
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '123456789',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '1234567890',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
         ],
       } as ImportClientsRequest)
       .set('Accept', 'application/json')
@@ -172,12 +212,34 @@ describe('queue', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '123456789',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: bodyOfCreateQueueRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '1234567890',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: bodyOfCreateQueueRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
     const { body: bodyOfGetQueueRequest } = await request(app.getHttpServer())
       .get(`/v1/queues/${bodyOfCreateQueueRequest.id}`)
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(bodyOfGetQueueRequest.clients.length).toBe(1);
-    expect(bodyOfGetQueueRequest.clients[0].id).toBeDefined();
+    expect(bodyOfGetQueueRequest.clients.length).toBe(3);
+    expect(bodyOfGetQueueRequest.clients[0].registrationId).toBe('12345678');
+    expect(bodyOfGetQueueRequest.clients[1].registrationId).toBe('123456789');
+    expect(bodyOfGetQueueRequest.clients[2].registrationId).toBe('1234567890');
   });
 });

@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   Req,
-  Version,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { CreateQueueUsecase } from '../../../../interactors/usecases/CreateQueueUsecase';
@@ -18,7 +17,6 @@ import { CreateQueueRequest, CreateQueueResponse } from '../../dto/CreateQueue';
 import { Queue } from '../../dto/_shared';
 import { toPresentationError } from '../../errors';
 import { Request } from 'express';
-import { SetUserRoleInOrganizationRequest } from '../../dto/SetUserRoleInOrganization';
 import { AttachGroupsToQueueRequest } from '../../dto/AttachGroupsToQueue';
 import { EnterQueueRequest } from '../../dto/EnterQueue';
 import { AttachClientToQueueUsecase } from '../../../../interactors/usecases/AttachClientToQueueUsecase';
