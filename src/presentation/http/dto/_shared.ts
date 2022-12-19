@@ -17,12 +17,12 @@ export class User {
   email: string;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   updatedAt: Date;
 }
@@ -39,12 +39,12 @@ export class Client {
   name: string;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   updatedAt: Date;
 
@@ -57,6 +57,16 @@ export class Client {
     example: '73be6348-a46d-4371-8a28-70988f39f7b7',
   })
   registrationId: string;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  calledDate?: Date;
+
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  attendedByUserId?: string;
 }
 
 export class Organization {
@@ -76,12 +86,12 @@ export class Organization {
   code: string;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   updatedAt: Date;
 }
@@ -108,22 +118,22 @@ export class Service {
   guestEnroll: boolean;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   opensAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   closesAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   updatedAt: Date;
 
@@ -160,12 +170,12 @@ export class Queue {
   priority: number;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   updatedAt: Date;
 
@@ -197,12 +207,12 @@ export class Group {
   name: string;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    example: 'Date',
+    example: '2022-12-19T23:03:44.662Z',
   })
   updatedAt: Date;
 

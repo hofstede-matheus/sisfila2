@@ -13,6 +13,32 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     private readonly queuesRepository: Repository<Queue>,
   ) {}
 
+  async callNextClient(queueId: string): Promise<void> {
+    //      SET clients.called_at = now()
+    const firstClientFromQueue = await this.queuesRepository.query(
+      `
+      select 
+        id
+      FROM clients_position_in_queues
+      WHERE queue_id = $1
+      ORDER BY clients_position_in_queues.created_at ASC
+      LIMIT 1
+      `,
+      [queueId],
+    );
+
+    await this.queuesRepository.query(
+      `
+      UPDATE clients_position_in_queues 
+      SET 
+        called_at = now() 
+      WHERE 
+        id = $1;
+      `,
+      [firstClientFromQueue[0].id],
+    );
+  }
+
   async findById(queueId: string): Promise<QueueEntity> {
     const queue = await this.queuesRepository.findOne({
       where: { id: queueId },
@@ -24,12 +50,15 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         clients.id, 
         clients.name, 
         clients.organization_id, 
-        clients.registration_id, 
+        clients.registration_id,
+        clients_position_in_queues.called_at,
+        clients_position_in_queues.attended_by_user,
         clients.created_at, 
         clients.updated_at
       FROM clients
       INNER JOIN clients_position_in_queues ON clients.id = clients_position_in_queues.client_id
       WHERE clients_position_in_queues.queue_id = $1
+      AND clients_position_in_queues.called_at IS NULL
       ORDER BY clients_position_in_queues.created_at ASC
       `,
       [queueId],
@@ -42,9 +71,11 @@ export class TypeOrmQueuesRepository implements QueueRepository {
           name: client.name,
           organizationId: client.organization_id,
           registrationId: client.registration_id,
+          calledDate: client.called_at,
           createdAt: client.created_at,
           updatedAt: client.updated_at,
-        };
+          attendedByUserId: client.attended_by_user,
+        } as ClientInQueue;
       },
     );
 

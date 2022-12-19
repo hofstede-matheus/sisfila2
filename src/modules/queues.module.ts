@@ -11,6 +11,7 @@ import { TypeOrmQueuesRepository } from '../data/typeorm/repositories/TypeOrmQue
 import { QueueRepository } from '../domain/repositories/QueueRepository';
 import { AttachClientToQueueUsecase } from '../interactors/usecases/AttachClientToQueueUsecase';
 import { AttachGroupsToQueueUsecase } from '../interactors/usecases/AttachGroupsToQueueUsecase';
+import { CallNextClientOfQueueUsecase } from '../interactors/usecases/CallNextClientOfQueueUsecase';
 import { CreateQueueUsecase } from '../interactors/usecases/CreateQueueUsecase';
 import { FindOneOrAllQueuesUsecase } from '../interactors/usecases/FindOneOrAllQueuesUsecase';
 import { FindQueueByIdUsecase } from '../interactors/usecases/FindQueueByIdUsecase';
@@ -52,6 +53,10 @@ import { OrganizationsModule } from './organizations.module';
     {
       provide: FindQueueByIdUsecase,
       useClass: FindQueueByIdUsecase,
+    },
+    {
+      provide: CallNextClientOfQueueUsecase,
+      useClass: CallNextClientOfQueueUsecase,
     },
   ],
   exports: [QueueRepository],

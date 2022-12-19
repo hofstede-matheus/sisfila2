@@ -21,6 +21,8 @@ import { AttachGroupsToQueueRequest } from '../../dto/AttachGroupsToQueue';
 import { EnterQueueRequest } from '../../dto/EnterQueue';
 import { AttachClientToQueueUsecase } from '../../../../interactors/usecases/AttachClientToQueueUsecase';
 import { FindQueueByIdUsecase } from '../../../../interactors/usecases/FindQueueByIdUsecase';
+import { CallNextClientOfQueueUsecase } from '../../../../interactors/usecases/CallNextClientOfQueueUsecase';
+import { CallNextOnQueueRequest } from '../../dto/CallNextOnQueue';
 
 @Controller({ path: 'queues', version: '1' })
 export class QueueController {
@@ -30,6 +32,7 @@ export class QueueController {
     private readonly createQueueUsecase: CreateQueueUsecase,
     private readonly attachGroupsToQueueUsecase: AttachGroupsToQueueUsecase,
     private readonly attachClientToQueueUsecase: AttachClientToQueueUsecase,
+    private readonly callNextClientOfQueueUsecase: CallNextClientOfQueueUsecase,
   ) {}
 
   @Get('organizations/:id')
@@ -137,6 +140,18 @@ export class QueueController {
   async enterQueue(@Body() body: EnterQueueRequest): Promise<void> {
     const result = await this.attachClientToQueueUsecase.execute(
       body.registrationId,
+      body.organizationId,
+      body.queueId,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+  }
+
+  @Patch('next')
+  async callNextClientOfQueue(
+    @Body() body: CallNextOnQueueRequest,
+  ): Promise<void> {
+    const result = await this.callNextClientOfQueueUsecase.execute(
       body.organizationId,
       body.queueId,
     );

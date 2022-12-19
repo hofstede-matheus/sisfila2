@@ -103,6 +103,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       attachGroupsToQueue: jest.fn(),
       attachClientToQueue: jest.fn(),
       findById: jest.fn(),
+      callNextClient: jest.fn(),
     } as QueueRepository,
   },
   {
