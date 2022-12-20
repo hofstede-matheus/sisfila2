@@ -64,6 +64,8 @@ export class ImportClientsToGroupUsecase implements UseCase {
         clients.map((client) => client.registrationId),
       );
 
+    await this.groupRepository.removeAllClientsFromGroup(groupId);
+
     await this.groupRepository.attachClientsToGroup(groupId, [
       ...newClientsIds,
       ...clientsIdsInDatabase,

@@ -112,6 +112,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findByOrganizationId: jest.fn(),
       create: jest.fn(),
       attachClientsToGroup: jest.fn(),
+      removeAllClientsFromGroup: jest.fn(),
     } as GroupRepository,
   },
   {

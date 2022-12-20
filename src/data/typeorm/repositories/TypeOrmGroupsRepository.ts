@@ -12,6 +12,13 @@ export class TypeOrmGroupsRepository implements GroupRepository {
     private readonly groupsRepository: Repository<Group>,
   ) {}
 
+  async removeAllClientsFromGroup(groupId: string): Promise<void> {
+    await this.groupsRepository.query(
+      `DELETE FROM clients_in_groups WHERE group_id = $1`,
+      [groupId],
+    );
+  }
+
   async attachClientsToGroup(
     groupId: string,
     clientsIds: string[],

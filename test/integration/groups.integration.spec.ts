@@ -215,5 +215,134 @@ describe('groups', () => {
     expect(bodyOfGetGroupRequest[0].clients[0].id).toBe(
       bodyOfCreateClientRequest.id,
     );
-  }, 99999);
+  });
+
+  it('previous clients from group shoud be deleted when adding new ones', async () => {
+    const { body: bodyOfCreateOrganizationRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/organizations')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    await connectionSource.query(`DELETE FROM groups`);
+
+    expect(bodyOfCreateOrganizationRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .patch(
+        `/v1/users/${USER.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .set('Authorization', USER.token)
+      .send({
+        role: 'TYPE_COORDINATOR',
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfCreateGroupRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/groups')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+      } as CreateGroupRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateGroupRequest.id).toBeDefined();
+
+    const { body: bodyOfCreateClientRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/clients')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        registrationId: '123456789',
+      } as CreateClientRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateClientRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .post(`/v1/groups/import`)
+      .set('Authorization', USER.token)
+      .send({
+        groupId: bodyOfCreateGroupRequest.id,
+        clients: [
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '123456789',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+        ],
+      } as ImportClientsRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const { body: bodyOfGetGroupRequest } = await request(app.getHttpServer())
+      .get(`/v1/groups/organizations/${bodyOfCreateOrganizationRequest.id}`)
+      .set('Authorization', USER.token)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetGroupRequest[0].id).toBe(bodyOfCreateGroupRequest.id);
+
+    expect(bodyOfGetGroupRequest[0].clients[0].id).toBe(
+      bodyOfCreateClientRequest.id,
+    );
+
+    const { body: bodyOfCreateClientRequest2 } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/clients')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        registrationId: '1234567890',
+      } as CreateClientRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateClientRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .post(`/v1/groups/import`)
+      .set('Authorization', USER.token)
+      .send({
+        groupId: bodyOfCreateGroupRequest.id,
+        clients: [
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '1234567890',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+        ],
+      } as ImportClientsRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const { body: bodyOfGetGroupRequest2 } = await request(app.getHttpServer())
+      .get(`/v1/groups/organizations/${bodyOfCreateOrganizationRequest.id}`)
+      .set('Authorization', USER.token)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetGroupRequest2[0].id).toBe(bodyOfCreateGroupRequest.id);
+    expect(bodyOfGetGroupRequest2[0].clients.length).toBe(1);
+    expect(bodyOfGetGroupRequest2[0].clients[0].id).toBe(
+      bodyOfCreateClientRequest2.id,
+    );
+  });
 });
