@@ -5,6 +5,7 @@
 Sisfila é uma aplicação para gerenciamento de filas de atendimento. Apesar de ser um sistema de filas genérico, a aplicação será desenvolvida com um escopo de matrícula do Instituto de Computação em mente.
 
 ## Configuração inicial
+
 ```bash
 ## não necessário caso o banco e a aplicação sejam inicializadas pelo docker-compose
 
@@ -20,13 +21,16 @@ npm ci
 ```bash
 docker-compose up --build
 ```
+
 ou
+
 ```bash
 docker-compose up db
 npm run start:dev
 ```
 
 ## Documentação swagger
+
 <http:localhost:3000/docs>
 
 ## Teste
@@ -44,3 +48,5 @@ $ npm run test:integration
 # test coverage
 $ npm run test:cov
 ```
+
+![alt text](sisfila_v10.JPG)

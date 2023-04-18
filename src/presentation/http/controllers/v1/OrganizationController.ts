@@ -34,7 +34,7 @@ export class OrganizationController {
 
   @Post()
   @ApiResponse({ type: CreateOrganizationResponse })
-  async createUser(
+  async create(
     @Body() body: CreateOrganizationRequest,
   ): Promise<CreateOrganizationResponse> {
     const result = await this.createOrganizationUsecase.execute(
@@ -48,7 +48,7 @@ export class OrganizationController {
   }
 
   @Put()
-  async updateUser(@Body() body: UpdateOrganizationRequest): Promise<void> {
+  async update(@Body() body: UpdateOrganizationRequest): Promise<void> {
     const result = await this.updateOrganizationUsecase.execute(
       body.id,
       body.name,
