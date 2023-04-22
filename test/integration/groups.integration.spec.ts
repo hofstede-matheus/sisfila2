@@ -41,7 +41,7 @@ describe('groups', () => {
     await connectionSource.query(`DELETE FROM groups`);
   });
 
-  it('shoud be able to create group', async () => {
+  it('should be able to create group', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
@@ -82,7 +82,7 @@ describe('groups', () => {
     expect(bodyOfCreateGroupRequest.id).toBeDefined();
   });
 
-  it('shoud be able to get group', async () => {
+  it('should be able to get group', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
@@ -131,7 +131,7 @@ describe('groups', () => {
     expect(bodyOfGetGroupRequest[0].id).toBeDefined();
   });
 
-  it('shoud be able to import clients to group', async () => {
+  it('should be able to import clients to group', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
@@ -217,7 +217,7 @@ describe('groups', () => {
     );
   });
 
-  it('previous clients from group shoud be deleted when adding new ones', async () => {
+  it('previous clients from group should be deleted when adding new ones', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )

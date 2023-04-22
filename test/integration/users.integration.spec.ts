@@ -33,7 +33,7 @@ describe('users', () => {
     await connectionSource.query(`DELETE FROM organizations`);
   });
 
-  it('shoud be able to create user', async () => {
+  it('should be able to create user', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/v1/users')
       .send({
@@ -47,7 +47,7 @@ describe('users', () => {
     expect(body.token).toBeDefined();
   });
 
-  it('shoud be able to authenticate a user', async () => {
+  it('should be able to authenticate a user', async () => {
     const validEmail = generateValidEmail();
     await request(app.getHttpServer())
       .post('/v1/users')
@@ -72,7 +72,7 @@ describe('users', () => {
     expect(body.token).toMatch(JWT_TOKEN_REGEX_EXPRESSION);
   });
 
-  it('shoud be able to set user role in organization', async () => {
+  it('should be able to set user role in organization', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
       .post('/v1/users')
@@ -119,7 +119,7 @@ describe('users', () => {
     expect(bodyOfGetUserRequest.id).toBeDefined();
   });
 
-  it('shoud be able to update user role in organization', async () => {
+  it('should be able to update user role in organization', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
       .post('/v1/users')
@@ -189,7 +189,7 @@ describe('users', () => {
     expect(bodyOfSecondGetUserRequest.id).toBeDefined();
   });
 
-  it('shoud be able to unset user role in organization by id', async () => {
+  it('should be able to unset user role in organization by id', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
       .post('/v1/users')
@@ -254,7 +254,7 @@ describe('users', () => {
       .expect(404);
   });
 
-  it('shoud be able to unset user role in organization by email', async () => {
+  it('should be able to unset user role in organization by email', async () => {
     const validEmail = generateValidEmail();
     const { body: bodyOfCreateUserRequest } = await request(app.getHttpServer())
       .post('/v1/users')
@@ -319,7 +319,7 @@ describe('users', () => {
       .expect(404);
   });
 
-  // it('shoud be able to authenticate a user with google when creating a new account', async () => {
+  // it('should be able to authenticate a user with google when creating a new account', async () => {
   //   const { body } = await request(app.getHttpServer())
   //     .post('/users/auth/google')
   //     .send({

@@ -30,7 +30,7 @@ export class OrganizationEntity {
         .error(() => new InvalidNameError()),
       code: Joi.string()
         .min(2)
-        .max(5)
+        .max(10)
         .required()
         .error(() => new InvalidCodeError()),
     });

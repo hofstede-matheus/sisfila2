@@ -30,25 +30,25 @@ describe('CreateOrganizationUsecase', () => {
     repository = module.get<OrganizationRepository>(OrganizationRepository);
   });
 
-  it('shoud not create an organization with invalid name', async () => {
+  it('should not create an organization with invalid name', async () => {
     const response = await useCase.execute('a', 'VALI');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidNameError());
   });
 
-  it('shoud not create an organization with invalid code', async () => {
+  it('should not create an organization with invalid code', async () => {
     const response = await useCase.execute('aa', 'A');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidCodeError());
   });
 
-  it('shoud not create an organization with invalid code', async () => {
+  it('should not create an organization with invalid code', async () => {
     const response = await useCase.execute('aa', 'AAAAAAAA');
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidCodeError());
   });
 
-  it('shoud not create an user organization when code already exists', async () => {
+  it('should not create an user organization when code already exists', async () => {
     jest.spyOn(repository, 'findByCode').mockImplementation(async () => {
       return VALID_ORGANIZATION;
     });
@@ -58,7 +58,7 @@ describe('CreateOrganizationUsecase', () => {
     expect(response.value).toEqual(new OrganizationCodeAlreadyUsedError());
   });
 
-  it('shoud create an organization with valid data', async () => {
+  it('should create an organization with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
       return VALID_ORGANIZATION.id;
     });

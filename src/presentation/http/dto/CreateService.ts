@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateServiceRequest {
   @ApiProperty({
-    example: 'Group name',
+    example: 'Service name',
   })
   name: string;
 

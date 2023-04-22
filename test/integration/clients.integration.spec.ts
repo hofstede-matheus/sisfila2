@@ -39,7 +39,7 @@ describe('clients', () => {
     await connectionSource.query(`DELETE FROM clients`);
   });
 
-  it('shoud be able to create client', async () => {
+  it('should be able to create client', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
@@ -70,7 +70,7 @@ describe('clients', () => {
     expect(bodyOfCreateClientRequest.id).toBeDefined();
   });
 
-  it('shoud be able to get one client as user', async () => {
+  it('should be able to get one client as user', async () => {
     const { body: bodyOfCreateOrganization1Request } = await request(
       app.getHttpServer(),
     )
@@ -170,7 +170,7 @@ describe('clients', () => {
     expect(bodyOfFindOneClient1Request.name).toBe(VALID_CLIENT.name);
   });
 
-  it('shoud be able to get one client as admin', async () => {
+  it('should be able to get one client as admin', async () => {
     const { body: bodyOfCreateOrganization1Request } = await request(
       app.getHttpServer(),
     )
@@ -273,7 +273,7 @@ describe('clients', () => {
     expect(bodyOfFindOneClient2Request.name).toBe(VALID_CLIENT.name);
   });
 
-  it('shoud be able to get all clients from organization as user', async () => {
+  it('should be able to get all clients from organization as user', async () => {
     const { body: bodyOfCreateOrganization1Request } = await request(
       app.getHttpServer(),
     )
@@ -379,7 +379,7 @@ describe('clients', () => {
     expect(bodyOfFindOneClient1Request[1].name).toBe(VALID_CLIENT.name);
   });
 
-  it('shoud be able to get all clients from organization as admin', async () => {
+  it('should be able to get all clients from organization as admin', async () => {
     const { body: bodyOfCreateOrganization1Request } = await request(
       app.getHttpServer(),
     )
@@ -486,7 +486,7 @@ describe('clients', () => {
     expect(bodyOfFindOneClient1Request[2].name).toBe(VALID_CLIENT.name);
   });
 
-  it('shoud be able to remove organization as user', async () => {
+  it('should be able to remove organization as user', async () => {
     const { body: bodyOfCreateOrganization1Request } = await request(
       app.getHttpServer(),
     )
@@ -616,7 +616,7 @@ describe('clients', () => {
     expect(notRemovedClient[0].name).toBe(VALID_CLIENT.name);
   });
 
-  it('shoud be able to remove organization as admin', async () => {
+  it('should be able to remove organization as admin', async () => {
     const { body: bodyOfCreateOrganization1Request } = await request(
       app.getHttpServer(),
     )

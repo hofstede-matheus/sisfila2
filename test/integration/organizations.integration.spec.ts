@@ -79,7 +79,7 @@ describe('organizations', () => {
     expect(bodyOfGetDefaultGroupRequest[0].id).toBeDefined();
   });
 
-  it('shoud be able to update organization', async () => {
+  it('should be able to update organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
       .post('/v1/organizations')
       .set('Authorization', USER.token)
@@ -126,7 +126,7 @@ describe('organizations', () => {
     expect(bodyOfFindOneRequest.code).toBe(VALID_ORGANIZATION.code + '_n');
   });
 
-  it('shoud be able to remove organization', async () => {
+  it('should be able to remove organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
       .post('/v1/organizations')
       .set('Authorization', USER.token)
@@ -146,7 +146,7 @@ describe('organizations', () => {
       .expect(200);
   });
 
-  it('shoud be able to get one organization', async () => {
+  it('should be able to get one organization', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
       .post('/v1/organizations')
       .set('Authorization', USER.token)
@@ -178,7 +178,7 @@ describe('organizations', () => {
     expect(bodyOfFindOneRequest.code).toBe(VALID_ORGANIZATION.code);
   });
 
-  it('shoud be able to get all organizations', async () => {
+  it('should be able to get all organizations', async () => {
     const { body: bodyOfCreateRequest } = await request(app.getHttpServer())
       .post('/v1/organizations')
       .set('Authorization', USER.token)
