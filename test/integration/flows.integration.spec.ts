@@ -6,6 +6,11 @@ import { CreateOrganizationRequest } from '../../src/presentation/http/dto/Creat
 import { CreateServiceRequest } from '../../src/presentation/http/dto/CreateService';
 import { CreateGroupRequest } from '../../src/presentation/http/dto/CreateGroup';
 import { ImportClientsRequest } from '../../src/presentation/http/dto/ImportClients';
+import { SetUserRoleInOrganizationRequest } from '../../src/presentation/http/dto/SetUserRoleInOrganization';
+import { CreateQueueRequest } from '../../src/presentation/http/dto/CreateQueue';
+import { AttachGroupsToQueueRequest } from '../../src/presentation/http/dto/AttachGroupsToQueue';
+import { EnterQueueRequest } from '../../src/presentation/http/dto/EnterQueue';
+import { CallNextOnQueueRequest } from '../../src/presentation/http/dto/CallNextOnQueue';
 
 describe('flows', () => {
   let app: INestApplication;
@@ -58,7 +63,7 @@ describe('flows', () => {
       .set('Authorization', USER.token)
       .send({
         role: 'TYPE_COORDINATOR',
-      })
+      } as SetUserRoleInOrganizationRequest)
       .set('Accept', 'application/json')
       .expect(200);
 
@@ -126,7 +131,7 @@ describe('flows', () => {
         code: 'queue',
         organizationId: createOrganizationResponse.body.id,
         serviceId: createServiceResponse.body.id,
-      })
+      } as CreateQueueRequest)
       .set('Accept', 'application/json')
       .expect(201);
 
@@ -138,7 +143,7 @@ describe('flows', () => {
       .set('Authorization', USER.token)
       .send({
         groups: [createGroupResponse.body.id],
-      })
+      } as AttachGroupsToQueueRequest)
       .set('Accept', 'application/json')
       .expect(200);
 
@@ -151,7 +156,7 @@ describe('flows', () => {
         registrationId: '12345678',
         organizationId: createOrganizationResponse.body.id,
         queueId: createQueueResponse.body.id,
-      })
+      } as EnterQueueRequest)
       .set('Accept', 'application/json')
       .expect(200);
 
@@ -161,7 +166,7 @@ describe('flows', () => {
         registrationId: '123456789',
         organizationId: createOrganizationResponse.body.id,
         queueId: createQueueResponse.body.id,
-      })
+      } as EnterQueueRequest)
       .set('Accept', 'application/json')
       .expect(200);
 
@@ -171,7 +176,7 @@ describe('flows', () => {
         registrationId: '1234567890',
         organizationId: createOrganizationResponse.body.id,
         queueId: createQueueResponse.body.id,
-      })
+      } as EnterQueueRequest)
       .set('Accept', 'application/json')
       .expect(200);
 
@@ -195,7 +200,7 @@ describe('flows', () => {
       .send({
         organizationId: createOrganizationResponse.body.id,
         queueId: createQueueResponse.body.id,
-      })
+      } as CallNextOnQueueRequest)
       .set('Accept', 'application/json')
       .expect(200);
 
