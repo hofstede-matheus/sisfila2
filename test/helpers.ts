@@ -99,6 +99,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findByOrganizationId: jest.fn(),
       findByServiceId: jest.fn(),
       create: jest.fn(),
+      findGroupsByQueueId: jest.fn(),
       attachGroupToQueue: jest.fn(),
       attachGroupsToQueue: jest.fn(),
       attachClientToQueue: jest.fn(),
@@ -110,6 +111,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
     provide: GroupRepository,
     useValue: {
       findByOrganizationId: jest.fn(),
+      findGroupsByQueueId: jest.fn(),
       create: jest.fn(),
       attachClientsToGroup: jest.fn(),
       removeAllClientsFromGroup: jest.fn(),

@@ -15,6 +15,7 @@ import {
   OrganizationCodeAlreadyUsedError,
   UserNotFoundError,
   UserNotFromOrganizationError,
+  UserNotInGroupError,
 } from '../../domain/errors';
 import { DomainError } from '../../shared/helpers/errors';
 
@@ -72,6 +73,9 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 401);
 
     case InvalidClientError:
+      return new PresentationException(error, 401);
+
+    case UserNotInGroupError:
       return new PresentationException(error, 401);
 
     default:

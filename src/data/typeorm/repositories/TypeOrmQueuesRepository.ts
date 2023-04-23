@@ -6,6 +6,7 @@ import {
 } from '../../../domain/entities/Queue.entity';
 import { QueueRepository } from '../../../domain/repositories/QueueRepository';
 import { Queue } from '../entities/queues';
+import { GroupEntity } from '../../../domain/entities/Group.entity';
 
 export class TypeOrmQueuesRepository implements QueueRepository {
   constructor(

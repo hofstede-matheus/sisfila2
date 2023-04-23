@@ -5,6 +5,7 @@ export interface GroupRepository {
   create(name: string, organizationId: string): Promise<string>;
   attachClientsToGroup(groupId: string, clientsIds: string[]): Promise<void>;
   removeAllClientsFromGroup(groupId: string): Promise<void>;
+  findGroupsByQueueId(queueId: string): Promise<GroupEntity[]>;
 }
 
 export const GroupRepository = Symbol('GroupRepository');

@@ -42,7 +42,7 @@ describe('queue', () => {
     await connectionSource.query(`DELETE FROM queues`);
   });
 
-  it('client should be able to enter queue', async () => {
+  it('client should be able to enter queue with guestEnrollment = true', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )
@@ -243,7 +243,149 @@ describe('queue', () => {
     expect(bodyOfGetQueueRequest.clients[2].registrationId).toBe('1234567890');
   });
 
-  it('client should be able be called on queue', async () => {
+  it('client should not be able to enter queue when he is not inside a group attached to this queue', async () => {
+    const { body: bodyOfCreateOrganizationRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/organizations')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateOrganizationRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .patch(
+        `/v1/users/${USER.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .set('Authorization', USER.token)
+      .send({
+        role: 'TYPE_COORDINATOR',
+      })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body: bodyOfCreateGroupRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/groups')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+      } as CreateGroupRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateGroupRequest.id).toBeDefined();
+
+    const { body: bodyOfCreateServiceRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/services')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_CLIENT.name,
+        subscriptionToken: '12345678',
+        guestEnrollment: true,
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        opensAt: new Date(),
+        closesAt: new Date(),
+      })
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateServiceRequest.id).toBeDefined();
+
+    const { body: bodyOfCreateQueueRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post(`/v1/queues/`)
+      .set('Authorization', USER.token)
+      .send({
+        name: 'queue',
+        description: 'queue',
+        priority: 1,
+        code: 'queue',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        serviceId: bodyOfCreateServiceRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateGroupRequest.id).toBeDefined();
+
+    await request(app.getHttpServer())
+      .post(`/v1/groups/import`)
+      .set('Authorization', USER.token)
+      .send({
+        groupId: bodyOfCreateGroupRequest.id,
+        clients: [
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '12345678',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '123456789',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '1234567890',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+        ],
+      } as ImportClientsRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    // NOT ATTACHED TO QUEUE GROUP
+
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '12345678',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: bodyOfCreateQueueRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(401);
+
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '123456789',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: bodyOfCreateQueueRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(401);
+
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '1234567890',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: bodyOfCreateQueueRequest.id,
+      })
+      .set('Accept', 'application/json')
+      .expect(401);
+
+    const { body: bodyOfGetQueueRequest } = await request(app.getHttpServer())
+      .get(`/v1/queues/${bodyOfCreateQueueRequest.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(bodyOfGetQueueRequest.clients.length).toBe(0);
+  });
+
+  it('client should be able be called on queue with guestEnrollment = true', async () => {
     const { body: bodyOfCreateOrganizationRequest } = await request(
       app.getHttpServer(),
     )

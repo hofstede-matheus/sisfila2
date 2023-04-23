@@ -5,6 +5,8 @@ import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
 import { Validator } from '../../shared/helpers/validator';
+import { UserNotInGroupError } from '../../domain/errors';
+import { GroupRepository } from '../../domain/repositories/GroupRepository';
 
 @Injectable()
 export class AttachClientToQueueUsecase implements UseCase {
@@ -16,6 +18,9 @@ export class AttachClientToQueueUsecase implements UseCase {
 
     @Inject(ClientRepository)
     private clientRepository: ClientRepository,
+
+    @Inject(GroupRepository)
+    private groupRepository: GroupRepository,
   ) {}
   async execute(
     registrationId: string,
@@ -33,7 +38,17 @@ export class AttachClientToQueueUsecase implements UseCase {
         registrationId,
       );
 
-    // TODO: check if user is from organization
+    // check if that user is from a group that is attached to the queue
+    const groups = await this.groupRepository.findGroupsByQueueId(queueId);
+
+    // check if the user is in any of the groups
+    const userIsInGroup = groups.some((group) =>
+      group.clients.some((client) => client.id === user.id),
+    );
+
+    if (!userIsInGroup) {
+      return left(new UserNotInGroupError());
+    }
 
     await this.queueRepository.attachClientToQueue(user.id, queueId);
 

@@ -20,11 +20,13 @@ import { AuthenticationMiddleware } from '../presentation/http/middleware/Authen
 import { ClientsModule } from './clients.module';
 import { CommonModule } from './common.module';
 import { OrganizationsModule } from './organizations.module';
+import { GroupsModule } from './groups.module';
 
 @Module({
   imports: [
     forwardRef(() => OrganizationsModule),
     forwardRef(() => ClientsModule),
+    forwardRef(() => GroupsModule),
     CommonModule,
     TypeOrmModule.forFeature([Queue]),
   ],
