@@ -24,12 +24,12 @@ export class CreateServiceRequest {
   @ApiProperty({
     example: '2021-01-01T00:00:00.000Z',
   })
-  opensAt: Date;
+  opensAt: string;
 
   @ApiProperty({
     example: '2021-01-01T00:00:00.000Z',
   })
-  closesAt: Date;
+  closesAt: string;
 }
 
 export class CreateServiceResponse {

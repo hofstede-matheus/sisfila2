@@ -10,6 +10,7 @@ export interface ServiceRepository {
     organizationId: string,
     subscriptionToken: string,
   ): Promise<string>;
+  findById(serviceId: string): Promise<ServiceEntity>;
 }
 
 export const ServiceRepository = Symbol('ServiceRepository');

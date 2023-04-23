@@ -5,8 +5,15 @@ import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
 import { Validator } from '../../shared/helpers/validator';
-import { UserNotInGroupError } from '../../domain/errors';
+import {
+  QueueNotFoundError,
+  ServiceNotOpenError,
+  UserNotInGroupError,
+} from '../../domain/errors';
 import { GroupRepository } from '../../domain/repositories/GroupRepository';
+import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
+import * as moment from 'moment';
+import { isBetweenIgnoringDate } from '../../shared/helpers/moment';
 
 @Injectable()
 export class AttachClientToQueueUsecase implements UseCase {
@@ -21,6 +28,9 @@ export class AttachClientToQueueUsecase implements UseCase {
 
     @Inject(GroupRepository)
     private groupRepository: GroupRepository,
+
+    @Inject(ServiceRepository)
+    private serviceRepository: ServiceRepository,
   ) {}
   async execute(
     registrationId: string,
@@ -32,16 +42,33 @@ export class AttachClientToQueueUsecase implements UseCase {
     });
     if (validation.isLeft()) return left(validation.value);
 
+    // get queue
+    const queue = await this.queueRepository.findById(queueId);
+    if (!queue) return left(new QueueNotFoundError());
+
+    // get service of the queue
+    const service = await this.serviceRepository.findById(queue.serviceId);
+
+    // check if service is between working hours
+
+    if (
+      !isBetweenIgnoringDate(
+        moment(new Date()),
+        moment(service.opensAt),
+        moment(service.closesAt),
+      )
+    ) {
+      return left(new ServiceNotOpenError());
+    }
+
     const user =
       await this.clientRepository.findByRegistrationIdFromOrganization(
         organizationId,
         registrationId,
       );
 
-    // check if that user is from a group that is attached to the queue
     const groups = await this.groupRepository.findGroupsByQueueId(queueId);
 
-    // check if the user is in any of the groups
     const userIsInGroup = groups.some((group) =>
       group.clients.some((client) => client.id === user.id),
     );

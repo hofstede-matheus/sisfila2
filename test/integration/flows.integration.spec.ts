@@ -11,11 +11,16 @@ import { CreateQueueRequest } from '../../src/presentation/http/dto/CreateQueue'
 import { AttachGroupsToQueueRequest } from '../../src/presentation/http/dto/AttachGroupsToQueue';
 import { EnterQueueRequest } from '../../src/presentation/http/dto/EnterQueue';
 import { CallNextOnQueueRequest } from '../../src/presentation/http/dto/CallNextOnQueue';
+import * as moment from 'moment';
+import { isBetweenIgnoringDate } from '../../src/shared/helpers/moment';
 
 describe('flows', () => {
   let app: INestApplication;
   let USER: { token: string; email: string; id: string };
   let USER2: { token: string; email: string; id: string };
+
+  const opensAt = moment().add(1, 'day').toDate();
+  const closesAt = moment().add(1, 'day').add(1, 'hour').toDate();
 
   connectionSource.initialize();
 
@@ -75,8 +80,8 @@ describe('flows', () => {
         name: 'Matrícula BSI',
         subscriptionToken: 'BSI-2023-2',
         guestEnrollment: true,
-        opensAt: new Date(),
-        closesAt: new Date(),
+        opensAt: opensAt.toISOString(),
+        closesAt: closesAt.toISOString(),
         organizationId: createOrganizationResponse.body.id,
       } as CreateServiceRequest)
       .set('Accept', 'application/json')
@@ -213,5 +218,13 @@ describe('flows', () => {
     expect(getQueueResponse2.body.clients.length).toBe(2);
     expect(getQueueResponse2.body.clients[0].registrationId).toBe('123456789');
     expect(getQueueResponse2.body.clients[1].registrationId).toBe('1234567890');
+  });
+
+  it('test 2', async () => {
+    const now = moment('2023-04-23T18:50:42.225Z');
+    const start = moment('2023-04-24T18:50:40.620Z');
+    const end = moment('2023-04-24T19:50:40.625Z');
+
+    expect(isBetweenIgnoringDate(now, start, end)).toBe(true);
   });
 });

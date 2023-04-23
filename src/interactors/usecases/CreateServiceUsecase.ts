@@ -23,8 +23,8 @@ export class CreateServiceUsecase implements UseCase {
     subscriptionToken: string,
     guestEnrollment: boolean,
     organizationId: string,
-    opensAt: Date,
-    closesAt: Date,
+    opensAt: string,
+    closesAt: string,
   ): Promise<Either<DomainError, string>> {
     const validation = Validator.validate({
       id: [organizationId],
@@ -34,8 +34,8 @@ export class CreateServiceUsecase implements UseCase {
     const entityValidation = ServiceEntity.build(
       name,
       guestEnrollment,
-      opensAt,
-      closesAt,
+      new Date(opensAt),
+      new Date(closesAt),
     );
     if (entityValidation.isLeft()) return left(entityValidation.value);
 
@@ -51,8 +51,8 @@ export class CreateServiceUsecase implements UseCase {
     const service = await this.serviceRepository.create(
       name,
       guestEnrollment,
-      opensAt,
-      closesAt,
+      entityValidation.value.opensAt,
+      entityValidation.value.closesAt,
       organizationId,
       subscriptionToken,
     );

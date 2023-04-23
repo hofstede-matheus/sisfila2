@@ -91,6 +91,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
     useValue: {
       findByOrganizationId: jest.fn(),
       create: jest.fn(),
+      findById: jest.fn(),
     } as ServiceRepository,
   },
   {

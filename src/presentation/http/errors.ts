@@ -13,6 +13,8 @@ import {
   InvalidUserTypeError,
   InvalidValueError,
   OrganizationCodeAlreadyUsedError,
+  QueueNotFoundError,
+  ServiceNotOpenError,
   UserNotFoundError,
   UserNotFromOrganizationError,
   UserNotInGroupError,
@@ -76,6 +78,12 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 401);
 
     case UserNotInGroupError:
+      return new PresentationException(error, 401);
+
+    case QueueNotFoundError:
+      return new PresentationException(error, 404);
+
+    case ServiceNotOpenError:
       return new PresentationException(error, 401);
 
     default:

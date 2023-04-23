@@ -131,18 +131,18 @@ export class UserController {
     return;
   }
 
-  @Get(':searchedUserId/organizations/:organizationId')
+  @Get(':userId/organizations/:organizationId')
   @ApiResponse({ type: User })
   @HttpCode(200)
   async getOne(
-    @Param('searchedUserId') searchedUserId: string,
+    @Param('userId') userId: string,
     @Param('organizationId') organizationId: string,
     @Req() request: Request,
   ): Promise<User> {
     const result = await this.findOneOrAllUsersUsecase.execute({
       organizationId,
       requestingUserId: request.user.sub,
-      searchedUserId,
+      searchedUserId: userId,
     });
 
     if (result.isLeft()) throw toPresentationError(result.value);

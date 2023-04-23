@@ -47,3 +47,5 @@ export class UserNotFromOrganizationError extends DomainError {}
 export class InvalidClientError extends DomainError {}
 
 export class UserNotInGroupError extends DomainError {}
+
+export class ServiceNotOpenError extends DomainError {}

@@ -51,4 +51,22 @@ export class TypeOrmServicesRepository implements ServiceRepository {
 
     return mappedServices;
   }
+
+  async findById(serviceId: string): Promise<ServiceEntity> {
+    const service = await this.servicesRepository.findOne({
+      where: { id: serviceId },
+    });
+
+    return {
+      id: service.id,
+      name: service.name,
+      subscriptionToken: service.subscription_token,
+      guestEnrollment: service.guest_enroll,
+      opensAt: service.opensAt,
+      closesAt: service.closesAt,
+      organizationId: service.organization_id,
+      createdAt: service.createdAt,
+      updatedAt: service.updatedAt,
+    };
+  }
 }

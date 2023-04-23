@@ -21,12 +21,14 @@ import { ClientsModule } from './clients.module';
 import { CommonModule } from './common.module';
 import { OrganizationsModule } from './organizations.module';
 import { GroupsModule } from './groups.module';
+import { ServicesModule } from './services.module';
 
 @Module({
   imports: [
     forwardRef(() => OrganizationsModule),
     forwardRef(() => ClientsModule),
     forwardRef(() => GroupsModule),
+    forwardRef(() => ServicesModule),
     CommonModule,
     TypeOrmModule.forFeature([Queue]),
   ],
