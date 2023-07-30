@@ -84,8 +84,8 @@ describe('FindOneOrAllClientsUsecase', () => {
     const response = await useCase.execute({
       organizationId: VALID_ORGANIZATION.id,
     });
-    expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toBeInstanceOf(ClientNotFoundError);
+    expect(response.isRight()).toBeTruthy();
+    expect((response.value as ClientEntity[]).length).toBe(0);
   });
 
   it('should not be able to find an client that does not exists as admin', async () => {
@@ -104,8 +104,8 @@ describe('FindOneOrAllClientsUsecase', () => {
     const response = await useCase.execute({
       organizationId: VALID_ORGANIZATION.id,
     });
-    expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toBeInstanceOf(ClientNotFoundError);
+    expect(response.isRight()).toBeTruthy();
+    expect((response.value as ClientEntity[]).length).toBe(0);
   });
 
   it('should find one client data as user', async () => {

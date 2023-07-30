@@ -52,7 +52,7 @@ describe('UpdateOrganizationUsecase', () => {
     const response = await useCase.execute(
       VALID_ORGANIZATION.id,
       'aa',
-      'AAAAAAAA',
+      'AAAAAAAAAAA',
     );
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidCodeError());

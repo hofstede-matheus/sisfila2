@@ -9,6 +9,7 @@ import {
   ALL_SERVICES_PROVIDERS,
   UUID_V4_REGEX_EXPRESSION,
   VALID_ORGANIZATION,
+  VALID_USER,
 } from '../../helpers';
 import { CreateOrganizationUsecase } from '../../../src/interactors/usecases/CreateOrganizationUsecase';
 import { OrganizationRepository } from '../../../src/domain/repositories/OrganizationRepository';
@@ -31,19 +32,19 @@ describe('CreateOrganizationUsecase', () => {
   });
 
   it('should not create an organization with invalid name', async () => {
-    const response = await useCase.execute('a', 'VALI');
+    const response = await useCase.execute('a', 'VALI', VALID_USER.id);
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidNameError());
   });
 
-  it('should not create an organization with invalid code', async () => {
-    const response = await useCase.execute('aa', 'A');
+  it('should not create an organization with invalid code < 2', async () => {
+    const response = await useCase.execute('aa', 'A', VALID_USER.id);
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidCodeError());
   });
 
-  it('should not create an organization with invalid code', async () => {
-    const response = await useCase.execute('aa', 'AAAAAAAA');
+  it('should not create an organization with invalid code > 10', async () => {
+    const response = await useCase.execute('aa', 'AAAAAAAAAAA', VALID_USER.id);
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new InvalidCodeError());
   });
@@ -53,7 +54,7 @@ describe('CreateOrganizationUsecase', () => {
       return VALID_ORGANIZATION;
     });
 
-    const response = await useCase.execute('aa', 'AAAA');
+    const response = await useCase.execute('aa', 'AAAA', VALID_USER.id);
     expect(response.isLeft()).toBeTruthy();
     expect(response.value).toEqual(new OrganizationCodeAlreadyUsedError());
   });
@@ -67,7 +68,7 @@ describe('CreateOrganizationUsecase', () => {
       return undefined;
     });
 
-    const response = await useCase.execute('aa', 'AAAA');
+    const response = await useCase.execute('aa', 'AAAA', VALID_USER.id);
 
     expect(response.isRight()).toBeTruthy();
     expect(response.value).toMatch(UUID_V4_REGEX_EXPRESSION);

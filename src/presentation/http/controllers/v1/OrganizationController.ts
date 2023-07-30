@@ -36,10 +36,13 @@ export class OrganizationController {
   @ApiResponse({ type: CreateOrganizationResponse })
   async create(
     @Body() body: CreateOrganizationRequest,
+    @Req() request: Request,
   ): Promise<CreateOrganizationResponse> {
+    const userId = request.user.sub;
     const result = await this.createOrganizationUsecase.execute(
       body.name,
       body.code,
+      userId,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);

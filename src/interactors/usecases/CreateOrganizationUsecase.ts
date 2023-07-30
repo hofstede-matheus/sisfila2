@@ -8,6 +8,7 @@ import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
+import { UserRepository } from '../../domain/repositories/UserRepository';
 
 @Injectable()
 export class CreateOrganizationUsecase implements UseCase {
@@ -20,10 +21,13 @@ export class CreateOrganizationUsecase implements UseCase {
     private queueRepository: QueueRepository,
     @Inject(GroupRepository)
     private groupRepository: GroupRepository,
+    @Inject(UserRepository)
+    private userRepository: UserRepository,
   ) {}
   async execute(
     name: string,
     code: string,
+    userId: string,
   ): Promise<Either<DomainError, string>> {
     const validation = OrganizationEntity.build(name, code);
     if (validation.isLeft()) return left(validation.value);
@@ -60,6 +64,12 @@ export class CreateOrganizationUsecase implements UseCase {
     );
 
     await this.groupRepository.create('Default Group', organizationId);
+
+    await this.userRepository.setUserRoleInOrganization(
+      userId,
+      organizationId,
+      'TYPE_COORDINATOR',
+    );
 
     return right(organizationId);
   }
