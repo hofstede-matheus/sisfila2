@@ -32,7 +32,9 @@ export class FindOneOrAllClientsUsecase implements UseCase {
 
     const user = await this.userRepository.findOneByIdOrAll(userId);
 
-    const clients = user[0].isSuperAdmin
+    const isUserAdmin = user[0].isSuperAdmin;
+
+    const clients = isUserAdmin
       ? await this.clientRepository.findOneOrAllByIdAsAdmin({
           clientId,
         })
@@ -42,7 +44,7 @@ export class FindOneOrAllClientsUsecase implements UseCase {
           clientId,
         });
 
-    if (!clients) return left(new ClientNotFoundError());
-    return right(clients);
+    if (!clients && clientId) return left(new ClientNotFoundError());
+    return right(clients ?? []);
   }
 }
