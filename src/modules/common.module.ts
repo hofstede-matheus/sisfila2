@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { BcryptEncryptionService } from '../data/services/BcryptEncryptionService';
+import { BcryptEncryptionService } from '../data/services/BcryptjsEncryptionService';
 import { GoogleOauthAuthenticationService } from '../data/services/GoogleOauthAuthenticationService';
 import { JWTAuthService } from '../data/services/JWTAuthService';
 import { AuthenticationService } from '../domain/services/AuthenticationService';
