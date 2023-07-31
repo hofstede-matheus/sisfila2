@@ -18,8 +18,6 @@ import { isBetweenIgnoringDate } from '../../shared/helpers/moment';
 @Injectable()
 export class AttachClientToQueueUsecase implements UseCase {
   constructor(
-    // @Inject(OrganizationRepository)
-    // private organizationRepository: OrganizationRepository,
     @Inject(QueueRepository)
     private queueRepository: QueueRepository,
 
