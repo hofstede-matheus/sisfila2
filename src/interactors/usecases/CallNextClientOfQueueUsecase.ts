@@ -37,6 +37,8 @@ export class CallNextClientOfQueueUsecase implements UseCase {
     // TODO: check if queue is from organziation inside callNextClient
     await this.queueRepository.callNextClient(queueId);
 
+    // TODO: notify queue subscriber
+
     return right();
   }
 }

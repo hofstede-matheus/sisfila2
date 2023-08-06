@@ -6,7 +6,6 @@ import {
 } from '../../../domain/entities/Queue.entity';
 import { QueueRepository } from '../../../domain/repositories/QueueRepository';
 import { Queue } from '../entities/queues';
-import { GroupEntity } from '../../../domain/entities/Group.entity';
 
 export class TypeOrmQueuesRepository implements QueueRepository {
   constructor(
@@ -15,29 +14,31 @@ export class TypeOrmQueuesRepository implements QueueRepository {
   ) {}
 
   async callNextClient(queueId: string): Promise<void> {
-    //      SET clients.called_at = now()
-    const firstClientFromQueue = await this.queuesRepository.query(
-      `
-      select 
-        id
-      FROM clients_position_in_queues
-      WHERE queue_id = $1
-      ORDER BY clients_position_in_queues.created_at ASC
-      LIMIT 1
-      `,
-      [queueId],
-    );
+    await this.queuesRepository.manager.transaction(async (transaction) => {
+      const firstClientFromQueue = await transaction.query(
+        `
+        select 
+          id
+        FROM clients_position_in_queues
+        WHERE queue_id = $1
+        and called_at is null
+        ORDER BY clients_position_in_queues.created_at ASC
+        LIMIT 1
+        `,
+        [queueId],
+      );
 
-    await this.queuesRepository.query(
-      `
-      UPDATE clients_position_in_queues 
-      SET 
-        called_at = now() 
-      WHERE 
-        id = $1;
-      `,
-      [firstClientFromQueue[0].id],
-    );
+      await transaction.query(
+        `
+        UPDATE clients_position_in_queues 
+        SET 
+          called_at = now() 
+        WHERE 
+          id = $1;
+        `,
+        [firstClientFromQueue[0].id],
+      );
+    });
   }
 
   async findById(queueId: string): Promise<QueueEntity> {
