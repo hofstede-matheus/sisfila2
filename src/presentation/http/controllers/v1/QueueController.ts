@@ -42,18 +42,28 @@ export class QueueController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    const mappedQueues: Queue[] = result.value.map((service) => {
+    const mappedQueues: Queue[] = result.value.map((queue) => {
       return {
-        id: service.id,
-        name: service.name,
-        organizationId: service.organizationId,
-        serviceId: service.serviceId,
-        code: service.code,
-        description: service.description,
-        priority: service.priority,
-        createdAt: service.createdAt,
-        updatedAt: service.updatedAt,
-        clients: [],
+        id: queue.id,
+        name: queue.name,
+        organizationId: queue.organizationId,
+        serviceId: queue.serviceId,
+        code: queue.code,
+        description: queue.description,
+        priority: queue.priority,
+        createdAt: queue.createdAt,
+        updatedAt: queue.updatedAt,
+        clients: queue.clientsInQueue?.map((client) => {
+          return {
+            id: client.id,
+            name: client.name,
+            organizationId: client.organizationId,
+            registrationId: client.registrationId,
+            createdAt: client.createdAt,
+            updatedAt: client.updatedAt,
+          };
+        }),
+        lastClientCalled: queue.lastClientCalled,
       };
     });
     return mappedQueues;
@@ -66,7 +76,7 @@ export class QueueController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    const r = {
+    return {
       id: result.value.id,
       name: result.value.name,
       organizationId: result.value.organizationId,
@@ -86,9 +96,8 @@ export class QueueController {
           updatedAt: client.updatedAt,
         };
       }),
+      lastClientCalled: result.value.lastClientCalled,
     };
-
-    return r;
   }
 
   @Post()

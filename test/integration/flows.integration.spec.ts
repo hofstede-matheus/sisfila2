@@ -217,6 +217,9 @@ describe('flows', () => {
     expect(getQueueResponse2.body.clients.length).toBe(2);
     expect(getQueueResponse2.body.clients[0].registrationId).toBe('123456789');
     expect(getQueueResponse2.body.clients[1].registrationId).toBe('1234567890');
+    expect(getQueueResponse2.body.lastClientCalled.registrationId).toBe(
+      '12345678',
+    );
   });
 
   it('should able to do a complete flow calling next 2 times', async () => {
@@ -391,6 +394,9 @@ describe('flows', () => {
     expect(getQueueResponse2.body.clients.length).toBe(2);
     expect(getQueueResponse2.body.clients[0].registrationId).toBe('123456789');
     expect(getQueueResponse2.body.clients[1].registrationId).toBe('1234567890');
+    expect(getQueueResponse2.body.lastClientCalled.registrationId).toBe(
+      '12345678',
+    );
 
     // call next on queue
     await request(app.getHttpServer())
@@ -411,6 +417,9 @@ describe('flows', () => {
 
     expect(getQueueResponse3.body.clients.length).toBe(1);
     expect(getQueueResponse3.body.clients[0].registrationId).toBe('1234567890');
+    expect(getQueueResponse3.body.lastClientCalled.registrationId).toBe(
+      '123456789',
+    );
   });
 
   it('should able to do a complete flow calling multiple times', async () => {

@@ -19,6 +19,7 @@ export interface QueueEntity {
   readonly serviceId: string;
 
   readonly clientsInQueue?: ClientInQueue[];
+  readonly lastClientCalled?: ClientInQueue;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

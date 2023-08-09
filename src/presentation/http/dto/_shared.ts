@@ -193,6 +193,11 @@ export class Queue {
     type: [Client],
   })
   clients: Client[];
+
+  @ApiProperty({
+    type: Client,
+  })
+  lastClientCalled: Client;
 }
 
 export class Group {

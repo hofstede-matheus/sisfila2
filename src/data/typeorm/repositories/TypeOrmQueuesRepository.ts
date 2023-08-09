@@ -66,6 +66,27 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       [queueId],
     );
 
+    const lastClientCalled = await this.queuesRepository.query(
+      `
+      SELECT
+        clients.id,
+        clients.name,
+        clients.organization_id,
+        clients.registration_id,
+        clients_position_in_queues.called_at,
+        clients_position_in_queues.attended_by_user,
+        clients.created_at,
+        clients.updated_at
+      FROM clients
+      INNER JOIN clients_position_in_queues ON clients.id = clients_position_in_queues.client_id
+      WHERE clients_position_in_queues.queue_id = $1
+      AND clients_position_in_queues.called_at IS NOT NULL
+      ORDER BY clients_position_in_queues.called_at DESC
+      LIMIT 1
+      `,
+      [queueId],
+    );
+
     const clientsInQueue: ClientInQueue[] = clientsInQueueFromDatabase.map(
       (client) => {
         return {
@@ -92,6 +113,18 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       createdAt: queue.createdAt,
       updatedAt: queue.updatedAt,
       clientsInQueue: clientsInQueue,
+      lastClientCalled: lastClientCalled[0]
+        ? ({
+            id: lastClientCalled[0].id,
+            name: lastClientCalled[0].name,
+            organizationId: lastClientCalled[0].organization_id,
+            registrationId: lastClientCalled[0].registration_id,
+            calledDate: lastClientCalled[0].called_at,
+            createdAt: lastClientCalled[0].created_at,
+            updatedAt: lastClientCalled[0].updated_at,
+            attendedByUserId: lastClientCalled[0].attended_by_user,
+          } as ClientInQueue)
+        : undefined,
     };
   }
 
