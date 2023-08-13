@@ -12,6 +12,11 @@ import { CreateClientRequest } from '../../src/presentation/http/dto/CreateClien
 import { CreateGroupRequest } from '../../src/presentation/http/dto/CreateGroup';
 import { ImportClientsRequest } from '../../src/presentation/http/dto/ImportClients';
 import * as moment from 'moment';
+import { AttachGroupsToQueueRequest } from '../../src/presentation/http/dto/AttachGroupsToQueue';
+import { CreateQueueRequest } from '../../src/presentation/http/dto/CreateQueue';
+import { CreateServiceRequest } from '../../src/presentation/http/dto/CreateService';
+import { EnterQueueRequest } from '../../src/presentation/http/dto/EnterQueue';
+import { CallNextOnQueueRequest } from '../../src/presentation/http/dto/CallNextOnQueue';
 
 describe('queue', () => {
   let app: INestApplication;
@@ -774,5 +779,148 @@ describe('queue', () => {
     expect(bodyOfGetQueueRequest2.clients.length).toBe(2);
     expect(bodyOfGetQueueRequest2.clients[0].registrationId).toBe('123456789');
     expect(bodyOfGetQueueRequest2.clients[1].registrationId).toBe('1234567890');
+  });
+
+  it('client should be able to get its position in a queue', async () => {
+    const { body: bodyOfCreateOrganizationRequest } = await request(
+      app.getHttpServer(),
+    )
+      .post('/v1/organizations')
+      .set('Authorization', USER.token)
+      .send({
+        name: VALID_ORGANIZATION.name,
+        code: VALID_ORGANIZATION.code,
+      } as CreateOrganizationRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    expect(bodyOfCreateOrganizationRequest.id).toBeDefined();
+
+    const createServiceResponse = await request(app.getHttpServer())
+      .post('/v1/services')
+      .set('Authorization', USER.token)
+      .send({
+        name: 'Matrícula BSI',
+        subscriptionToken: 'BSI-2023-2',
+        guestEnrollment: true,
+        opensAt: opensAt.toISOString(),
+        closesAt: closesAt.toISOString(),
+        organizationId: bodyOfCreateOrganizationRequest.id,
+      } as CreateServiceRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const createGroupResponse = await request(app.getHttpServer())
+      .post('/v1/groups')
+      .set('Authorization', USER.token)
+      .send({
+        name: 'BSI_GRUPO_1',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+      } as CreateGroupRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(`/v1/groups/import`)
+      .set('Authorization', USER.token)
+      .send({
+        groupId: createGroupResponse.body.id,
+        clients: [
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '12345678',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+          {
+            name: VALID_CLIENT.name,
+            registrationId: '123456789',
+            organizationId: bodyOfCreateOrganizationRequest.id,
+          },
+        ],
+      } as ImportClientsRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const createQueueResponse = await request(app.getHttpServer())
+      .post(`/v1/queues/`)
+      .set('Authorization', USER.token)
+      .send({
+        name: 'queue',
+        description: 'queue',
+        priority: 1,
+        code: 'queue',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        serviceId: createServiceResponse.body.id,
+      } as CreateQueueRequest)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch(
+        `/v1/queues/${createQueueResponse.body.id}/organizations/${bodyOfCreateOrganizationRequest.id}`,
+      )
+      .set('Authorization', USER.token)
+      .send({
+        groups: [createGroupResponse.body.id],
+      } as AttachGroupsToQueueRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '12345678',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: createQueueResponse.body.id,
+      } as EnterQueueRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/enter`)
+      .send({
+        registrationId: '123456789',
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: createQueueResponse.body.id,
+      } as EnterQueueRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const getQueueResponse = await request(app.getHttpServer())
+      .get(`/v1/queues/${createQueueResponse.body.id}`)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(getQueueResponse.body.clients.length).toBe(2);
+    expect(getQueueResponse.body.clients[0].registrationId).toBe('12345678');
+    expect(getQueueResponse.body.clients[1].registrationId).toBe('123456789');
+
+    const getPositionInQueueResponse = await request(app.getHttpServer())
+      .get(`/v1/queues/${createQueueResponse.body.id}/position/12345678`)
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(getPositionInQueueResponse.body.position).toBe(1);
+
+    const getPositionInQueue2Response = await request(app.getHttpServer())
+      .get(`/v1/queues/${createQueueResponse.body.id}/position/123456789`)
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(getPositionInQueue2Response.body.position).toBe(2);
+
+    await request(app.getHttpServer())
+      .patch(`/v1/queues/next`)
+      .set('Authorization', USER.token)
+      .send({
+        organizationId: bodyOfCreateOrganizationRequest.id,
+        queueId: createQueueResponse.body.id,
+      } as CallNextOnQueueRequest)
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const getPositionInQueue3Response = await request(app.getHttpServer())
+      .get(`/v1/queues/${createQueueResponse.body.id}/position/123456789`)
+      .set('Accept', 'application/json')
+      .expect(200);
+    expect(getPositionInQueue3Response.body.position).toBe(1);
   });
 });

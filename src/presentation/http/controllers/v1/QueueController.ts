@@ -23,6 +23,8 @@ import { AttachClientToQueueUsecase } from '../../../../interactors/usecases/Att
 import { FindQueueByIdUsecase } from '../../../../interactors/usecases/FindQueueByIdUsecase';
 import { CallNextClientOfQueueUsecase } from '../../../../interactors/usecases/CallNextClientOfQueueUsecase';
 import { CallNextOnQueueRequest } from '../../dto/CallNextOnQueue';
+import { GetClientPositionInQueueResponse } from '../../dto/GetClientPositionInQueue';
+import { GetClientPositionInQueueUsecase } from '../../../../interactors/usecases/GetClientPositionInQueueUsecase';
 
 @Controller({ path: 'queues', version: '1' })
 export class QueueController {
@@ -33,6 +35,7 @@ export class QueueController {
     private readonly attachGroupsToQueueUsecase: AttachGroupsToQueueUsecase,
     private readonly attachClientToQueueUsecase: AttachClientToQueueUsecase,
     private readonly callNextClientOfQueueUsecase: CallNextClientOfQueueUsecase,
+    private readonly getClientPositionInQueueUsecase: GetClientPositionInQueueUsecase,
   ) {}
 
   @Get('organizations/:id')
@@ -67,6 +70,24 @@ export class QueueController {
       };
     });
     return mappedQueues;
+  }
+
+  // get client position in queue by registrationId
+  @Get(':queueId/position/:registrationId')
+  @ApiResponse({ type: Number })
+  async getClientPositionInQueue(
+    @Param('queueId') queueId: string,
+    @Param('registrationId') registrationId: string,
+  ): Promise<GetClientPositionInQueueResponse> {
+    const result = await this.getClientPositionInQueueUsecase.execute(
+      queueId,
+      registrationId,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+    return {
+      position: result.value,
+    };
   }
 
   @Get(':queueId')

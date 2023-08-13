@@ -12,6 +12,50 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     @InjectRepository(Queue)
     private readonly queuesRepository: Repository<Queue>,
   ) {}
+  async getPositionOfClient(
+    queueId: string,
+    clientId: string,
+  ): Promise<number> {
+    const clientsInQueueFromDatabase = await this.queuesRepository.query(
+      `
+      SELECT 
+        clients.id, 
+        clients.name, 
+        clients.organization_id, 
+        clients.registration_id,
+        clients_position_in_queues.called_at,
+        clients_position_in_queues.attended_by_user,
+        clients.created_at, 
+        clients.updated_at
+      FROM clients
+      INNER JOIN clients_position_in_queues ON clients.id = clients_position_in_queues.client_id
+      WHERE clients_position_in_queues.queue_id = $1
+      AND clients_position_in_queues.called_at IS NULL
+      ORDER BY clients_position_in_queues.created_at ASC
+      `,
+      [queueId],
+    );
+
+    const clientsInQueue: ClientInQueue[] = clientsInQueueFromDatabase.map(
+      (client) => {
+        return {
+          id: client.id,
+          name: client.name,
+          organizationId: client.organization_id,
+          registrationId: client.registration_id,
+          calledDate: client.called_at,
+          createdAt: client.created_at,
+          updatedAt: client.updated_at,
+          attendedByUserId: client.attended_by_user,
+        } as ClientInQueue;
+      },
+    );
+
+    const position = clientsInQueue.findIndex(
+      (client) => client.registrationId === clientId,
+    );
+    return position;
+  }
 
   async callNextClient(queueId: string): Promise<void> {
     await this.queuesRepository.manager.transaction(async (transaction) => {

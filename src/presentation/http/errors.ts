@@ -2,6 +2,7 @@ import { HttpException } from '@nestjs/common';
 import {
   ClientAlreadyExistsError,
   ClientNotFoundError,
+  ClientNotInQueueError,
   EmailAlreadyExistsError,
   InvalidClientError,
   InvalidCodeError,
@@ -85,6 +86,9 @@ export function toPresentationError(error: DomainError): HttpException {
 
     case ServiceNotOpenError:
       return new PresentationException(error, 401);
+
+    case ClientNotInQueueError:
+      return new PresentationException(error, 400);
 
     default:
       console.error('ERROR NOT MAPPED', error);

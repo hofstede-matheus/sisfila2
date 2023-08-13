@@ -73,7 +73,6 @@ export class TypeOrmGroupsRepository implements GroupRepository {
       `,
       [queueId],
     );
-    console.log(groupsWithClientsByQueueId);
 
     return mapGroupsWithClients(groupsWithClientsByQueueId);
   }

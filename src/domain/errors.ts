@@ -36,6 +36,8 @@ export class ServiceNotFoundError extends DomainError {}
 
 export class QueueNotFoundError extends DomainError {}
 
+export class ClientNotInQueueError extends DomainError {}
+
 export class GroupNotFoundError extends DomainError {}
 
 export class ClientAlreadyExistsError extends DomainError {}

@@ -22,6 +22,7 @@ import { CommonModule } from './common.module';
 import { OrganizationsModule } from './organizations.module';
 import { GroupsModule } from './groups.module';
 import { ServicesModule } from './services.module';
+import { GetClientPositionInQueueUsecase } from '../interactors/usecases/GetClientPositionInQueueUsecase';
 
 @Module({
   imports: [
@@ -62,6 +63,10 @@ import { ServicesModule } from './services.module';
       provide: CallNextClientOfQueueUsecase,
       useClass: CallNextClientOfQueueUsecase,
     },
+    {
+      provide: GetClientPositionInQueueUsecase,
+      useClass: GetClientPositionInQueueUsecase,
+    },
   ],
   exports: [QueueRepository],
 })
@@ -76,6 +81,10 @@ export class QueuesModule implements NestModule {
         },
         {
           path: 'v1/queues/:queueId',
+          method: RequestMethod.GET,
+        },
+        {
+          path: 'v1/queues/:queueId/position/:registrationId',
           method: RequestMethod.GET,
         },
       )

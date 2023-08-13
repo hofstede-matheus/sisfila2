@@ -15,13 +15,13 @@ export class AuthenticationMiddleware implements NestMiddleware {
 
   use(req: Request, _: Response, next: NextFunction) {
     const authorizationHeader = req.headers.authorization;
-    if (!authorizationHeader) throw new HttpException('Invalid token', 400);
+    if (!authorizationHeader) throw new HttpException('Invalid token', 401);
 
     const token = authorizationHeader.split(' ')[1];
 
     const decryptedToken = this.authService.decrypt(token);
 
-    if (!decryptedToken) throw new HttpException('Invalid token', 400);
+    if (!decryptedToken) throw new HttpException('Invalid token', 401);
 
     req.user = decryptedToken;
 
