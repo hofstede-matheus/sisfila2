@@ -30,6 +30,7 @@ import { UsersModule } from './users.module';
       logging: process.env.DATABASE_LOGGING === 'true',
       migrations: ['dist/src/data/typeorm/migrations/*.js'],
       migrationsRun: true,
+      ssl: process.env.DATABASE_SSL === 'true',
     }),
     UsersModule,
     OrganizationsModule,

@@ -1,0 +1,9 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - '--tag=gcr.io/$PROJECT_ID/sisfila2'
+      - '--file=./Dockerfile.prod'
+      - .
+images:
+  - 'gcr.io/$PROJECT_ID/sisfila2'
