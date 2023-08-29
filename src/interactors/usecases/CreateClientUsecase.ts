@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ClientEntity } from '../../domain/entities/Client.entity';
+import { ClientEntity } from '../../modules/clients/domain/entities/Client.entity';
 import { ClientAlreadyExistsError } from '../../domain/errors';
-import { ClientRepository } from '../../domain/repositories/ClientRepository';
+import { ClientRepository } from '../../modules/clients/domain/repositories/ClientRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

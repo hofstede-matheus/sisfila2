@@ -9,10 +9,10 @@ import {
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { OrganizationRepository } from '../../../src/domain/repositories/OrganizationRepository';
+import { OrganizationRepository } from '../../../src/modules/organizations/domain/repositories/OrganizationRepository';
 import { FindOneOrAllOrganizationsUsecase } from '../../../src/interactors/usecases/FindOneOrAllOrganizationsUsecase';
-import { OrganizationEntity } from '../../../src/domain/entities/Organization.entity';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { OrganizationEntity } from '../../../src/modules/organizations/domain/entities/Organization.entity';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 
 describe('FindOneOrAllOrganizationsUsecase', () => {
   let useCase: FindOneOrAllOrganizationsUsecase;

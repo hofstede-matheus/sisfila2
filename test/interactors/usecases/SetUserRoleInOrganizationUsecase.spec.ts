@@ -7,14 +7,12 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { SetUserRoleInOrganizationUsecase } from '../../../src/interactors/usecases/SetUserRoleInOrganizationUsecase';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
-import { UserEntityTypes } from '../../../src/domain/entities/User.entity';
-import { AuthorizationService } from '../../../src/domain/services/AuthorizationService';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
+import { UserEntityTypes } from '../../../src/modules/users/domain/entities/User.entity';
 
 describe('SetUserRoleInOrganizationUsecase', () => {
   let useCase: SetUserRoleInOrganizationUsecase;
   let userRepository: UserRepository;
-  let authorizationService: AuthorizationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,8 +25,6 @@ describe('SetUserRoleInOrganizationUsecase', () => {
 
     useCase = module.get(SetUserRoleInOrganizationUsecase);
     userRepository = module.get<UserRepository>(UserRepository);
-    authorizationService =
-      module.get<AuthorizationService>(AuthorizationService);
   });
 
   it('should not be able to set user role with invalid user id', async () => {

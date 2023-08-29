@@ -9,8 +9,9 @@ export const connectionSource = new DataSource({
   username: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
-  migrations: ['src/data/typeorm/migrations/*.ts'],
-  entities: ['src/data/typeorm/entities/*.ts'],
+  migrations: ['src/modules/common/data/typeorm/migrations/*.ts'],
+  entities: ['src/*/*.typeorm-entity.ts'],
   synchronize: false,
   logging: process.env.DATABASE_LOGGING === 'true',
+  ssl: process.env.DATABASE_SSL === 'true',
 });

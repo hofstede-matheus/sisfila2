@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { QueueEntity } from '../../domain/entities/Queue.entity';
+import { QueueEntity } from '../../modules/queues/domain/entities/Queue.entity';
 import { QueueNotFoundError } from '../../domain/errors';
-import { QueueRepository } from '../../domain/repositories/QueueRepository';
+import { QueueRepository } from '../../modules/queues/domain/repositories/QueueRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

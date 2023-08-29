@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserEntity } from '../../domain/entities/User.entity';
+import { UserEntity } from '../../modules/users/domain/entities/User.entity';
 import { UserNotFoundError } from '../../domain/errors';
-import { UserRepository } from '../../domain/repositories/UserRepository';
+import { UserRepository } from '../../modules/users/domain/repositories/UserRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

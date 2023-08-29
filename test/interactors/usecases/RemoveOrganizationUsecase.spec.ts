@@ -5,7 +5,7 @@ import {
   ALL_SERVICES_PROVIDERS,
   VALID_ORGANIZATION,
 } from '../../helpers';
-import { OrganizationRepository } from '../../../src/domain/repositories/OrganizationRepository';
+import { OrganizationRepository } from '../../../src/modules/organizations/domain/repositories/OrganizationRepository';
 import { RemoveOrganizationUsecase } from '../../../src/interactors/usecases/RemoveOrganizationUsecase';
 
 describe('UpdateOrganizationUsecase', () => {

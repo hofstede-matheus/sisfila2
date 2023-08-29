@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ServiceEntity } from '../../domain/entities/Service.entity';
+import { ServiceEntity } from '../../modules/services/domain/entities/Service.entity';
 import { ServiceNotFoundError } from '../../domain/errors';
-import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
+import { ServiceRepository } from '../../modules/services/domain/repositories/ServiceRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

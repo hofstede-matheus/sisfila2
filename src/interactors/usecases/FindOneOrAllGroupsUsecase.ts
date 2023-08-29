@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { GroupEntity } from '../../domain/entities/Group.entity';
+import { GroupEntity } from '../../modules/groups/domain/entities/Group.entity';
 import { GroupNotFoundError } from '../../domain/errors';
-import { GroupRepository } from '../../domain/repositories/GroupRepository';
+import { GroupRepository } from '../../modules/groups/domain/repositories/GroupRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

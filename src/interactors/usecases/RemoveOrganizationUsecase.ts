@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OrganizationRepository } from '../../domain/repositories/OrganizationRepository';
+import { OrganizationRepository } from '../../modules/organizations/domain/repositories/OrganizationRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

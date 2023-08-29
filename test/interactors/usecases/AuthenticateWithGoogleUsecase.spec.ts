@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { InvalidOauthDataError } from '../../../src/domain/errors';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
-import { AuthenticationService } from '../../../src/domain/services/AuthenticationService';
-import { OAuthService } from '../../../src/domain/services/OauthAuthenticationService';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
+import { AuthenticationService } from '../../../src/modules/users/domain/services/AuthenticationService';
 import { AuthenticateWithGoogleUsecase } from '../../../src/interactors/usecases/AuthenticateWithGoogleUsecase';
 import {
   ALL_REPOSITORIES_PROVIDERS,
@@ -10,6 +9,7 @@ import {
   checkForTokenAndUserId,
   VALID_USER,
 } from '../../helpers';
+import { OAuthService } from '../../../src/modules/users/domain/services/OauthAuthenticationService';
 
 describe('AuthenticateWithGoogleUsecase', () => {
   let useCase: AuthenticateWithGoogleUsecase;

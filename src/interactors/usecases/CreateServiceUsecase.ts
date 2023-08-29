@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ServiceEntity } from '../../domain/entities/Service.entity';
+import { ServiceEntity } from '../../modules/services/domain/entities/Service.entity';
 import { UserNotFromOrganizationError } from '../../domain/errors';
-import { OrganizationRepository } from '../../domain/repositories/OrganizationRepository';
-import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
+import { OrganizationRepository } from '../../modules/organizations/domain/repositories/OrganizationRepository';
+import { ServiceRepository } from '../../modules/services/domain/repositories/ServiceRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

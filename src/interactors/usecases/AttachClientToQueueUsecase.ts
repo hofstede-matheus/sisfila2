@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ClientRepository } from '../../domain/repositories/ClientRepository';
-import { QueueRepository } from '../../domain/repositories/QueueRepository';
+import { ClientRepository } from '../../modules/clients/domain/repositories/ClientRepository';
+import { QueueRepository } from '../../modules/queues/domain/repositories/QueueRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
@@ -10,8 +10,8 @@ import {
   ServiceNotOpenError,
   UserNotInGroupError,
 } from '../../domain/errors';
-import { GroupRepository } from '../../domain/repositories/GroupRepository';
-import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
+import { GroupRepository } from '../../modules/groups/domain/repositories/GroupRepository';
+import { ServiceRepository } from '../../modules/services/domain/repositories/ServiceRepository';
 import * as moment from 'moment';
 import { isBetweenIgnoringDate } from '../../shared/helpers/moment';
 

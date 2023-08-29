@@ -10,10 +10,10 @@ import {
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 import { FindOneOrAllClientsUsecase } from '../../../src/interactors/usecases/FindOneOrAllClientsUsecase';
-import { ClientRepository } from '../../../src/domain/repositories/ClientRepository';
-import { ClientEntity } from '../../../src/domain/entities/Client.entity';
+import { ClientRepository } from '../../../src/modules/clients/domain/repositories/ClientRepository';
+import { ClientEntity } from '../../../src/modules/clients/domain/entities/Client.entity';
 
 describe('FindOneOrAllClientsUsecase', () => {
   let useCase: FindOneOrAllClientsUsecase;

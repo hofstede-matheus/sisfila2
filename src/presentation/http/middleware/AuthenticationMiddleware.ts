@@ -5,7 +5,7 @@ import {
   NestMiddleware,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { AuthenticationService } from '../../../domain/services/AuthenticationService';
+import { AuthenticationService } from '../../../modules/users/domain/services/AuthenticationService';
 @Injectable()
 export class AuthenticationMiddleware implements NestMiddleware {
   constructor(

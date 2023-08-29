@@ -8,8 +8,8 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { RemoveClientUsecase } from '../../../src/interactors/usecases/RemoveClientUsecase';
-import { ClientRepository } from '../../../src/domain/repositories/ClientRepository';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { ClientRepository } from '../../../src/modules/clients/domain/repositories/ClientRepository';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 
 describe('RemoveClientUsecase', () => {
   let useCase: RemoveClientUsecase;

@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserEntity } from '../../domain/entities/User.entity';
+import { UserEntity } from '../../modules/users/domain/entities/User.entity';
 import { InvalidOauthDataError } from '../../domain/errors';
-import { UserRepository } from '../../domain/repositories/UserRepository';
-import { AuthenticationService } from '../../domain/services/AuthenticationService';
-import { OAuthService } from '../../domain/services/OauthAuthenticationService';
+import { UserRepository } from '../../modules/users/domain/repositories/UserRepository';
+import { AuthenticationService } from '../../modules/users/domain/services/AuthenticationService';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
+import { OAuthService } from '../../modules/users/domain/services/OauthAuthenticationService';
 
 @Injectable()
 export class AuthenticateWithGoogleUsecase implements UseCase {
@@ -18,7 +18,7 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
     private authenticationService: AuthenticationService,
 
     @Inject(OAuthService)
-    private OAuthService: OAuthService,
+    private oAuthService: OAuthService,
   ) {}
 
   async execute(
@@ -33,7 +33,7 @@ export class AuthenticateWithGoogleUsecase implements UseCase {
     )
       return Promise.resolve(left(new InvalidOauthDataError()));
 
-    const userData = await this.OAuthService.getUserProfile(
+    const userData = await this.oAuthService.getUserProfile(
       oauthToken,
       audience,
     );

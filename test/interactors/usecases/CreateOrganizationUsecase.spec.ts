@@ -12,7 +12,7 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { CreateOrganizationUsecase } from '../../../src/interactors/usecases/CreateOrganizationUsecase';
-import { OrganizationRepository } from '../../../src/domain/repositories/OrganizationRepository';
+import { OrganizationRepository } from '../../../src/modules/organizations/domain/repositories/OrganizationRepository';
 
 describe('CreateOrganizationUsecase', () => {
   let useCase: CreateOrganizationUsecase;

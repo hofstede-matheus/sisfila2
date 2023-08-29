@@ -9,7 +9,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { UserEntityTypes } from '../../../../domain/entities/User.entity';
+import { UserEntityTypes } from '../../../../modules/users/domain/entities/User.entity';
 import { AuthenticateUserUsecase } from '../../../../interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticateWithGoogleUsecase } from '../../../../interactors/usecases/AuthenticateWithGoogleUsecase';
 import { CreateUserUsecase } from '../../../../interactors/usecases/CreateUserUsecase';

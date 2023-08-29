@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ClientRepository } from '../../domain/repositories/ClientRepository';
-import { UserRepository } from '../../domain/repositories/UserRepository';
+import { ClientRepository } from '../../modules/clients/domain/repositories/ClientRepository';
+import { UserRepository } from '../../modules/users/domain/repositories/UserRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';

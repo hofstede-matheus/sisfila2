@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OrganizationEntity } from '../../domain/entities/Organization.entity';
+import { OrganizationEntity } from '../../modules/organizations/domain/entities/Organization.entity';
 import { OrganizationCodeAlreadyUsedError } from '../../domain/errors';
-import { GroupRepository } from '../../domain/repositories/GroupRepository';
-import { OrganizationRepository } from '../../domain/repositories/OrganizationRepository';
-import { QueueRepository } from '../../domain/repositories/QueueRepository';
-import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
+import { GroupRepository } from '../../modules/groups/domain/repositories/GroupRepository';
+import { OrganizationRepository } from '../../modules/organizations/domain/repositories/OrganizationRepository';
+import { QueueRepository } from '../../modules/queues/domain/repositories/QueueRepository';
+import { ServiceRepository } from '../../modules/services/domain/repositories/ServiceRepository';
 import { Either, left, right } from '../../shared/helpers/either';
 import { DomainError } from '../../shared/helpers/errors';
 import { UseCase } from '../../shared/helpers/usecase';
-import { UserRepository } from '../../domain/repositories/UserRepository';
+import { UserRepository } from '../../modules/users/domain/repositories/UserRepository';
 
 @Injectable()
 export class CreateOrganizationUsecase implements UseCase {

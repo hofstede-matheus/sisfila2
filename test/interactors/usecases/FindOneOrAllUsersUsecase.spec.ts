@@ -7,8 +7,8 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { FindOneOrAllUsersUsecase } from '../../../src/interactors/usecases/FindOneOrAllUsersUsecase';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
-import { UserEntity } from '../../../src/domain/entities/User.entity';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
+import { UserEntity } from '../../../src/modules/users/domain/entities/User.entity';
 
 describe('FindOneOrAllUsersUsecase', () => {
   let useCase: FindOneOrAllUsersUsecase;

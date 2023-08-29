@@ -14,8 +14,8 @@ import {
   INVALID_EMAIL,
   VALID_USER,
 } from '../../helpers';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
-import { AuthenticationService } from '../../../src/domain/services/AuthenticationService';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
+import { AuthenticationService } from '../../../src/modules/users/domain/services/AuthenticationService';
 
 describe('CreateUserUsecase', () => {
   let useCase: CreateUserUsecase;

@@ -1,33 +1,33 @@
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
-import { Group } from '../src/data/typeorm/entities/groups';
-import { Organization } from '../src/data/typeorm/entities/organizations';
-import { Queue } from '../src/data/typeorm/entities/queues';
-import { Service } from '../src/data/typeorm/entities/services';
-import { User } from '../src/data/typeorm/entities/users';
-import { OrganizationEntity } from '../src/domain/entities/Organization.entity';
-import { UserEntity } from '../src/domain/entities/User.entity';
-import { GroupRepository } from '../src/domain/repositories/GroupRepository';
-import { OrganizationRepository } from '../src/domain/repositories/OrganizationRepository';
-import { QueueRepository } from '../src/domain/repositories/QueueRepository';
-import { ServiceRepository } from '../src/domain/repositories/ServiceRepository';
-import { UserRepository } from '../src/domain/repositories/UserRepository';
-import { AuthenticationService } from '../src/domain/services/AuthenticationService';
-import { AuthorizationService } from '../src/domain/services/AuthorizationService';
-import { EncryptionService } from '../src/domain/services/EncryptionService';
-import { OAuthService } from '../src/domain/services/OauthAuthenticationService';
-import { CommonModule } from '../src/modules/common.module';
-import { OrganizationsModule } from '../src/modules/organizations.module';
-import { UsersModule } from '../src/modules/users.module';
+import { Group } from '../src/modules/groups/data/typeorm/entities/groups.typeorm-entity';
+import { Organization } from '../src/modules/organizations/data/typeorm/entities/organizations.typeorm-entity';
+import { Queue } from '../src/modules/queues/data/typeorm/entities/queues.typeorm-entity';
+import { Service } from '../src/modules/services/data/typeorm/entities/services.typeorm-entity';
+import { User } from '../src/modules/users/data/typeorm/entities/users.typeorm-entity';
+import { OrganizationEntity } from '../src/modules/organizations/domain/entities/Organization.entity';
+import { UserEntity } from '../src/modules/users/domain/entities/User.entity';
+import { GroupRepository } from '../src/modules/groups/domain/repositories/GroupRepository';
+import { OrganizationRepository } from '../src/modules/organizations/domain/repositories/OrganizationRepository';
+import { QueueRepository } from '../src/modules/queues/domain/repositories/QueueRepository';
+import { ServiceRepository } from '../src/modules/services/domain/repositories/ServiceRepository';
+import { UserRepository } from '../src/modules/users/domain/repositories/UserRepository';
+import { AuthenticationService } from '../src/modules/users/domain/services/AuthenticationService';
+import { CommonModule } from '../src/modules/common/common.module';
+import { OrganizationsModule } from '../src/modules/organizations/organizations.module';
+import { UsersModule } from '../src/modules/users/users.module';
 import * as request from 'supertest';
 import { CreateUserRequest } from '../src/presentation/http/dto/CreateUser';
 import { INestApplication, Provider, VersioningType } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { ClientEntity } from '../src/domain/entities/Client.entity';
-import { ClientRepository } from '../src/domain/repositories/ClientRepository';
-import { ClientsModule } from '../src/modules/clients.module';
-import { Client } from '../src/data/typeorm/entities/clients';
+import { ClientEntity } from '../src/modules/clients/domain/entities/Client.entity';
+import { ClientRepository } from '../src/modules/clients/domain/repositories/ClientRepository';
+import { ClientsModule } from '../src/modules/clients/clients.module';
+import { Client } from '../src/modules/clients/data/typeorm/entities/clients.typeorm-entity';
+import { AuthorizationService } from '../src/modules/users/domain/services/AuthorizationService';
+import { EncryptionService } from '../src/modules/users/domain/services/EncryptionService';
+import { OAuthService } from '../src/modules/users/domain/services/OauthAuthenticationService';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -158,7 +158,7 @@ export const TEST_CONFIG = [
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
-    migrations: ['src/data/typeorm/migrations/*.ts'],
+    migrations: ['src/modules/common/data/typeorm/migrations/*.ts'],
     migrationsRun: true,
     entities: ALL_TYPEORM_ENTITIES,
     logging: process.env.DATABASE_LOGGING === 'true',

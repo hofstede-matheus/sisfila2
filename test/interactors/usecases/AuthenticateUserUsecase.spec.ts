@@ -11,10 +11,10 @@ import {
   VALID_USER,
   checkForTokenAndUserId,
 } from '../../helpers';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 import { AuthenticateUserUsecase } from '../../../src/interactors/usecases/AuthenticateUserUsecase';
-import { EncryptionService } from '../../../src/domain/services/EncryptionService';
-import { AuthenticationService } from '../../../src/domain/services/AuthenticationService';
+import { AuthenticationService } from '../../../src/modules/users/domain/services/AuthenticationService';
+import { EncryptionService } from '../../../src/modules/users/domain/services/EncryptionService';
 
 describe('AuthenticateUserUsecase', () => {
   let useCase: AuthenticateUserUsecase;

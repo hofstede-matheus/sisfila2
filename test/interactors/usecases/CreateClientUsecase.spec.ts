@@ -13,7 +13,7 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { CreateClientUsecase } from '../../../src/interactors/usecases/CreateClientUsecase';
-import { ClientRepository } from '../../../src/domain/repositories/ClientRepository';
+import { ClientRepository } from '../../../src/modules/clients/domain/repositories/ClientRepository';
 
 describe('CreateClientUsecase', () => {
   let useCase: CreateClientUsecase;

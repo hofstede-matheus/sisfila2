@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Client } from '../data/typeorm/entities/clients';
-import { Group } from '../data/typeorm/entities/groups';
-import { Organization } from '../data/typeorm/entities/organizations';
-import { Queue } from '../data/typeorm/entities/queues';
-import { Service } from '../data/typeorm/entities/services';
-import { User } from '../data/typeorm/entities/users';
+import { Client } from './clients/data/typeorm/entities/clients.typeorm-entity';
+import { Group } from './groups/data/typeorm/entities/groups.typeorm-entity';
+import { Organization } from './organizations/data/typeorm/entities/organizations.typeorm-entity';
+import { Queue } from './queues/data/typeorm/entities/queues.typeorm-entity';
+import { Service } from './services/data/typeorm/entities/services.typeorm-entity';
+import { User } from './users/data/typeorm/entities/users.typeorm-entity';
 import { AppController } from '../presentation/http/controllers/app.controller';
-import { ClientsModule } from './clients.module';
-import { CommonModule } from './common.module';
-import { GroupsModule } from './groups.module';
-import { OrganizationsModule } from './organizations.module';
-import { QueuesModule } from './queues.module';
-import { ServicesModule } from './services.module';
-import { UsersModule } from './users.module';
+import { ClientsModule } from './clients/clients.module';
+import { CommonModule } from './common/common.module';
+import { GroupsModule } from './groups/groups.module';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { QueuesModule } from './queues/queues.module';
+import { ServicesModule } from './services/services.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { UsersModule } from './users.module';
       database: process.env.DATABASE_NAME,
       entities: [User, Organization, Service, Queue, Group, Client],
       logging: process.env.DATABASE_LOGGING === 'true',
-      migrations: ['dist/src/data/typeorm/migrations/*.js'],
+      migrations: ['dist/src/modules/common/data/typeorm/migrations/*.js'],
       migrationsRun: true,
       ssl: process.env.DATABASE_SSL === 'true',
     }),
