@@ -7,7 +7,7 @@ import { Organization } from './organizations/data/typeorm/entities/organization
 import { Queue } from './queues/data/typeorm/entities/queues.typeorm-entity';
 import { Service } from './services/data/typeorm/entities/services.typeorm-entity';
 import { User } from './users/data/typeorm/entities/users.typeorm-entity';
-import { AppController } from '../presentation/http/controllers/app.controller';
+import { AppController } from './common/app.controller';
 import { ClientsModule } from './clients/clients.module';
 import { CommonModule } from './common/common.module';
 import { GroupsModule } from './groups/groups.module';

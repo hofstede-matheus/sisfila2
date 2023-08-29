@@ -1,11 +1,11 @@
 import * as Joi from 'joi';
-import { Either, left, right } from '../../../../shared/helpers/either';
+import { Either, left, right } from '../../../common/shared/helpers/either';
 import {
   staticImplements,
   DomainEntity,
-} from '../../../../shared/helpers/entity';
-import { DomainError } from '../../../../shared/helpers/errors';
-import { InvalidNameError } from '../../../../domain/errors';
+} from '../../../common/shared/helpers/entity';
+import { DomainError } from '../../../common/shared/helpers/errors';
+import { InvalidNameError } from '../../../common/domain/errors';
 import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
 
 export interface GroupEntity {

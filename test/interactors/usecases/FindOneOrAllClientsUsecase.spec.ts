@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   ClientNotFoundError,
   InvalidIdError,
-} from '../../../src/domain/errors';
+} from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
@@ -11,7 +11,7 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
-import { FindOneOrAllClientsUsecase } from '../../../src/interactors/usecases/FindOneOrAllClientsUsecase';
+import { FindOneOrAllClientsUsecase } from '../../../src/modules/clients/interactors/usecases/FindOneOrAllClientsUsecase';
 import { ClientRepository } from '../../../src/modules/clients/domain/repositories/ClientRepository';
 import { ClientEntity } from '../../../src/modules/clients/domain/entities/Client.entity';
 

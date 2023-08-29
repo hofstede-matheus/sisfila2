@@ -3,7 +3,7 @@ import {
   ClientAlreadyExistsError,
   InvalidIdError,
   InvalidNameError,
-} from '../../../src/domain/errors';
+} from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
@@ -12,7 +12,7 @@ import {
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { CreateClientUsecase } from '../../../src/interactors/usecases/CreateClientUsecase';
+import { CreateClientUsecase } from '../../../src/modules/clients/interactors/usecases/CreateClientUsecase';
 import { ClientRepository } from '../../../src/modules/clients/domain/repositories/ClientRepository';
 
 describe('CreateClientUsecase', () => {

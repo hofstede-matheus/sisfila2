@@ -9,20 +9,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Queue } from './data/typeorm/entities/queues.typeorm-entity';
 import { TypeOrmQueuesRepository } from './data/typeorm/repositories/TypeOrmQueuesRepository';
 import { QueueRepository } from './domain/repositories/QueueRepository';
-import { AttachClientToQueueUsecase } from '../../interactors/usecases/AttachClientToQueueUsecase';
-import { AttachGroupsToQueueUsecase } from '../../interactors/usecases/AttachGroupsToQueueUsecase';
-import { CallNextClientOfQueueUsecase } from '../../interactors/usecases/CallNextClientOfQueueUsecase';
-import { CreateQueueUsecase } from '../../interactors/usecases/CreateQueueUsecase';
-import { FindOneOrAllQueuesUsecase } from '../../interactors/usecases/FindOneOrAllQueuesUsecase';
-import { FindQueueByIdUsecase } from '../../interactors/usecases/FindQueueByIdUsecase';
-import { QueueController } from '../../presentation/http/controllers/v1/QueueController';
-import { AuthenticationMiddleware } from '../../presentation/http/middleware/AuthenticationMiddleware';
+import { AttachClientToQueueUsecase } from './interactors/usecases/AttachClientToQueueUsecase';
+import { AttachGroupsToQueueUsecase } from './interactors/usecases/AttachGroupsToQueueUsecase';
+import { CallNextClientOfQueueUsecase } from './interactors/usecases/CallNextClientOfQueueUsecase';
+import { CreateQueueUsecase } from './interactors/usecases/CreateQueueUsecase';
+import { FindOneOrAllQueuesUsecase } from './interactors/usecases/FindOneOrAllQueuesUsecase';
+import { FindQueueByIdUsecase } from './interactors/usecases/FindQueueByIdUsecase';
+import { QueueController } from './presentation/http/controllers/QueueController';
+import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
 import { ClientsModule } from '../clients/clients.module';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
 import { GroupsModule } from '../groups/groups.module';
 import { ServicesModule } from '../services/services.module';
-import { GetClientPositionInQueueUsecase } from '../../interactors/usecases/GetClientPositionInQueueUsecase';
+import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClientPositionInQueueUsecase';
 
 @Module({
   imports: [

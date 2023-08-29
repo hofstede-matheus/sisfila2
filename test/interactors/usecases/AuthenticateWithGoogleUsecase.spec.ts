@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvalidOauthDataError } from '../../../src/domain/errors';
+import { InvalidOauthDataError } from '../../../src/modules/common/domain/errors';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 import { AuthenticationService } from '../../../src/modules/users/domain/services/AuthenticationService';
-import { AuthenticateWithGoogleUsecase } from '../../../src/interactors/usecases/AuthenticateWithGoogleUsecase';
+import { AuthenticateWithGoogleUsecase } from '../../../src/modules/users/interactors/usecases/AuthenticateWithGoogleUsecase';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,

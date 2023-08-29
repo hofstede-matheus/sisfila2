@@ -2,15 +2,15 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { generateTestingApp, generateUser, VALID_CLIENT } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
-import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
-import { CreateServiceRequest } from '../../src/presentation/http/dto/CreateService';
-import { CreateGroupRequest } from '../../src/presentation/http/dto/CreateGroup';
-import { ImportClientsRequest } from '../../src/presentation/http/dto/ImportClients';
-import { SetUserRoleInOrganizationRequest } from '../../src/presentation/http/dto/SetUserRoleInOrganization';
-import { CreateQueueRequest } from '../../src/presentation/http/dto/CreateQueue';
-import { AttachGroupsToQueueRequest } from '../../src/presentation/http/dto/AttachGroupsToQueue';
-import { EnterQueueRequest } from '../../src/presentation/http/dto/EnterQueue';
-import { CallNextOnQueueRequest } from '../../src/presentation/http/dto/CallNextOnQueue';
+import { CreateOrganizationRequest } from '../../src/modules/organizations/presentation/http/dto/CreateOrganization';
+import { CreateServiceRequest } from '../../src/modules/services/presentation/http/dto/CreateService';
+import { CreateGroupRequest } from '../../src/modules/groups/presentation/http/dto/CreateGroup';
+import { ImportClientsRequest } from '../../src/modules/groups/presentation/http/dto/ImportClients';
+import { SetUserRoleInOrganizationRequest } from '../../src/modules/users/presentation/http/dto/SetUserRoleInOrganization';
+import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/dto/CreateQueue';
+import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/AttachGroupsToQueue';
+import { EnterQueueRequest } from '../../src/modules/queues/presentation/http/dto/EnterQueue';
+import { CallNextOnQueueRequest } from '../../src/modules/queues/presentation/http/dto/CallNextOnQueue';
 import * as moment from 'moment';
 
 describe('flows', () => {

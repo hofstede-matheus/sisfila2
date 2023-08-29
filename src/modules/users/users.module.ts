@@ -9,13 +9,13 @@ import { Organization } from '../organizations/data/typeorm/entities/organizatio
 import { User } from './data/typeorm/entities/users.typeorm-entity';
 import { TypeOrmUsersRepository } from './data/typeorm/repositories/TypeOrmUsersRepository';
 import { UserRepository } from './domain/repositories/UserRepository';
-import { AuthenticateUserUsecase } from '../../interactors/usecases/AuthenticateUserUsecase';
-import { AuthenticateWithGoogleUsecase } from '../../interactors/usecases/AuthenticateWithGoogleUsecase';
-import { CreateUserUsecase } from '../../interactors/usecases/CreateUserUsecase';
-import { FindOneOrAllUsersUsecase } from '../../interactors/usecases/FindOneOrAllUsersUsecase';
-import { SetUserRoleInOrganizationUsecase } from '../../interactors/usecases/SetUserRoleInOrganizationUsecase';
-import { UserController } from '../../presentation/http/controllers/v1/UserController';
-import { AuthenticationMiddleware } from '../../presentation/http/middleware/AuthenticationMiddleware';
+import { AuthenticateUserUsecase } from './interactors/usecases/AuthenticateUserUsecase';
+import { AuthenticateWithGoogleUsecase } from './interactors/usecases/AuthenticateWithGoogleUsecase';
+import { CreateUserUsecase } from './interactors/usecases/CreateUserUsecase';
+import { FindOneOrAllUsersUsecase } from './interactors/usecases/FindOneOrAllUsersUsecase';
+import { SetUserRoleInOrganizationUsecase } from './interactors/usecases/SetUserRoleInOrganizationUsecase';
+import { UserController } from './presentation/http/controllers/UserController';
+import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from '../common/common.module';
 
 @Module({

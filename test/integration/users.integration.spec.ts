@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { CreateUserRequest } from '../../src/presentation/http/dto/CreateUser';
+import { CreateUserRequest } from '../../src/modules/users/presentation/http/dto/CreateUser';
 import {
   generateTestingApp,
   generateUser,
@@ -10,7 +10,7 @@ import {
   VALID_USER,
 } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
-import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
+import { CreateOrganizationRequest } from '../../src/modules/organizations/presentation/http/dto/CreateOrganization';
 
 describe('users', () => {
   let app: INestApplication;

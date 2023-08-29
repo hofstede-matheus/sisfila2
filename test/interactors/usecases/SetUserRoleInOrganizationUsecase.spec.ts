@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvalidIdError } from '../../../src/domain/errors';
+import { InvalidIdError } from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { SetUserRoleInOrganizationUsecase } from '../../../src/interactors/usecases/SetUserRoleInOrganizationUsecase';
+import { SetUserRoleInOrganizationUsecase } from '../../../src/modules/users/interactors/usecases/SetUserRoleInOrganizationUsecase';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 import { UserEntityTypes } from '../../../src/modules/users/domain/entities/User.entity';
 

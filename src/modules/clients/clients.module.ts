@@ -8,11 +8,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client } from './data/typeorm/entities/clients.typeorm-entity';
 import { TypeOrmClientsRepository } from './data/typeorm/repositories/TypeOrmClientsRepository';
 import { ClientRepository } from './domain/repositories/ClientRepository';
-import { CreateClientUsecase } from '../../interactors/usecases/CreateClientUsecase';
-import { FindOneOrAllClientsUsecase } from '../../interactors/usecases/FindOneOrAllClientsUsecase';
-import { RemoveClientUsecase } from '../../interactors/usecases/RemoveClientUsecase';
-import { ClientController } from '../../presentation/http/controllers/v1/ClientController';
-import { AuthenticationMiddleware } from '../../presentation/http/middleware/AuthenticationMiddleware';
+import { CreateClientUsecase } from './interactors/usecases/CreateClientUsecase';
+import { FindOneOrAllClientsUsecase } from './interactors/usecases/FindOneOrAllClientsUsecase';
+import { RemoveClientUsecase } from './interactors/usecases/RemoveClientUsecase';
+import { ClientController } from './presentation/http/controllers/v1/ClientController';
+import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from '../common/common.module';
 import { UsersModule } from '../users/users.module';
 

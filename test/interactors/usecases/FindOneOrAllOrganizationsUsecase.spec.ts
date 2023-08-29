@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   InvalidIdError,
   OrganizationNotFoundError,
-} from '../../../src/domain/errors';
+} from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
@@ -10,7 +10,7 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { OrganizationRepository } from '../../../src/modules/organizations/domain/repositories/OrganizationRepository';
-import { FindOneOrAllOrganizationsUsecase } from '../../../src/interactors/usecases/FindOneOrAllOrganizationsUsecase';
+import { FindOneOrAllOrganizationsUsecase } from '../../../src/modules/organizations/interactors/usecases/FindOneOrAllOrganizationsUsecase';
 import { OrganizationEntity } from '../../../src/modules/organizations/domain/entities/Organization.entity';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 

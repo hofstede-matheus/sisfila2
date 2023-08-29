@@ -7,16 +7,16 @@ import {
   VALID_ORGANIZATION,
 } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
-import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
-import { CreateClientRequest } from '../../src/presentation/http/dto/CreateClient';
-import { CreateGroupRequest } from '../../src/presentation/http/dto/CreateGroup';
-import { ImportClientsRequest } from '../../src/presentation/http/dto/ImportClients';
+import { CreateOrganizationRequest } from '../../src/modules/organizations/presentation/http/dto/CreateOrganization';
+import { CreateClientRequest } from '../../src/modules/clients/presentation/http/dto/CreateClient';
+import { CreateGroupRequest } from '../../src/modules/groups/presentation/http/dto/CreateGroup';
+import { ImportClientsRequest } from '../../src/modules/groups/presentation/http/dto/ImportClients';
 import * as moment from 'moment';
-import { AttachGroupsToQueueRequest } from '../../src/presentation/http/dto/AttachGroupsToQueue';
-import { CreateQueueRequest } from '../../src/presentation/http/dto/CreateQueue';
-import { CreateServiceRequest } from '../../src/presentation/http/dto/CreateService';
-import { EnterQueueRequest } from '../../src/presentation/http/dto/EnterQueue';
-import { CallNextOnQueueRequest } from '../../src/presentation/http/dto/CallNextOnQueue';
+import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/AttachGroupsToQueue';
+import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/dto/CreateQueue';
+import { CreateServiceRequest } from '../../src/modules/services/presentation/http/dto/CreateService';
+import { EnterQueueRequest } from '../../src/modules/queues/presentation/http/dto/EnterQueue';
+import { CallNextOnQueueRequest } from '../../src/modules/queues/presentation/http/dto/CallNextOnQueue';
 
 describe('queue', () => {
   let app: INestApplication;

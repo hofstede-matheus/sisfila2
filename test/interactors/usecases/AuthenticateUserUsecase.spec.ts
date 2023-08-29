@@ -3,7 +3,7 @@ import {
   InvalidCredentialsError,
   InvalidEmailError,
   InvalidPasswordError,
-} from '../../../src/domain/errors';
+} from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
@@ -12,7 +12,7 @@ import {
   checkForTokenAndUserId,
 } from '../../helpers';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
-import { AuthenticateUserUsecase } from '../../../src/interactors/usecases/AuthenticateUserUsecase';
+import { AuthenticateUserUsecase } from '../../../src/modules/users/interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticationService } from '../../../src/modules/users/domain/services/AuthenticationService';
 import { EncryptionService } from '../../../src/modules/users/domain/services/EncryptionService';
 

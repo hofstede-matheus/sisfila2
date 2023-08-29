@@ -18,7 +18,7 @@ import { CommonModule } from '../src/modules/common/common.module';
 import { OrganizationsModule } from '../src/modules/organizations/organizations.module';
 import { UsersModule } from '../src/modules/users/users.module';
 import * as request from 'supertest';
-import { CreateUserRequest } from '../src/presentation/http/dto/CreateUser';
+import { CreateUserRequest } from '../src/modules/users/presentation/http/dto/CreateUser';
 import { INestApplication, Provider, VersioningType } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ClientEntity } from '../src/modules/clients/domain/entities/Client.entity';

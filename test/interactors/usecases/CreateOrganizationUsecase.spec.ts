@@ -3,7 +3,7 @@ import {
   OrganizationCodeAlreadyUsedError,
   InvalidCodeError,
   InvalidNameError,
-} from '../../../src/domain/errors';
+} from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
@@ -11,7 +11,7 @@ import {
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { CreateOrganizationUsecase } from '../../../src/interactors/usecases/CreateOrganizationUsecase';
+import { CreateOrganizationUsecase } from '../../../src/modules/organizations/interactors/usecases/CreateOrganizationUsecase';
 import { OrganizationRepository } from '../../../src/modules/organizations/domain/repositories/OrganizationRepository';
 
 describe('CreateOrganizationUsecase', () => {

@@ -1,15 +1,15 @@
 import * as Joi from 'joi';
-import { Either, left, right } from '../../../../shared/helpers/either';
+import { Either, left, right } from '../../../common/shared/helpers/either';
 import {
   DomainEntity,
   staticImplements,
-} from '../../../../shared/helpers/entity';
-import { DomainError } from '../../../../shared/helpers/errors';
+} from '../../../common/shared/helpers/entity';
+import { DomainError } from '../../../common/shared/helpers/errors';
 import {
   InvalidEmailError,
   InvalidNameError,
   InvalidPasswordError,
-} from '../../../../domain/errors';
+} from '../../../common/domain/errors';
 
 export interface UserEntity {
   readonly id: string;

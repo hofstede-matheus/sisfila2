@@ -4,8 +4,8 @@ import {
   InvalidEmailError,
   InvalidNameError,
   InvalidPasswordError,
-} from '../../../src/domain/errors';
-import { CreateUserUsecase } from '../../../src/interactors/usecases/CreateUserUsecase';
+} from '../../../src/modules/common/domain/errors';
+import { CreateUserUsecase } from '../../../src/modules/users/interactors/usecases/CreateUserUsecase';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,

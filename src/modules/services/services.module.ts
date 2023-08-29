@@ -9,10 +9,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Service } from './data/typeorm/entities/services.typeorm-entity';
 import { TypeOrmServicesRepository } from './data/typeorm/repositories/TypeOrmServicesRepository';
 import { ServiceRepository } from './domain/repositories/ServiceRepository';
-import { CreateServiceUsecase } from '../../interactors/usecases/CreateServiceUsecase';
-import { FindOneOrAllServicesUsecase } from '../../interactors/usecases/FindOneOrAllServicesUsecase';
-import { ServiceController } from '../../presentation/http/controllers/v1/ServiceController';
-import { AuthenticationMiddleware } from '../../presentation/http/middleware/AuthenticationMiddleware';
+import { CreateServiceUsecase } from './interactors/usecases/CreateServiceUsecase';
+import { FindOneOrAllServicesUsecase } from './interactors/usecases/FindOneOrAllServicesUsecase';
+import { ServiceController } from './presentation/http/controllers/ServiceController';
+import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
 

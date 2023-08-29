@@ -7,8 +7,8 @@ import {
   VALID_ORGANIZATION,
 } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
-import { CreateOrganizationRequest } from '../../src/presentation/http/dto/CreateOrganization';
-import { CreateClientRequest } from '../../src/presentation/http/dto/CreateClient';
+import { CreateOrganizationRequest } from '../../src/modules/organizations/presentation/http/dto/CreateOrganization';
+import { CreateClientRequest } from '../../src/modules/clients/presentation/http/dto/CreateClient';
 
 describe('clients', () => {
   let app: INestApplication;

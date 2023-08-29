@@ -4,14 +4,14 @@ import {
   InvalidCodeError,
   InvalidIdError,
   InvalidNameError,
-} from '../../../src/domain/errors';
+} from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
   VALID_ORGANIZATION,
 } from '../../helpers';
 import { OrganizationRepository } from '../../../src/modules/organizations/domain/repositories/OrganizationRepository';
-import { UpdateOrganizationUsecase } from '../../../src/interactors/usecases/UpdateOrganizationUsecase';
+import { UpdateOrganizationUsecase } from '../../../src/modules/organizations/interactors/usecases/UpdateOrganizationUsecase';
 
 describe('UpdateOrganizationUsecase', () => {
   let useCase: UpdateOrganizationUsecase;

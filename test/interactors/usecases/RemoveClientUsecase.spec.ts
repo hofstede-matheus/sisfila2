@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvalidIdError } from '../../../src/domain/errors';
+import { InvalidIdError } from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
@@ -7,7 +7,7 @@ import {
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { RemoveClientUsecase } from '../../../src/interactors/usecases/RemoveClientUsecase';
+import { RemoveClientUsecase } from '../../../src/modules/clients/interactors/usecases/RemoveClientUsecase';
 import { ClientRepository } from '../../../src/modules/clients/domain/repositories/ClientRepository';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 

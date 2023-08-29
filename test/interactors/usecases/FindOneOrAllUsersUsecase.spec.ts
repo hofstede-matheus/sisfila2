@@ -1,12 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvalidIdError, UserNotFoundError } from '../../../src/domain/errors';
+import {
+  InvalidIdError,
+  UserNotFoundError,
+} from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { FindOneOrAllUsersUsecase } from '../../../src/interactors/usecases/FindOneOrAllUsersUsecase';
+import { FindOneOrAllUsersUsecase } from '../../../src/modules/users/interactors/usecases/FindOneOrAllUsersUsecase';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 import { UserEntity } from '../../../src/modules/users/domain/entities/User.entity';
 
