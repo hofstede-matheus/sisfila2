@@ -10,6 +10,7 @@ import {
   InvalidPriorityError,
   InvalidCodeError,
 } from '../../../common/domain/errors';
+import { GroupEntity } from '../../../groups/domain/entities/Group.entity';
 
 export interface QueueEntity {
   readonly id: string;
@@ -23,6 +24,7 @@ export interface QueueEntity {
 
   readonly clientsInQueue?: ClientInQueue[];
   readonly lastClientCalled?: ClientInQueue;
+  readonly groups: GroupEntity[];
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

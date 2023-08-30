@@ -6,6 +6,7 @@ import {
 } from '../../../domain/entities/Queue.entity';
 import { QueueRepository } from '../../../domain/repositories/QueueRepository';
 import { Queue } from '../entities/queues.typeorm-entity';
+import { GroupEntity } from '../../../../groups/domain/entities/Group.entity';
 
 export class TypeOrmQueuesRepository implements QueueRepository {
   constructor(
@@ -146,6 +147,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       },
     );
 
+    const groupsFromQueue = await this.getGroupsFromQueue(queueId);
+
     return {
       id: queue.id,
       name: queue.name,
@@ -169,6 +172,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
             attendedByUserId: lastClientCalled[0].attended_by_user,
           } as ClientInQueue)
         : undefined,
+      groups: groupsFromQueue,
     };
   }
 
@@ -196,8 +200,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       where: { organization_id: organizationId },
     });
 
-    const mappedQueues: QueueEntity[] = queues.map((queue: Queue) => {
-      return {
+    const mappedQueues = [];
+    for (const queue of queues) {
+      mappedQueues.push({
         id: queue.id,
         name: queue.name,
         code: queue.code,
@@ -207,8 +212,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         serviceId: queue.service_id,
         createdAt: queue.createdAt,
         updatedAt: queue.updatedAt,
-      };
-    });
+        groups: await this.getGroupsFromQueue(queue.id),
+      });
+    }
 
     return mappedQueues;
   }
@@ -220,7 +226,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     organizationId: string,
     serviceId: string,
     description?: string,
-  ): Promise<string> {
+  ): Promise<QueueEntity> {
     const queueEntity = this.queuesRepository.create({
       name,
       description,
@@ -232,7 +238,19 @@ export class TypeOrmQueuesRepository implements QueueRepository {
 
     const queueInDatabase = await this.queuesRepository.save(queueEntity);
 
-    return queueInDatabase.id;
+    return {
+      id: queueInDatabase.id,
+      name: queueInDatabase.name,
+      code: queueInDatabase.code,
+      priority: queueInDatabase.priority,
+      description: queueInDatabase.description,
+      organizationId: queueInDatabase.organization_id,
+      serviceId: queueInDatabase.service_id,
+      createdAt: queueInDatabase.createdAt,
+      updatedAt: queueInDatabase.updatedAt,
+      clientsInQueue: [],
+      groups: [],
+    };
   }
 
   async findByServiceId(serviceId: string): Promise<QueueEntity[]> {
@@ -240,8 +258,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       where: { service_id: serviceId },
     });
 
-    const mappedQueues: QueueEntity[] = queues.map((queue: Queue) => {
-      return {
+    const mappedQueues = [];
+    for (const queue of queues) {
+      mappedQueues.push({
         id: queue.id,
         name: queue.name,
         code: queue.code,
@@ -251,9 +270,41 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         serviceId: queue.service_id,
         createdAt: queue.createdAt,
         updatedAt: queue.updatedAt,
-      };
-    });
+        groups: await this.getGroupsFromQueue(queue.id),
+      });
+    }
 
     return mappedQueues;
+  }
+
+  private async getGroupsFromQueue(queueId: string): Promise<GroupEntity[]> {
+    const groupsFromQueueFromDatabase = await this.queuesRepository.query(
+      `
+      SELECT
+        groups.id,
+        groups.name,
+        groups.organization_id,
+        groups.created_at,
+        groups.updated_at
+      FROM groups
+      INNER JOIN groups_from_queues ON groups.id = groups_from_queues.group_id
+      WHERE groups_from_queues.queue_id = $1
+      `,
+      [queueId],
+    );
+
+    const groupsFromQueue: GroupEntity[] = groupsFromQueueFromDatabase.map(
+      (group) => {
+        return {
+          id: group.id,
+          name: group.name,
+          organizationId: group.organization_id,
+          createdAt: group.created_at,
+          updatedAt: group.updated_at,
+        };
+      },
+    );
+
+    return groupsFromQueue;
   }
 }

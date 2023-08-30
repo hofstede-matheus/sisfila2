@@ -30,11 +30,9 @@ export class CreateQueueRequest {
     example: 'valid_uuid',
   })
   serviceId: string;
-}
 
-export class CreateQueueResponse {
   @ApiProperty({
-    example: 'valid_uuid',
+    example: ['valid_uuid'],
   })
-  id: string;
+  groupIds: string[];
 }

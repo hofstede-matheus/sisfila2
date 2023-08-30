@@ -13,7 +13,6 @@ import { CreateQueueUsecase } from '../../../interactors/usecases/CreateQueueUse
 import { FindOneOrAllQueuesUsecase } from '../../../interactors/usecases/FindOneOrAllQueuesUsecase';
 import { AttachGroupsToQueueUsecase } from '../../../interactors/usecases/AttachGroupsToQueueUsecase';
 
-import { CreateQueueRequest, CreateQueueResponse } from '../dto/CreateQueue';
 import { Queue } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { Request } from 'express';
@@ -25,6 +24,7 @@ import { CallNextClientOfQueueUsecase } from '../../../interactors/usecases/Call
 import { CallNextOnQueueRequest } from '../dto/CallNextOnQueue';
 import { GetClientPositionInQueueResponse } from '../dto/GetClientPositionInQueue';
 import { GetClientPositionInQueueUsecase } from '../../../interactors/usecases/GetClientPositionInQueueUsecase';
+import { CreateQueueRequest } from '../dto/CreateQueue';
 
 @Controller({ path: 'queues', version: '1' })
 export class QueueController {
@@ -67,12 +67,12 @@ export class QueueController {
           };
         }),
         lastClientCalled: queue.lastClientCalled,
+        groups: queue.groups,
       };
     });
     return mappedQueues;
   }
 
-  // get client position in queue by registrationId
   @Get(':queueId/position/:registrationId')
   @ApiResponse({ type: Number })
   async getClientPositionInQueue(
@@ -118,15 +118,16 @@ export class QueueController {
         };
       }),
       lastClientCalled: result.value.lastClientCalled,
+      groups: result.value.groups,
     };
   }
 
   @Post()
-  @ApiResponse({ type: CreateQueueResponse })
+  @ApiResponse({ type: Queue })
   async create(
     @Body() body: CreateQueueRequest,
     @Req() request: Request,
-  ): Promise<CreateQueueResponse> {
+  ): Promise<Queue> {
     const userId = request.user.sub;
 
     const result = await this.createQueueUsecase.execute(
@@ -141,7 +142,20 @@ export class QueueController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { id: result.value };
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      organizationId: result.value.organizationId,
+      serviceId: result.value.serviceId,
+      code: result.value.code,
+      description: result.value.description,
+      priority: result.value.priority,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+      clients: [],
+      lastClientCalled: undefined,
+      groups: result.value.groups,
+    };
   }
 
   @Patch(':queueId/organizations/:organizationId')
