@@ -40,7 +40,7 @@ export class QueueController {
 
   @Get('organizations/:id')
   @ApiResponse({ type: [Queue] })
-  async getOne(@Param('id') id: string): Promise<Queue[]> {
+  async getByOrganizationId(@Param('id') id: string): Promise<Queue[]> {
     const result = await this.findOneOrAllQueuesUsecase.execute(id);
 
     if (result.isLeft()) throw toPresentationError(result.value);
@@ -92,7 +92,7 @@ export class QueueController {
 
   @Get(':queueId')
   @ApiResponse({ type: Queue })
-  async getQueue(@Param('queueId') queueId: string): Promise<Queue> {
+  async getOne(@Param('queueId') queueId: string): Promise<Queue> {
     const result = await this.findQueueByIdUsecase.execute(queueId);
 
     if (result.isLeft()) throw toPresentationError(result.value);
