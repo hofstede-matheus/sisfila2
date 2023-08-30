@@ -69,6 +69,38 @@ export class Client {
   attendedByUserId?: string;
 }
 
+export class ClientInGroup {
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  id: string;
+
+  @ApiProperty({
+    example: 'John Doe',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  updatedAt: Date;
+
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  organizationId: string;
+
+  @ApiProperty({
+    example: '12345678',
+  })
+  registrationId: string;
+}
+
 export class Organization {
   @ApiProperty({
     example: '73be6348-a46d-4371-8a28-70988f39f7b7',
@@ -169,8 +201,8 @@ export class Group {
   })
   organizationId: string;
 
-  @ApiProperty({ type: [Client] })
-  clients?: Client[];
+  @ApiProperty({ type: [ClientInGroup] })
+  clients?: ClientInGroup[];
 }
 
 export class Queue {

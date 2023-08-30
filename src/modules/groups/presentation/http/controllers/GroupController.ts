@@ -19,7 +19,7 @@ export class GroupController {
 
   @Get('organizations/:id')
   @ApiResponse({ type: [Group] })
-  async getOne(@Param('id') id: string): Promise<Group[]> {
+  async getAllFromOrgagnization(@Param('id') id: string): Promise<Group[]> {
     const result = await this.findOneOrAllGroupsUsecase.execute(id);
 
     if (result.isLeft()) throw toPresentationError(result.value);
@@ -31,7 +31,16 @@ export class GroupController {
         organizationId: group.organizationId,
         createdAt: group.createdAt,
         updatedAt: group.updatedAt,
-        clients: group.clients,
+        clients: group.clients.map((client) => {
+          return {
+            id: client.id,
+            name: client.name,
+            organizationId: client.organizationId,
+            registrationId: client.registrationId,
+            createdAt: client.createdAt,
+            updatedAt: client.updatedAt,
+          };
+        }),
       };
     });
     return mappedGroups;

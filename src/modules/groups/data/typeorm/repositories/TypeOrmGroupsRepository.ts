@@ -32,7 +32,7 @@ export class TypeOrmGroupsRepository implements GroupRepository {
   async findByOrganizationId(organizationId: string): Promise<GroupEntity[]> {
     const groupsFromDatabase = await this.groupsRepository.query(
       `
-      SELECT groups.id, groups.name, groups.organization_id, groups.created_at, groups.updated_at, cli.id as client_id, cli.name as client_name, cli.organization_id as client_organization_id, cli.created_at as client_created_at, cli.updated_at as client_updated_at
+      SELECT groups.id, groups.name, groups.organization_id, groups.created_at, groups.updated_at, cli.id as client_id, cli.name as client_name, cli.organization_id as client_organization_id, cli.registration_id as client_registration_id, cli.created_at as client_created_at, cli.updated_at as client_updated_at
       FROM groups
       LEFT JOIN clients_in_groups cig ON cig.group_id = groups.id
       LEFT JOIN clients cli ON cli.id = cig.client_id
@@ -101,6 +101,7 @@ function mapGroupsWithClients(query: any): GroupEntity[] {
       id: element.client_id,
       name: element.client_name,
       organizationId: element.client_organization_id,
+      registrationId: element.client_registration_id,
       createdAt: element.client_created_at,
       updatedAt: element.client_updated_at,
     });
@@ -117,6 +118,6 @@ function mapGroupsWithClients(query: any): GroupEntity[] {
       organizationId: group.organization_id,
       createdAt: group.createdAt,
       updatedAt: group.updatedAt,
-    };
+    } as GroupEntity;
   });
 }
