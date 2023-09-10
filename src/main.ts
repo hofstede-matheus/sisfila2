@@ -18,6 +18,7 @@ async function bootstrap() {
     new DocumentBuilder()
       .setTitle('Sisfila2 API')
       .setDescription('Sisfila2 API description')
+      .addBearerAuth()
       .build(),
   );
   SwaggerModule.setup('docs', app, document, {});

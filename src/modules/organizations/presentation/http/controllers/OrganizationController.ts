@@ -8,7 +8,7 @@ import {
   Put,
   Req,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 import { Request } from 'express';
 import { CreateOrganizationUsecase } from '../../../interactors/usecases/CreateOrganizationUsecase';
@@ -34,6 +34,7 @@ export class OrganizationController {
 
   @Post()
   @ApiResponse({ type: CreateOrganizationResponse })
+  @ApiBearerAuth()
   async create(
     @Body() body: CreateOrganizationRequest,
     @Req() request: Request,
@@ -51,6 +52,7 @@ export class OrganizationController {
   }
 
   @Put()
+  @ApiBearerAuth()
   async update(@Body() body: UpdateOrganizationRequest): Promise<void> {
     const result = await this.updateOrganizationUsecase.execute(
       body.id,
@@ -63,6 +65,7 @@ export class OrganizationController {
 
   @Get(':id')
   @ApiResponse({ type: Organization })
+  @ApiBearerAuth()
   async getOne(@Param('id') id: string): Promise<Organization> {
     const result = await this.findOneOrAllOrganizationsUsecase.execute({
       organizationId: id,
@@ -81,6 +84,7 @@ export class OrganizationController {
 
   @Get()
   @ApiResponse({ type: [Organization] })
+  @ApiBearerAuth()
   async getAll(@Req() request: Request): Promise<Organization[]> {
     const result = await this.findOneOrAllOrganizationsUsecase.execute({
       userId: request.user.sub,
@@ -100,6 +104,7 @@ export class OrganizationController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   async remove(@Param('id') id: string): Promise<void> {
     const result = await this.removeOrganizationUsecase.execute(id);
 

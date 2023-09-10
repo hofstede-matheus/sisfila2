@@ -15,6 +15,8 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { QueuesModule } from './queues/queues.module';
 import { ServicesModule } from './services/services.module';
 import { UsersModule } from './users/users.module';
+import { DesksModule } from './desk/desk.module';
+import { Desk } from './desk/data/typeorm/entities/desks.typeorm-entity';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { UsersModule } from './users/users.module';
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User, Organization, Service, Queue, Group, Client],
+      entities: [User, Organization, Service, Queue, Group, Client, Desk],
       logging: process.env.DATABASE_LOGGING === 'true',
       migrations: ['dist/src/modules/common/data/typeorm/migrations/*.js'],
       migrationsRun: true,
@@ -39,6 +41,7 @@ import { UsersModule } from './users/users.module';
     GroupsModule,
     CommonModule,
     ClientsModule,
+    DesksModule,
   ],
   controllers: [AppController],
 })

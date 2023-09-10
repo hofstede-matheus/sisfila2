@@ -266,3 +266,35 @@ export class Queue {
   })
   groups: Group[];
 }
+
+export class Desk {
+  @ApiProperty({
+    example: 'valid_uuid',
+  })
+  id: string;
+
+  @ApiProperty({
+    example: 'Desk 1',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: 'valid_uuid',
+  })
+  organizationId: string;
+
+  @ApiProperty({
+    type: [Service],
+  })
+  services: Service[];
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  updatedAt: Date;
+}
