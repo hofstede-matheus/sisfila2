@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientRepository } from '../../../clients/domain/repositories/ClientRepository';
-import { QueueRepository } from '../../domain/repositories/QueueRepository';
+import { QueueRepository } from '../../../queues/domain/repositories/QueueRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
@@ -8,15 +8,13 @@ import { Validator } from '../../../common/shared/helpers/validator';
 import {
   QueueNotFoundError,
   ServiceNotOpenError,
-  UserNotInGroupError,
 } from '../../../common/domain/errors';
-import { GroupRepository } from '../../../groups/domain/repositories/GroupRepository';
-import { ServiceRepository } from '../../../services/domain/repositories/ServiceRepository';
+import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
 import * as moment from 'moment';
 import { isBetweenIgnoringDate } from '../../../common/shared/helpers/moment';
 
 @Injectable()
-export class AttachClientToQueueUsecase implements UseCase {
+export class AttachClientToServiceUsecase implements UseCase {
   constructor(
     @Inject(QueueRepository)
     private queueRepository: QueueRepository,
@@ -24,28 +22,30 @@ export class AttachClientToQueueUsecase implements UseCase {
     @Inject(ClientRepository)
     private clientRepository: ClientRepository,
 
-    @Inject(GroupRepository)
-    private groupRepository: GroupRepository,
-
     @Inject(ServiceRepository)
     private serviceRepository: ServiceRepository,
   ) {}
   async execute(
     registrationId: string,
     organizationId: string,
-    queueId: string,
-  ): Promise<Either<DomainError, void>> {
+    serviceId: string,
+  ): Promise<
+    Either<
+      DomainError,
+      {
+        queueId: string;
+        queueName: string;
+        position: number;
+      }
+    >
+  > {
     const validation = Validator.validate({
-      id: [organizationId, queueId],
+      id: [organizationId, serviceId],
     });
     if (validation.isLeft()) return left(validation.value);
 
-    // get queue
-    const queue = await this.queueRepository.findById(queueId);
-    if (!queue) return left(new QueueNotFoundError());
-
-    // get service of the queue
-    const service = await this.serviceRepository.findById(queue.serviceId);
+    // get service
+    const service = await this.serviceRepository.findById(serviceId);
 
     // check if service is between working hours
 
@@ -65,18 +65,16 @@ export class AttachClientToQueueUsecase implements UseCase {
         registrationId,
       );
 
-    const groups = await this.groupRepository.findGroupsByQueueId(queueId);
+    // get queue given serviceId, organizationId and registrationId
+    const queue =
+      await this.queueRepository.attachClientToQueueByServiceIdOrganizationIdRegistrationId(
+        serviceId,
+        organizationId,
+        user.id,
+      );
 
-    const userIsInGroup = groups.some((group) =>
-      group.clients.some((client) => client.id === user.id),
-    );
+    if (!queue) return left(new QueueNotFoundError());
 
-    if (!userIsInGroup) {
-      return left(new UserNotInGroupError());
-    }
-
-    await this.queueRepository.attachClientToQueue(user.id, queueId);
-
-    return right();
+    return right(queue);
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Patch } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { FindOneOrAllServicesUsecase } from '../../../interactors/usecases/FindOneOrAllServicesUsecase';
@@ -9,12 +9,15 @@ import {
 import { Service } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { CreateServiceUsecase } from '../../../interactors/usecases/CreateServiceUsecase';
+import { EnterServiceRequest, EnterServiceResponse } from '../dto/EnterService';
+import { AttachClientToServiceUsecase } from '../../../interactors/usecases/AttachClientToServiceUsecase';
 
 @Controller({ path: 'services', version: '1' })
 export class ServiceController {
   constructor(
     private readonly findOneOrAllServicesUsecase: FindOneOrAllServicesUsecase,
     private readonly createServiceUsecase: CreateServiceUsecase,
+    private readonly attachClientToServiceUsecase: AttachClientToServiceUsecase,
   ) {}
 
   @Get('organizations/:id')
@@ -63,5 +66,25 @@ export class ServiceController {
     if (result.isLeft()) throw toPresentationError(result.value);
 
     return { id: result.value };
+  }
+
+  @Patch('enter')
+  @ApiResponse({ type: EnterServiceResponse })
+  async enterService(
+    @Body() body: EnterServiceRequest,
+  ): Promise<EnterServiceResponse> {
+    const result = await this.attachClientToServiceUsecase.execute(
+      body.registrationId,
+      body.organizationId,
+      body.serviceId,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return {
+      queueId: result.value.queueId,
+      queueName: result.value.queueName,
+      position: result.value.position,
+    };
   }
 }

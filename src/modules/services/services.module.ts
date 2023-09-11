@@ -15,10 +15,15 @@ import { ServiceController } from './presentation/http/controllers/ServiceContro
 import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
+import { AttachClientToServiceUsecase } from './interactors/usecases/AttachClientToServiceUsecase';
+import { ClientsModule } from '../clients/clients.module';
+import { QueuesModule } from '../queues/queues.module';
 
 @Module({
   imports: [
     forwardRef(() => OrganizationsModule),
+    forwardRef(() => ClientsModule),
+    forwardRef(() => QueuesModule),
     CommonModule,
     TypeOrmModule.forFeature([Service]),
   ],
@@ -36,6 +41,10 @@ import { OrganizationsModule } from '../organizations/organizations.module';
       provide: CreateServiceUsecase,
       useClass: CreateServiceUsecase,
     },
+    {
+      provide: AttachClientToServiceUsecase,
+      useClass: AttachClientToServiceUsecase,
+    },
   ],
   exports: [ServiceRepository],
 })
@@ -43,6 +52,10 @@ export class ServicesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
+      .exclude({
+        path: 'v1/services/enter',
+        method: RequestMethod.PATCH,
+      })
       .forRoutes({ path: 'v1/services*', method: RequestMethod.ALL });
   }
 }

@@ -13,9 +13,113 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     @InjectRepository(Queue)
     private readonly queuesRepository: Repository<Queue>,
   ) {}
+
+  async attachClientToQueueByServiceIdOrganizationIdRegistrationId(
+    serviceId: string,
+    organizationId: string,
+    userId: string,
+  ): Promise<{
+    queueId: string;
+    queueName: string;
+    position: number;
+  }> {
+    let queuesOrderedByPriority = [];
+    await this.queuesRepository.manager.transaction(async (transaction) => {
+      const groupsThatUserBelongs = await transaction.query(
+        `
+      SELECT
+        groups.id
+      FROM groups
+      INNER JOIN clients_in_groups ON groups.id = clients_in_groups.group_id
+      WHERE clients_in_groups.client_id = $1
+      `,
+        [userId],
+      );
+
+      const groupsThatUserBelongsIds = groupsThatUserBelongs.map(
+        (group) => group.id,
+      );
+
+      if (groupsThatUserBelongsIds.length === 0) {
+        return;
+      }
+
+      const queuesAssociatedWithGroups = await transaction.query(
+        `
+      SELECT
+        groups_from_queues.queue_id
+      FROM groups_from_queues
+      WHERE groups_from_queues.group_id IN ($1)
+      `,
+        [groupsThatUserBelongsIds.join(',')],
+      );
+
+      const queuesAssociatedWithGroupsIds = queuesAssociatedWithGroups.map(
+        (queue) => queue.queue_id,
+      );
+
+      queuesOrderedByPriority = await transaction.query(
+        `
+      SELECT
+        queues.id,
+        queues.name
+      FROM queues
+      WHERE queues.service_id = $1
+      AND queues.organization_id = $2
+      AND queues.id IN ($3)
+      ORDER BY queues.priority DESC
+      `,
+        [serviceId, organizationId, queuesAssociatedWithGroupsIds.join(',')],
+      );
+
+      // check if user is already in a queue
+      const userAlreadyInQueue = await transaction.query(
+        `
+      SELECT
+        clients_position_in_queues.queue_id
+      FROM clients_position_in_queues
+      WHERE clients_position_in_queues.client_id = $1
+      `,
+        [userId],
+      );
+
+      if (userAlreadyInQueue.length === 0) {
+        await transaction.query(
+          `INSERT INTO clients_position_in_queues (client_id, queue_id) VALUES ($1, $2)`,
+          [userId, queuesOrderedByPriority[0].id],
+        );
+      }
+    });
+
+    if (queuesOrderedByPriority.length === 0) {
+      return;
+    }
+
+    const user = await this.queuesRepository.query(
+      `
+      SELECT
+        clients.registration_id
+      FROM clients
+      WHERE clients.id = $1
+      `,
+      [userId],
+    );
+
+    const position = await this.getPositionOfClient(
+      queuesOrderedByPriority[0].id,
+      user[0].registration_id,
+    );
+
+    return {
+      queueId: queuesOrderedByPriority[0].id,
+      queueName: queuesOrderedByPriority[0].name,
+      position: position + 1,
+    };
+  }
+
   async getPositionOfClient(
     queueId: string,
-    clientId: string,
+    registrationId: string,
   ): Promise<number> {
     const clientsInQueueFromDatabase = await this.queuesRepository.query(
       `
@@ -53,7 +157,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     );
 
     const position = clientsInQueue.findIndex(
-      (client) => client.registrationId === clientId,
+      (client) => client.registrationId === registrationId,
     );
     return position;
   }

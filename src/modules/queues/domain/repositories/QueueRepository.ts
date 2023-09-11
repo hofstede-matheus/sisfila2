@@ -16,6 +16,15 @@ export interface QueueRepository {
   attachClientToQueue(userId: string, queueId: string): Promise<void>;
   callNextClient(queueId: string): Promise<void>;
   getPositionOfClient(queueId: string, clientId: string): Promise<number>;
+  attachClientToQueueByServiceIdOrganizationIdRegistrationId(
+    serviceId: string,
+    organizationId: string,
+    userId: string,
+  ): Promise<{
+    queueId: string;
+    queueName: string;
+    position: number;
+  }>;
 }
 
 export const QueueRepository = Symbol('QueueRepository');

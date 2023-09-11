@@ -9,7 +9,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Queue } from './data/typeorm/entities/queues.typeorm-entity';
 import { TypeOrmQueuesRepository } from './data/typeorm/repositories/TypeOrmQueuesRepository';
 import { QueueRepository } from './domain/repositories/QueueRepository';
-import { AttachClientToQueueUsecase } from './interactors/usecases/AttachClientToQueueUsecase';
 import { AttachGroupsToQueueUsecase } from './interactors/usecases/AttachGroupsToQueueUsecase';
 import { CallNextClientOfQueueUsecase } from './interactors/usecases/CallNextClientOfQueueUsecase';
 import { CreateQueueUsecase } from './interactors/usecases/CreateQueueUsecase';
@@ -20,16 +19,12 @@ import { AuthenticationMiddleware } from '../common/presentation/http/middleware
 import { ClientsModule } from '../clients/clients.module';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
-import { GroupsModule } from '../groups/groups.module';
-import { ServicesModule } from '../services/services.module';
 import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClientPositionInQueueUsecase';
 
 @Module({
   imports: [
     forwardRef(() => OrganizationsModule),
     forwardRef(() => ClientsModule),
-    forwardRef(() => GroupsModule),
-    forwardRef(() => ServicesModule),
     CommonModule,
     TypeOrmModule.forFeature([Queue]),
   ],
@@ -52,10 +47,6 @@ import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClien
       useClass: AttachGroupsToQueueUsecase,
     },
     {
-      provide: AttachClientToQueueUsecase,
-      useClass: AttachClientToQueueUsecase,
-    },
-    {
       provide: FindQueueByIdUsecase,
       useClass: FindQueueByIdUsecase,
     },
@@ -75,10 +66,6 @@ export class QueuesModule implements NestModule {
     consumer
       .apply(AuthenticationMiddleware)
       .exclude(
-        {
-          path: 'v1/queues/enter',
-          method: RequestMethod.PATCH,
-        },
         {
           path: 'v1/queues/:queueId',
           method: RequestMethod.GET,

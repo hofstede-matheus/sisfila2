@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { Group } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { FindOneOrAllGroupsUsecase } from '../../../interactors/usecases/FindOneOrAllGroupsUsecase';
@@ -19,6 +19,7 @@ export class GroupController {
 
   @Get('organizations/:id')
   @ApiResponse({ type: [Group] })
+  @ApiBearerAuth()
   async getAllFromOrgagnization(@Param('id') id: string): Promise<Group[]> {
     const result = await this.findOneOrAllGroupsUsecase.execute(id);
 
@@ -48,6 +49,7 @@ export class GroupController {
 
   @Post()
   @ApiResponse({ type: CreateGroupResponse })
+  @ApiBearerAuth()
   async create(
     @Body() body: CreateGroupRequest,
     @Req() request: Request,
@@ -66,6 +68,7 @@ export class GroupController {
   }
 
   @Post('import')
+  @ApiBearerAuth()
   async importClients(
     @Body() body: ImportClientsRequest,
     @Req() request: Request,

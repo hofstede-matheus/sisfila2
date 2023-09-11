@@ -8,7 +8,7 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { CreateQueueUsecase } from '../../../interactors/usecases/CreateQueueUsecase';
 import { FindOneOrAllQueuesUsecase } from '../../../interactors/usecases/FindOneOrAllQueuesUsecase';
 import { AttachGroupsToQueueUsecase } from '../../../interactors/usecases/AttachGroupsToQueueUsecase';
@@ -18,7 +18,6 @@ import { toPresentationError } from '../../../../common/presentation/http/errors
 import { Request } from 'express';
 import { AttachGroupsToQueueRequest } from '../dto/AttachGroupsToQueue';
 import { EnterQueueRequest } from '../dto/EnterQueue';
-import { AttachClientToQueueUsecase } from '../../../interactors/usecases/AttachClientToQueueUsecase';
 import { FindQueueByIdUsecase } from '../../../interactors/usecases/FindQueueByIdUsecase';
 import { CallNextClientOfQueueUsecase } from '../../../interactors/usecases/CallNextClientOfQueueUsecase';
 import { CallNextOnQueueRequest } from '../dto/CallNextOnQueue';
@@ -33,13 +32,13 @@ export class QueueController {
     private readonly findQueueByIdUsecase: FindQueueByIdUsecase,
     private readonly createQueueUsecase: CreateQueueUsecase,
     private readonly attachGroupsToQueueUsecase: AttachGroupsToQueueUsecase,
-    private readonly attachClientToQueueUsecase: AttachClientToQueueUsecase,
     private readonly callNextClientOfQueueUsecase: CallNextClientOfQueueUsecase,
     private readonly getClientPositionInQueueUsecase: GetClientPositionInQueueUsecase,
   ) {}
 
   @Get('organizations/:id')
   @ApiResponse({ type: [Queue] })
+  @ApiBearerAuth()
   async getByOrganizationId(@Param('id') id: string): Promise<Queue[]> {
     const result = await this.findOneOrAllQueuesUsecase.execute(id);
 
@@ -124,6 +123,7 @@ export class QueueController {
 
   @Post()
   @ApiResponse({ type: Queue })
+  @ApiBearerAuth()
   async create(
     @Body() body: CreateQueueRequest,
     @Req() request: Request,
@@ -160,6 +160,7 @@ export class QueueController {
 
   @Patch(':queueId/organizations/:organizationId')
   @HttpCode(200)
+  @ApiBearerAuth()
   async attachGroupsToQueue(
     @Param('queueId') queueId: string,
     @Param('organizationId') organizationId: string,
@@ -180,18 +181,8 @@ export class QueueController {
     return;
   }
 
-  @Patch('enter')
-  async enterQueue(@Body() body: EnterQueueRequest): Promise<void> {
-    const result = await this.attachClientToQueueUsecase.execute(
-      body.registrationId,
-      body.organizationId,
-      body.queueId,
-    );
-
-    if (result.isLeft()) throw toPresentationError(result.value);
-  }
-
   @Patch('next')
+  @ApiBearerAuth()
   async callNextClientOfQueue(
     @Body() body: CallNextOnQueueRequest,
   ): Promise<void> {
