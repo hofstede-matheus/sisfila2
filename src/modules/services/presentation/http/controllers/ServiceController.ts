@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { FindOneOrAllServicesUsecase } from '../../../interactors/usecases/FindOneOrAllServicesUsecase';
 import {
   CreateServiceRequest,
@@ -19,7 +19,8 @@ export class ServiceController {
 
   @Get('organizations/:id')
   @ApiResponse({ type: [Service] })
-  async getOne(@Param('id') id: string): Promise<Service[]> {
+  @ApiBearerAuth()
+  async getAllFromOrganization(@Param('id') id: string): Promise<Service[]> {
     const result = await this.findOneOrAllServicesUsecase.execute(id);
 
     if (result.isLeft()) throw toPresentationError(result.value);
@@ -42,6 +43,7 @@ export class ServiceController {
 
   @Post()
   @ApiResponse({ type: CreateServiceResponse })
+  @ApiBearerAuth()
   async create(
     @Body() body: CreateServiceRequest,
     @Req() request: Request,

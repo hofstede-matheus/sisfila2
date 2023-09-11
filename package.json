@@ -20,7 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:unit": "jest --config ./test/jest-unit.json --runInBand",
     "test:integration": "jest --config ./test/jest-integration.json --runInBand --forceExit",
-    "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./ormconfig.ts"
+    "typeorm": "ts-node ./node_modules/typeorm/cli.js -d ./ormconfig.ts",
+    "typeorm:cli:migration:create": "ts-node ./node_modules/typeorm/cli.js migration:create"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",

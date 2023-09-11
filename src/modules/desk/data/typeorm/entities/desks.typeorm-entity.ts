@@ -17,8 +17,8 @@ export class Desk {
   @Column({ name: 'organization_id' })
   organizationId: string;
 
-  @Column({ name: 'attendent_id' })
-  attendentId: string;
+  @Column({ name: 'attendant_id' })
+  attendantId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

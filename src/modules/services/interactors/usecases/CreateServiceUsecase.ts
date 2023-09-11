@@ -17,6 +17,7 @@ export class CreateServiceUsecase implements UseCase {
     @Inject(OrganizationRepository)
     private organizationRepository: OrganizationRepository,
   ) {}
+
   async execute(
     userId: string,
     name: string,

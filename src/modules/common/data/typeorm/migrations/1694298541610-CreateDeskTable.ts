@@ -19,7 +19,7 @@ export class CreateDeskTable1694298541610 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'attendent_id',
+            name: 'attendant_id',
             type: 'uuid',
             isNullable: true,
           },
@@ -51,7 +51,7 @@ export class CreateDeskTable1694298541610 implements MigrationInterface {
       'desks',
       new TableForeignKey({
         name: 'AttendentDesk',
-        columnNames: ['attendent_id'],
+        columnNames: ['attendant_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'SET NULL',

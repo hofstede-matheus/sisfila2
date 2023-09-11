@@ -284,6 +284,11 @@ export class Desk {
   organizationId: string;
 
   @ApiProperty({
+    example: 'valid_uuid',
+  })
+  attendantId: string;
+
+  @ApiProperty({
     type: [Service],
   })
   services: Service[];
