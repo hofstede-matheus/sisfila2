@@ -14,6 +14,7 @@ export class UpdateDeskRequest {
 
   @ApiProperty({
     type: [String],
+    example: ['valid_uuid', 'valid_uuid'],
   })
   services: string[];
 }

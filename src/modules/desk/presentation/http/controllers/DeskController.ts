@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -109,7 +110,7 @@ export class DeskController {
   }
 
   // update desk
-  @Put(':id')
+  @Patch(':id')
   @ApiBearerAuth()
   async updateDesk(
     @Param('id') id: string,
