@@ -10,8 +10,7 @@ import {
   ServiceNotOpenError,
 } from '../../../common/domain/errors';
 import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
-import * as moment from 'moment';
-import { isBetweenIgnoringDate } from '../../../common/shared/helpers/moment';
+import { isServiceOpen } from '../../../common/shared/helpers/moment';
 
 @Injectable()
 export class AttachClientToServiceUsecase implements UseCase {
@@ -49,13 +48,7 @@ export class AttachClientToServiceUsecase implements UseCase {
 
     // check if service is between working hours
 
-    if (
-      !isBetweenIgnoringDate(
-        moment(new Date()),
-        moment(service.opensAt),
-        moment(service.closesAt),
-      )
-    ) {
+    if (!isServiceOpen(service.opensAt, service.closesAt)) {
       return left(new ServiceNotOpenError());
     }
 

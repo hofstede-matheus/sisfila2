@@ -14,6 +14,28 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     private readonly queuesRepository: Repository<Queue>,
   ) {}
 
+  async callClient(
+    callerId: string,
+    queueId: string,
+    clientId: string,
+  ): Promise<void> {
+    await this.queuesRepository.manager.transaction(async (transaction) => {
+      await transaction.query(
+        `
+        UPDATE clients_position_in_queues
+        SET
+          attended_by_user = $1,
+          called_at = now()
+        WHERE
+          queue_id = $2
+        AND
+          client_id = $3
+        `,
+        [callerId, clientId, queueId],
+      );
+    });
+  }
+
   async attachClientToQueueByServiceIdOrganizationIdRegistrationId(
     serviceId: string,
     organizationId: string,
@@ -362,23 +384,13 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       where: { service_id: serviceId },
     });
 
-    const mappedQueues = [];
-    for (const queue of queues) {
-      mappedQueues.push({
-        id: queue.id,
-        name: queue.name,
-        code: queue.code,
-        priority: queue.priority,
-        description: queue.description,
-        organizationId: queue.organization_id,
-        serviceId: queue.service_id,
-        createdAt: queue.createdAt,
-        updatedAt: queue.updatedAt,
-        groups: await this.getGroupsFromQueue(queue.id),
-      });
-    }
+    const queuesPromises = queues.map(async (queue) => {
+      return this.findById(queue.id);
+    });
 
-    return mappedQueues;
+    const queuesWithClients = await Promise.all(queuesPromises);
+
+    return queuesWithClients;
   }
 
   private async getGroupsFromQueue(queueId: string): Promise<GroupEntity[]> {

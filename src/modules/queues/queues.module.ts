@@ -10,7 +10,6 @@ import { Queue } from './data/typeorm/entities/queues.typeorm-entity';
 import { TypeOrmQueuesRepository } from './data/typeorm/repositories/TypeOrmQueuesRepository';
 import { QueueRepository } from './domain/repositories/QueueRepository';
 import { AttachGroupsToQueueUsecase } from './interactors/usecases/AttachGroupsToQueueUsecase';
-import { CallNextClientOfQueueUsecase } from './interactors/usecases/CallNextClientOfQueueUsecase';
 import { CreateQueueUsecase } from './interactors/usecases/CreateQueueUsecase';
 import { FindOneOrAllQueuesUsecase } from './interactors/usecases/FindOneOrAllQueuesUsecase';
 import { FindQueueByIdUsecase } from './interactors/usecases/FindQueueByIdUsecase';
@@ -49,10 +48,6 @@ import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClien
     {
       provide: FindQueueByIdUsecase,
       useClass: FindQueueByIdUsecase,
-    },
-    {
-      provide: CallNextClientOfQueueUsecase,
-      useClass: CallNextClientOfQueueUsecase,
     },
     {
       provide: GetClientPositionInQueueUsecase,

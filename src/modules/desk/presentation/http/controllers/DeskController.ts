@@ -6,7 +6,7 @@ import {
   Param,
   Patch,
   Post,
-  Put,
+  Req,
 } from '@nestjs/common';
 import { CreateDeskRequest, CreateDeskResponse } from '../dto/CreateDesk';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
@@ -17,6 +17,9 @@ import { Desk } from '../../../../common/presentation/http/dto/_shared';
 import { RemoveDeskUsecase } from '../../../interactors/usecases/RemoveDeskUsecase';
 import { UpdateDeskRequest, UpdateDeskResponse } from '../dto/UpdateDesk';
 import { UpdateDeskUsecase } from '../../../interactors/usecases/UpdateDeskUsecase';
+import { CallNextOnDeskResponse } from '../dto/CallNextOnDesk';
+import { CallNextClientOfDeskUsecase } from '../../../interactors/usecases/CallNextClientOfDeskUsecase';
+import { Request } from 'express';
 
 @Controller({ path: 'desks', version: '1' })
 export class DeskController {
@@ -25,6 +28,7 @@ export class DeskController {
     private readonly findOneOrAllDesksUsecase: FindOneOrAllDesksUsecase,
     private readonly removeDeskUsecase: RemoveDeskUsecase,
     private readonly updateDeskUsecase: UpdateDeskUsecase,
+    private readonly callNextClientOfDeskUsecase: CallNextClientOfDeskUsecase,
   ) {}
 
   @Post()
@@ -109,7 +113,6 @@ export class DeskController {
     if (result.isLeft()) throw toPresentationError(result.value);
   }
 
-  // update desk
   @Patch(':id')
   @ApiBearerAuth()
   async updateDesk(
@@ -143,6 +146,32 @@ export class DeskController {
         updatedAt: service.updatedAt,
       })),
 
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+    };
+  }
+
+  @Patch(':id/next')
+  @ApiBearerAuth()
+  async callNextClientOfQueue(
+    @Param('id') id: string,
+    @Req() request: Request,
+  ): Promise<CallNextOnDeskResponse> {
+    const result = await this.callNextClientOfDeskUsecase.execute(
+      id,
+      request.user.sub,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    if (result.value === null) return null;
+
+    // return called client
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      organizationId: result.value.organizationId,
+      registrationId: result.value.registrationId,
       createdAt: result.value.createdAt,
       updatedAt: result.value.updatedAt,
     };

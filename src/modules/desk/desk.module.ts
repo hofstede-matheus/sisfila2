@@ -3,6 +3,7 @@ import {
   Module,
   NestModule,
   RequestMethod,
+  forwardRef,
 } from '@nestjs/common';
 import { CommonModule } from '../common/common.module';
 import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
@@ -15,9 +16,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FindOneOrAllDesksUsecase } from './interactors/usecases/FindOneOrAllDesksUsecase';
 import { RemoveDeskUsecase } from './interactors/usecases/RemoveDeskUsecase';
 import { UpdateDeskUsecase } from './interactors/usecases/UpdateDeskUsecase';
+import { CallNextClientOfDeskUsecase } from './interactors/usecases/CallNextClientOfDeskUsecase';
+import { ServicesModule } from '../services/services.module';
+import { QueuesModule } from '../queues/queues.module';
 
 @Module({
-  imports: [CommonModule, TypeOrmModule.forFeature([Desk])],
+  imports: [
+    CommonModule,
+    forwardRef(() => ServicesModule),
+    forwardRef(() => QueuesModule),
+    TypeOrmModule.forFeature([Desk]),
+  ],
   controllers: [DeskController],
   providers: [
     { provide: DeskRepository, useClass: TypeOrmDesksRepository },
@@ -25,6 +34,10 @@ import { UpdateDeskUsecase } from './interactors/usecases/UpdateDeskUsecase';
     { provide: FindOneOrAllDesksUsecase, useClass: FindOneOrAllDesksUsecase },
     { provide: RemoveDeskUsecase, useClass: RemoveDeskUsecase },
     { provide: UpdateDeskUsecase, useClass: UpdateDeskUsecase },
+    {
+      provide: CallNextClientOfDeskUsecase,
+      useClass: CallNextClientOfDeskUsecase,
+    },
   ],
   exports: [DeskRepository],
 })

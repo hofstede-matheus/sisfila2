@@ -9,6 +9,34 @@ export class TypeOrmServicesRepository implements ServiceRepository {
     @InjectRepository(Service)
     private readonly servicesRepository: Repository<Service>,
   ) {}
+
+  async findByDeskId(deskId: string): Promise<ServiceEntity[]> {
+    const services = await this.servicesRepository.query(
+      `
+      SELECT s.id, s.name, s.subscription_token, s.guest_enroll, s.opens_at, s.closes_at, s.organization_id, s.created_at, s.updated_at
+      FROM desks d
+      INNER JOIN desks_has_services dhs ON d.id = dhs.desk_id
+      INNER JOIN services s ON dhs.service_id = s.id
+      WHERE d.id = $1
+    `,
+      [deskId],
+    );
+
+    return services.map((service) => {
+      return {
+        id: service.id,
+        name: service.name,
+        subscriptionToken: service.subscription_token,
+        guestEnrollment: service.guest_enroll,
+        opensAt: service.opens_at,
+        closesAt: service.closes_at,
+        organizationId: service.organization_id,
+        createdAt: service.created_at,
+        updatedAt: service.updated_at,
+      };
+    });
+  }
+
   async create(
     name: string,
     guestEnrollment: boolean,

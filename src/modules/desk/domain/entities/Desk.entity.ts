@@ -55,8 +55,8 @@ export class DeskEntity {
   public static validateEdit(
     id: string,
     name: string,
-    attendantId: string,
     services: string[],
+    attendantId?: string,
   ): Either<DomainError, void> {
     const schema = Joi.object({
       name: Joi.string()
@@ -70,6 +70,7 @@ export class DeskEntity {
 
       attendantId: Joi.string()
         .uuid()
+        .optional()
         .error(() => new InvalidIdError()),
 
       services: Joi.array()

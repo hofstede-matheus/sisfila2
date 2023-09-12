@@ -18,7 +18,7 @@ export class UpdateDeskUsecase implements UseCase {
     attendantId: string,
     services: string[],
   ): Promise<Either<DomainError, DeskEntity>> {
-    const validation = DeskEntity.validateEdit(id, name, attendantId, services);
+    const validation = DeskEntity.validateEdit(id, name, services, attendantId);
     if (validation.isLeft()) return left(validation.value);
 
     const updatedDesk = await this.deskRepository.update(

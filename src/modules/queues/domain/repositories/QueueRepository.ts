@@ -15,6 +15,11 @@ export interface QueueRepository {
   attachGroupsToQueue(groupIds: string[], queueId: string): Promise<void>;
   attachClientToQueue(userId: string, queueId: string): Promise<void>;
   callNextClient(queueId: string): Promise<void>;
+  callClient(
+    callerId: string,
+    queueId: string,
+    clientId: string,
+  ): Promise<void>;
   getPositionOfClient(queueId: string, clientId: string): Promise<number>;
   attachClientToQueueByServiceIdOrganizationIdRegistrationId(
     serviceId: string,

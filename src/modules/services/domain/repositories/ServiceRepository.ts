@@ -11,6 +11,7 @@ export interface ServiceRepository {
     subscriptionToken: string,
   ): Promise<string>;
   findById(serviceId: string): Promise<ServiceEntity>;
+  findByDeskId(deskId: string): Promise<ServiceEntity[]>;
 }
 
 export const ServiceRepository = Symbol('ServiceRepository');

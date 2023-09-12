@@ -17,10 +17,7 @@ import { Queue } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { Request } from 'express';
 import { AttachGroupsToQueueRequest } from '../dto/AttachGroupsToQueue';
-import { EnterQueueRequest } from '../dto/EnterQueue';
 import { FindQueueByIdUsecase } from '../../../interactors/usecases/FindQueueByIdUsecase';
-import { CallNextClientOfQueueUsecase } from '../../../interactors/usecases/CallNextClientOfQueueUsecase';
-import { CallNextOnQueueRequest } from '../dto/CallNextOnQueue';
 import { GetClientPositionInQueueResponse } from '../dto/GetClientPositionInQueue';
 import { GetClientPositionInQueueUsecase } from '../../../interactors/usecases/GetClientPositionInQueueUsecase';
 import { CreateQueueRequest } from '../dto/CreateQueue';
@@ -32,7 +29,6 @@ export class QueueController {
     private readonly findQueueByIdUsecase: FindQueueByIdUsecase,
     private readonly createQueueUsecase: CreateQueueUsecase,
     private readonly attachGroupsToQueueUsecase: AttachGroupsToQueueUsecase,
-    private readonly callNextClientOfQueueUsecase: CallNextClientOfQueueUsecase,
     private readonly getClientPositionInQueueUsecase: GetClientPositionInQueueUsecase,
   ) {}
 
@@ -179,18 +175,5 @@ export class QueueController {
     if (result.isLeft()) throw toPresentationError(result.value);
 
     return;
-  }
-
-  @Patch('next')
-  @ApiBearerAuth()
-  async callNextClientOfQueue(
-    @Body() body: CallNextOnQueueRequest,
-  ): Promise<void> {
-    const result = await this.callNextClientOfQueueUsecase.execute(
-      body.organizationId,
-      body.queueId,
-    );
-
-    if (result.isLeft()) throw toPresentationError(result.value);
   }
 }
