@@ -169,7 +169,6 @@ export class DeskController {
 
     if (result.value === null) return null;
 
-    // return called client
     return {
       id: result.value.id,
       name: result.value.name,
