@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { ServiceEntity } from '../../../domain/entities/Service.entity';
 import { ServiceRepository } from '../../../domain/repositories/ServiceRepository';
 import { Service } from '../entities/services.typeorm-entity';
+import { isServiceOpen } from '../../../../common/shared/helpers/moment';
 
 export class TypeOrmServicesRepository implements ServiceRepository {
   constructor(
@@ -72,6 +73,7 @@ export class TypeOrmServicesRepository implements ServiceRepository {
         opensAt: service.opensAt,
         closesAt: service.closesAt,
         organizationId: service.organization_id,
+        isOpened: isServiceOpen(service.opensAt, service.closesAt),
         createdAt: service.createdAt,
         updatedAt: service.updatedAt,
       };
@@ -93,6 +95,7 @@ export class TypeOrmServicesRepository implements ServiceRepository {
       opensAt: service.opensAt,
       closesAt: service.closesAt,
       organizationId: service.organization_id,
+      isOpened: isServiceOpen(service.opensAt, service.closesAt),
       createdAt: service.createdAt,
       updatedAt: service.updatedAt,
     };

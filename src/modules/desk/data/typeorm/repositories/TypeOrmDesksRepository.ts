@@ -4,6 +4,7 @@ import { DeskEntity } from '../../../domain/entities/Desk.entity';
 import { DeskRepository } from '../../../domain/repositories/DeskRepository';
 import { Desk } from '../entities/desks.typeorm-entity';
 import { ServiceEntity } from '../../../../services/domain/entities/Service.entity';
+import { isServiceOpen } from '../../../../common/shared/helpers/moment';
 
 export class TypeOrmDesksRepository implements DeskRepository {
   constructor(
@@ -131,6 +132,7 @@ export function mapDesksWithServices(data: any[]): DeskEntity[] {
       id: service_id,
       name: service_name,
       organizationId: service_organization_id,
+      isOpened: isServiceOpen(service_opens_at, service_closes_at),
       guestEnrollment: service_guest_enroll,
       opensAt: service_opens_at,
       closesAt: service_closes_at,

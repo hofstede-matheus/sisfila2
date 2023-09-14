@@ -28,6 +28,7 @@ import { Client } from '../src/modules/clients/data/typeorm/entities/clients.typ
 import { AuthorizationService } from '../src/modules/users/domain/services/AuthorizationService';
 import { EncryptionService } from '../src/modules/users/domain/services/EncryptionService';
 import { OAuthService } from '../src/modules/users/domain/services/OauthAuthenticationService';
+import { GroupEntity } from '../src/modules/groups/domain/entities/Group.entity';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -62,6 +63,14 @@ export const VALID_CLIENT = {
   registrationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
 } as ClientEntity;
 
+export const VALID_GROUP = {
+  id: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  name: 'Valid Name',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+} as GroupEntity;
+
 export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
   {
     provide: UserRepository,
@@ -92,6 +101,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findByOrganizationId: jest.fn(),
       create: jest.fn(),
       findById: jest.fn(),
+      findByDeskId: jest.fn(),
     } as ServiceRepository,
   },
   {
@@ -107,6 +117,9 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findById: jest.fn(),
       callNextClient: jest.fn(),
       getPositionOfClient: jest.fn(),
+      attachServiceToQueue: jest.fn(),
+      callClient: jest.fn(),
+      attachClientToQueueByServiceIdOrganizationIdRegistrationId: jest.fn(),
     } as QueueRepository,
   },
   {
@@ -130,6 +143,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       removeAsAdmin: jest.fn(),
       findManyIdsByRegistrationIds: jest.fn(),
       attachClientToQueue: jest.fn(),
+      update: jest.fn(),
     } as ClientRepository,
   },
 ];

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Req,
@@ -19,7 +20,10 @@ import {
   CreateOrganizationResponse,
   CreateOrganizationRequest,
 } from '../dto/CreateOrganization';
-import { UpdateOrganizationRequest } from '../dto/UpdateOrganization';
+import {
+  UpdateOrganizationRequest,
+  UpdateOrganizationResponse,
+} from '../dto/UpdateOrganization';
 import { Organization } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 
@@ -48,12 +52,21 @@ export class OrganizationController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { id: result.value };
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      code: result.value.code,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+    };
   }
 
-  @Put()
+  @Patch()
   @ApiBearerAuth()
-  async update(@Body() body: UpdateOrganizationRequest): Promise<void> {
+  @ApiResponse({ type: UpdateOrganizationResponse })
+  async update(
+    @Body() body: UpdateOrganizationRequest,
+  ): Promise<UpdateOrganizationResponse> {
     const result = await this.updateOrganizationUsecase.execute(
       body.id,
       body.name,
@@ -61,6 +74,14 @@ export class OrganizationController {
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);
+
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      code: result.value.code,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+    };
   }
 
   @Get(':id')

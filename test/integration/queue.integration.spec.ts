@@ -182,19 +182,17 @@ describe('queue', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '12345678',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '123456789',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '1234567890',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
+        organizationId: bodyOfCreateOrganizationRequest.id,
       } as ImportClientsRequest)
       .set('Accept', 'application/json')
       .expect(201);
@@ -213,31 +211,31 @@ describe('queue', () => {
     // CLIENT WITHOUT AUTH
 
     await request(app.getHttpServer())
-      .patch(`/v1/queues/enter`)
+      .patch(`/v1/services/enter`)
       .send({
         registrationId: '12345678',
         organizationId: bodyOfCreateOrganizationRequest.id,
-        queueId: bodyOfCreateQueueRequest.id,
+        serviceId: bodyOfCreateServiceRequest.id,
       })
       .set('Accept', 'application/json')
       .expect(200);
 
     await request(app.getHttpServer())
-      .patch(`/v1/queues/enter`)
+      .patch(`/v1/services/enter`)
       .send({
         registrationId: '123456789',
         organizationId: bodyOfCreateOrganizationRequest.id,
-        queueId: bodyOfCreateQueueRequest.id,
+        serviceId: bodyOfCreateServiceRequest.id,
       })
       .set('Accept', 'application/json')
       .expect(200);
 
     await request(app.getHttpServer())
-      .patch(`/v1/queues/enter`)
+      .patch(`/v1/services/enter`)
       .send({
         registrationId: '1234567890',
         organizationId: bodyOfCreateOrganizationRequest.id,
-        queueId: bodyOfCreateQueueRequest.id,
+        serviceId: bodyOfCreateServiceRequest.id,
       })
       .set('Accept', 'application/json')
       .expect(200);
@@ -338,17 +336,14 @@ describe('queue', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '12345678',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '123456789',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '1234567890',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
       } as ImportClientsRequest)
@@ -495,17 +490,14 @@ describe('queue', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '12345678',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '123456789',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '1234567890',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
       } as ImportClientsRequest)
@@ -691,17 +683,14 @@ describe('queue', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '12345678',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '123456789',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '1234567890',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
       } as ImportClientsRequest)
@@ -829,12 +818,10 @@ describe('queue', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '12345678',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
           {
             name: VALID_CLIENT.name,
             registrationId: '123456789',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
       } as ImportClientsRequest)

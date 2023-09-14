@@ -1,39 +1,39 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientEntity } from '../../domain/entities/Client.entity';
-import { ClientAlreadyExistsError } from '../../../common/domain/errors';
+import {
+  ClientAlreadyExistsError,
+  ClientNotFoundError,
+} from '../../../common/domain/errors';
 import { ClientRepository } from '../../domain/repositories/ClientRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
+import { Validator } from '../../../common/shared/helpers/validator';
 
 @Injectable()
-export class CreateClientUsecase implements UseCase {
+export class UpdateClientUsecase implements UseCase {
   constructor(
     @Inject(ClientRepository)
     private clientRepository: ClientRepository,
   ) {}
   async execute(
-    name: string,
+    clientId: string,
     organizationId: string,
-    registrationId: string,
+    name: string,
   ): Promise<Either<DomainError, ClientEntity>> {
-    const validation = ClientEntity.build(name, organizationId, registrationId);
+    const validation = Validator.validate({
+      id: [clientId, organizationId],
+    });
     if (validation.isLeft()) return left(validation.value);
 
-    const client =
-      await this.clientRepository.findByRegistrationIdFromOrganization(
-        organizationId,
-        registrationId,
-      );
-
-    if (client) return left(new ClientAlreadyExistsError());
-
-    const newClient = await this.clientRepository.create(
-      name,
+    const updatedClient = await this.clientRepository.update(
+      clientId,
       organizationId,
-      registrationId,
+      name,
     );
 
-    return right(newClient);
+    if (!updatedClient) return left(new ClientNotFoundError());
+
+    return right(updatedClient);
   }
 }

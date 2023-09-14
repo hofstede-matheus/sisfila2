@@ -15,58 +15,80 @@ export class ImportClientsToGroupUsecase implements UseCase {
     @Inject(ClientRepository)
     private clientRepository: ClientRepository,
   ) {}
+
   async execute(
     userId: string,
     groupId: string,
     organizationId: string,
-    clients: ClientEntity[],
+    clients: { name: string; registrationId: string }[],
   ): Promise<Either<DomainError, void>> {
     const validation = Validator.validate({
-      id: [userId, groupId],
+      id: [userId, groupId, organizationId],
     });
     if (validation.isLeft()) return left(validation.value);
 
-    const newClientsToGroup: ClientEntity[] = [];
-    const newClientsIds: string[] = [];
+    const clientsWithUniqueRegistrationId = clients.filter(
+      (client, index, self) =>
+        index ===
+        self.findIndex((t) => t.registrationId === client.registrationId),
+    );
 
-    for (const client of clients) {
+    const newClients: ClientEntity[] = [];
+    const clientsInDatabase: { client: ClientEntity; isNameEdited: boolean }[] =
+      [];
+
+    for (const client of clientsWithUniqueRegistrationId) {
       const entityValidation = ClientEntity.build(
         client.name,
-        client.organizationId,
+        organizationId,
         client.registrationId,
       );
       if (entityValidation.isLeft()) return left(entityValidation.value);
       const clientInDatabase =
         await this.clientRepository.findByRegistrationIdFromOrganization(
-          client.organizationId,
+          organizationId,
           client.registrationId,
         );
 
       if (!clientInDatabase) {
-        newClientsToGroup.push(client);
+        newClients.push(entityValidation.value);
+      } else {
+        clientsInDatabase.push({
+          client: {
+            ...clientInDatabase,
+            name: client.name,
+          },
+          isNameEdited: clientInDatabase.name !== client.name,
+        });
       }
     }
 
-    for (const client of newClientsToGroup) {
+    const newClientIds = [];
+
+    for (const client of newClients) {
       const newClient = await this.clientRepository.create(
         client.name,
-        client.organizationId,
+        organizationId,
         client.registrationId,
       );
-      newClientsIds.push(newClient.id);
+      newClientIds.push(newClient.id);
     }
 
-    // TODO - remove newly created clients from this list
-    const clientsIdsInDatabase =
-      await this.clientRepository.findManyIdsByRegistrationIds(
-        clients.map((client) => client.registrationId),
-      );
+    for (const client of clientsInDatabase) {
+      if (client.isNameEdited) {
+        await this.clientRepository.update(
+          client.client.id,
+          client.client.organizationId,
+          client.client.name,
+        );
+      }
+    }
 
     await this.groupRepository.removeAllClientsFromGroup(groupId);
 
     await this.groupRepository.attachClientsToGroup(groupId, [
-      ...newClientsIds,
-      ...clientsIdsInDatabase,
+      ...newClientIds,
+      ...clientsInDatabase.map((client) => client.client.id),
     ]);
 
     return right();

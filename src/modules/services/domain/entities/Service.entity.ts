@@ -19,6 +19,7 @@ export interface ServiceEntity {
   readonly opensAt: Date;
   readonly closesAt: Date;
   readonly organizationId: string;
+  readonly isOpened: boolean;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

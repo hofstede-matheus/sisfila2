@@ -173,6 +173,11 @@ export class Service {
     example: '73be6348-a46d-4371-8a28-70988f39f7b7',
   })
   organizationId: string;
+
+  @ApiProperty({
+    example: true,
+  })
+  isOpened: boolean;
 }
 
 export class Group {

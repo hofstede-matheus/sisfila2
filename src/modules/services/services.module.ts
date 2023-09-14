@@ -52,10 +52,16 @@ export class ServicesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
-      .exclude({
-        path: 'v1/services/enter',
-        method: RequestMethod.PATCH,
-      })
+      .exclude(
+        {
+          path: 'v1/services/enter',
+          method: RequestMethod.PATCH,
+        },
+        {
+          path: 'v1/services/organizations/:id',
+          method: RequestMethod.GET,
+        },
+      )
       .forRoutes({ path: 'v1/services*', method: RequestMethod.ALL });
   }
 }

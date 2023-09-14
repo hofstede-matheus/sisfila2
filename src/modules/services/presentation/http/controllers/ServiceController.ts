@@ -22,7 +22,6 @@ export class ServiceController {
 
   @Get('organizations/:id')
   @ApiResponse({ type: [Service] })
-  @ApiBearerAuth()
   async getAllFromOrganization(@Param('id') id: string): Promise<Service[]> {
     const result = await this.findOneOrAllServicesUsecase.execute(id);
 
@@ -35,6 +34,7 @@ export class ServiceController {
         subscriptionToken: service.subscriptionToken,
         guestEnroll: service.guestEnrollment,
         organizationId: service.organizationId,
+        isOpened: service.isOpened,
         opensAt: service.opensAt,
         closesAt: service.closesAt,
         createdAt: service.createdAt,

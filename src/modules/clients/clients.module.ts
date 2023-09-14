@@ -15,6 +15,7 @@ import { ClientController } from './presentation/http/controllers/v1/ClientContr
 import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from '../common/common.module';
 import { UsersModule } from '../users/users.module';
+import { UpdateClientUsecase } from './interactors/usecases/UpdateClientUsecase';
 
 @Module({
   imports: [CommonModule, TypeOrmModule.forFeature([Client]), UsersModule],
@@ -36,6 +37,7 @@ import { UsersModule } from '../users/users.module';
       provide: RemoveClientUsecase,
       useClass: RemoveClientUsecase,
     },
+    { provide: UpdateClientUsecase, useClass: UpdateClientUsecase },
   ],
   exports: [ClientRepository],
 })

@@ -1,10 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateClientRequest } from '../../../../clients/presentation/http/dto/CreateClient';
-import { Client } from '../../../../common/presentation/http/dto/_shared';
+
+export class ClientToImport {
+  @ApiProperty({
+    example: 'John Doe',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: '04859541847',
+  })
+  registrationId: string;
+}
 
 export class ImportClientsRequest {
-  @ApiProperty({ type: [CreateClientRequest] })
-  clients: Client[];
+  @ApiProperty({ type: [ClientToImport] })
+  clients: ClientToImport[];
 
   @ApiProperty({ example: 'valid_uuid' })
   groupId: string;

@@ -55,6 +55,7 @@ export class DeskController {
         subscriptionToken: service.subscriptionToken,
         guestEnroll: service.guestEnrollment,
         organizationId: service.organizationId,
+        isOpened: service.isOpened,
         opensAt: service.opensAt,
         closesAt: service.closesAt,
 
@@ -91,6 +92,7 @@ export class DeskController {
           subscriptionToken: service.subscriptionToken,
           guestEnroll: service.guestEnrollment,
           organizationId: service.organizationId,
+          isOpened: service.isOpened,
           opensAt: service.opensAt,
           closesAt: service.closesAt,
 
@@ -139,6 +141,7 @@ export class DeskController {
         subscriptionToken: service.subscriptionToken,
         guestEnroll: service.guestEnrollment,
         organizationId: service.organizationId,
+        isOpened: service.isOpened,
         opensAt: service.opensAt,
         closesAt: service.closesAt,
 

@@ -17,8 +17,8 @@ export class UpdateOrganizationUsecase implements UseCase {
     id: string,
     name?: string,
     code?: string,
-  ): Promise<Either<DomainError, void>> {
-    const entityValidation = OrganizationEntity.build(name, code);
+  ): Promise<Either<DomainError, OrganizationEntity>> {
+    const entityValidation = OrganizationEntity.validateEdit(id, name, code);
     const validation = Validator.validate({
       id: [id],
     });
@@ -26,12 +26,19 @@ export class UpdateOrganizationUsecase implements UseCase {
     if (entityValidation.isLeft()) return left(entityValidation.value);
     if (validation.isLeft()) return left(validation.value);
 
-    const organization = await this.organizationRepository.findByCode(code);
+    if (code) {
+      const organization = await this.organizationRepository.findByCode(code);
 
-    if (organization) return left(new OrganizationCodeAlreadyUsedError());
+      if (organization) return left(new OrganizationCodeAlreadyUsedError());
+    }
+    // TODO: check if user is TYPE_COORDINATOR for this organization
 
-    this.organizationRepository.update(id, name, code);
+    const updatedOrganization = await this.organizationRepository.update(
+      id,
+      name,
+      code,
+    );
 
-    return right();
+    return right(updatedOrganization);
   }
 }

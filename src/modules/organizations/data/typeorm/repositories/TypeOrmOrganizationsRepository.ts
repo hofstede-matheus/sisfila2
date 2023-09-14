@@ -101,16 +101,21 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
 
     return organizationsEntity;
   }
-  async update(id: string, name?: string, code?: string): Promise<void> {
-    await this.organizationsRepository.update(id, {
+  async update(
+    id: string,
+    name?: string,
+    code?: string,
+  ): Promise<OrganizationEntity> {
+    const updatedOrganization = await this.organizationsRepository.save({
+      id,
       name,
       code,
     });
 
-    return;
+    return updatedOrganization;
   }
 
-  async create(name: string, code: string): Promise<string> {
+  async create(name: string, code: string): Promise<OrganizationEntity> {
     const userEntity = this.organizationsRepository.create({
       name,
       code,
@@ -118,7 +123,13 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
 
     const userInDatabase = await this.organizationsRepository.save(userEntity);
 
-    return userInDatabase.id;
+    return {
+      id: userInDatabase.id,
+      name: userInDatabase.name,
+      code: userInDatabase.code,
+      createdAt: userInDatabase.createdAt,
+      updatedAt: userInDatabase.updatedAt,
+    };
   }
   async findByCode(code: string): Promise<OrganizationEntity> {
     const userInDatabase = await this.organizationsRepository.findOne({

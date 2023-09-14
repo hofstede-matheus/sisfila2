@@ -9,7 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Queue } from './data/typeorm/entities/queues.typeorm-entity';
 import { TypeOrmQueuesRepository } from './data/typeorm/repositories/TypeOrmQueuesRepository';
 import { QueueRepository } from './domain/repositories/QueueRepository';
-import { AttachGroupsToQueueUsecase } from './interactors/usecases/AttachGroupsToQueueUsecase';
+import { AttachGroupsAndServiceToQueueUsecase } from './interactors/usecases/AttachGroupsToQueueUsecase';
 import { CreateQueueUsecase } from './interactors/usecases/CreateQueueUsecase';
 import { FindOneOrAllQueuesUsecase } from './interactors/usecases/FindOneOrAllQueuesUsecase';
 import { FindQueueByIdUsecase } from './interactors/usecases/FindQueueByIdUsecase';
@@ -42,8 +42,8 @@ import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClien
       useClass: CreateQueueUsecase,
     },
     {
-      provide: AttachGroupsToQueueUsecase,
-      useClass: AttachGroupsToQueueUsecase,
+      provide: AttachGroupsAndServiceToQueueUsecase,
+      useClass: AttachGroupsAndServiceToQueueUsecase,
     },
     {
       provide: FindQueueByIdUsecase,

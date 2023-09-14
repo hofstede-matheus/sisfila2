@@ -7,6 +7,7 @@ import {
 import { DomainError } from '../../../common/shared/helpers/errors';
 import {
   InvalidCodeError,
+  InvalidIdError,
   InvalidNameError,
 } from '../../../common/domain/errors';
 
@@ -45,5 +46,37 @@ export class OrganizationEntity {
     if (validation.error) return left(validation.error);
 
     return right(new OrganizationEntity(name, code));
+  }
+
+  public static validateEdit(
+    id: string,
+    name: string,
+    code: string,
+  ): Either<DomainError, void> {
+    const schema = Joi.object({
+      id: Joi.string()
+        .uuid()
+        .required()
+        .error(() => new InvalidIdError()),
+
+      name: Joi.string()
+        .min(2)
+        .error(() => new InvalidNameError()),
+
+      code: Joi.string()
+        .min(2)
+        .max(10)
+        .error(() => new InvalidCodeError()),
+    });
+
+    const validation = schema.validate({
+      id,
+      name,
+      code,
+    });
+
+    if (validation.error) return left(validation.error);
+
+    return right();
   }
 }

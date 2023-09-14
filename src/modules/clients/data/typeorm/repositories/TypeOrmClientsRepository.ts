@@ -10,8 +10,32 @@ export class TypeOrmClientsRepository implements ClientRepository {
     private readonly clientsRepository: Repository<Client>,
   ) {}
 
-  async attachClientToQueue(clientId: string, queueId: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async update(
+    clientId: string,
+    organizationId: string,
+    name: string,
+  ): Promise<ClientEntity> {
+    const client = await this.clientsRepository.findOneBy({
+      id: clientId,
+      organizationId,
+    });
+
+    if (!client) return undefined;
+
+    const updatedClient = await this.clientsRepository.save({
+      id: clientId,
+      organizationId,
+      name,
+    });
+
+    return {
+      id: updatedClient.id,
+      name: updatedClient.name,
+      organizationId: updatedClient.organizationId,
+      registrationId: updatedClient.registrationId,
+      createdAt: updatedClient.createdAt,
+      updatedAt: updatedClient.updatedAt,
+    };
   }
 
   async findManyIdsByRegistrationIds(

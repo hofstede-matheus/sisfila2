@@ -11,7 +11,7 @@ import {
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { CreateQueueUsecase } from '../../../interactors/usecases/CreateQueueUsecase';
 import { FindOneOrAllQueuesUsecase } from '../../../interactors/usecases/FindOneOrAllQueuesUsecase';
-import { AttachGroupsToQueueUsecase } from '../../../interactors/usecases/AttachGroupsToQueueUsecase';
+import { AttachGroupsAndServiceToQueueUsecase } from '../../../interactors/usecases/AttachGroupsToQueueUsecase';
 
 import { Queue } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
@@ -28,7 +28,7 @@ export class QueueController {
     private readonly findOneOrAllQueuesUsecase: FindOneOrAllQueuesUsecase,
     private readonly findQueueByIdUsecase: FindQueueByIdUsecase,
     private readonly createQueueUsecase: CreateQueueUsecase,
-    private readonly attachGroupsToQueueUsecase: AttachGroupsToQueueUsecase,
+    private readonly attachGroupsToQueueUsecase: AttachGroupsAndServiceToQueueUsecase,
     private readonly getClientPositionInQueueUsecase: GetClientPositionInQueueUsecase,
   ) {}
 
@@ -157,7 +157,7 @@ export class QueueController {
   @Patch(':queueId/organizations/:organizationId')
   @HttpCode(200)
   @ApiBearerAuth()
-  async attachGroupsToQueue(
+  async attachGroupsAndServiceToQueue(
     @Param('queueId') queueId: string,
     @Param('organizationId') organizationId: string,
     @Body() body: AttachGroupsToQueueRequest,
@@ -170,6 +170,7 @@ export class QueueController {
       organizationId,
       queueId,
       body.groups,
+      body.serviceId,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);

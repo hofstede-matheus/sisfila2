@@ -13,6 +13,7 @@ export interface QueueRepository {
     description?: string,
   ): Promise<QueueEntity>;
   attachGroupsToQueue(groupIds: string[], queueId: string): Promise<void>;
+  attachServiceToQueue(serviceId: string, queueId: string): Promise<void>;
   attachClientToQueue(userId: string, queueId: string): Promise<void>;
   callNextClient(queueId: string): Promise<void>;
   callClient(

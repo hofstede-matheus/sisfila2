@@ -4,10 +4,11 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Req,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { toPresentationError } from '../../../../../common/presentation/http/errors';
 import { CreateClientUsecase } from '../../../../interactors/usecases/CreateClientUsecase';
 import {
@@ -18,6 +19,8 @@ import { Client } from '../../../../../common/presentation/http/dto/_shared';
 import { FindOneOrAllClientsUsecase } from '../../../../interactors/usecases/FindOneOrAllClientsUsecase';
 import { Request } from 'express';
 import { RemoveClientUsecase } from '../../../../interactors/usecases/RemoveClientUsecase';
+import { UpdateClientRequest } from '../../dto/UpdateClient';
+import { UpdateClientUsecase } from '../../../../interactors/usecases/UpdateClientUsecase';
 
 @Controller({ path: 'clients', version: '1' })
 export class ClientController {
@@ -25,11 +28,13 @@ export class ClientController {
     private readonly createClientUsecase: CreateClientUsecase,
     private readonly findOneOrAllClientsUsecase: FindOneOrAllClientsUsecase,
     private readonly removeClientUsecase: RemoveClientUsecase,
+    private readonly updateClientUsecase: UpdateClientUsecase,
   ) {}
 
   @Post()
   @ApiResponse({ type: CreateClientResponse })
-  async createUser(
+  @ApiBearerAuth()
+  async createClient(
     @Body() body: CreateClientRequest,
   ): Promise<CreateClientResponse> {
     const result = await this.createClientUsecase.execute(
@@ -40,11 +45,19 @@ export class ClientController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return { id: result.value };
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+      organizationId: result.value.organizationId,
+      registrationId: result.value.registrationId,
+    };
   }
 
   @Get(':clientId/organizations/:organizationId')
   @ApiResponse({ type: Client })
+  @ApiBearerAuth()
   async getOneByUser(
     @Param('clientId') clientId: string,
     @Param('organizationId') organizationId: string,
@@ -70,6 +83,7 @@ export class ClientController {
 
   @Get(':clientId')
   @ApiResponse({ type: Client })
+  @ApiBearerAuth()
   async getOneByAdmin(
     @Param('clientId') clientId: string,
     @Req() request: Request,
@@ -93,6 +107,7 @@ export class ClientController {
 
   @Get('organizations/:organizationId')
   @ApiResponse({ type: [Client] })
+  @ApiBearerAuth()
   async getAll(
     @Param('organizationId') organizationId: string,
     @Req() request: Request,
@@ -117,6 +132,7 @@ export class ClientController {
   }
 
   @Delete(':clientId/organizations/:organizationId')
+  @ApiBearerAuth()
   async remove(
     @Param('clientId') clientId: string,
     @Param('organizationId') organizationId: string,
@@ -129,5 +145,30 @@ export class ClientController {
     });
 
     if (result.isLeft()) throw toPresentationError(result.value);
+  }
+
+  @Patch(':clientId/organizations/:organizationId')
+  @ApiBearerAuth()
+  async update(
+    @Param('clientId') clientId: string,
+    @Param('organizationId') organizationId: string,
+    @Body() body: UpdateClientRequest,
+  ): Promise<Client> {
+    const result = await this.updateClientUsecase.execute(
+      clientId,
+      organizationId,
+      body.name,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+      organizationId: result.value.organizationId,
+      registrationId: result.value.registrationId,
+    };
   }
 }

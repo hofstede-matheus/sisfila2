@@ -14,6 +14,16 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     private readonly queuesRepository: Repository<Queue>,
   ) {}
 
+  async attachServiceToQueue(
+    serviceId: string,
+    queueId: string,
+  ): Promise<void> {
+    await this.queuesRepository.update(
+      { id: queueId },
+      { service_id: serviceId },
+    );
+  }
+
   async callClient(
     callerId: string,
     queueId: string,
@@ -71,9 +81,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       SELECT
         groups_from_queues.queue_id
       FROM groups_from_queues
-      WHERE groups_from_queues.group_id IN ($1)
+      WHERE groups_from_queues.group_id = ANY($1)
       `,
-        [groupsThatUserBelongsIds.join(',')],
+        [groupsThatUserBelongsIds],
       );
 
       const queuesAssociatedWithGroupsIds = queuesAssociatedWithGroups.map(

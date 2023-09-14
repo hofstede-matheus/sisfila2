@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Organization } from '../../../../common/presentation/http/dto/_shared';
 
 export class CreateOrganizationRequest {
   @ApiProperty({
@@ -12,9 +13,4 @@ export class CreateOrganizationRequest {
   code: string;
 }
 
-export class CreateOrganizationResponse {
-  @ApiProperty({
-    example: 'valid_uuid',
-  })
-  id: string;
-}
+export class CreateOrganizationResponse extends Organization {}

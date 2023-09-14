@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Organization } from '../../../../common/presentation/http/dto/_shared';
 
 export class UpdateOrganizationRequest {
   @ApiProperty({
@@ -18,3 +19,5 @@ export class UpdateOrganizationRequest {
   })
   code?: string;
 }
+
+export class UpdateOrganizationResponse extends Organization {}

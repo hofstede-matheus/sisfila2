@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Client } from '../../../../common/presentation/http/dto/_shared';
 
 export class CreateClientRequest {
   @ApiProperty({
@@ -17,9 +18,4 @@ export class CreateClientRequest {
   registrationId: string;
 }
 
-export class CreateClientResponse {
-  @ApiProperty({
-    example: 'valid_uuid',
-  })
-  id: string;
-}
+export class CreateClientResponse extends Client {}

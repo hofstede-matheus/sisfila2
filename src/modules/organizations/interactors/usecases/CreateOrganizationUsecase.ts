@@ -28,7 +28,7 @@ export class CreateOrganizationUsecase implements UseCase {
     name: string,
     code: string,
     userId: string,
-  ): Promise<Either<DomainError, string>> {
+  ): Promise<Either<DomainError, OrganizationEntity>> {
     const validation = OrganizationEntity.build(name, code);
     if (validation.isLeft()) return left(validation.value);
 
@@ -40,7 +40,7 @@ export class CreateOrganizationUsecase implements UseCase {
       return left(new OrganizationCodeAlreadyUsedError());
     }
 
-    const organizationId = await this.organizationRepository.create(
+    const organization = await this.organizationRepository.create(
       validation.value.name,
       validation.value.code,
     );
@@ -50,7 +50,7 @@ export class CreateOrganizationUsecase implements UseCase {
       true,
       new Date(),
       new Date(),
-      organizationId,
+      organization.id,
       'default',
     );
 
@@ -58,19 +58,19 @@ export class CreateOrganizationUsecase implements UseCase {
       'Default Queue',
       1,
       'DEFAULT',
-      organizationId,
+      organization.id,
       serviceId,
       'default',
     );
 
-    await this.groupRepository.create('Default Group', organizationId);
+    await this.groupRepository.create('Default Group', organization.id);
 
     await this.userRepository.setUserRoleInOrganization(
       userId,
-      organizationId,
+      organization.id,
       'TYPE_COORDINATOR',
     );
 
-    return right(organizationId);
+    return right(organization);
   }
 }
