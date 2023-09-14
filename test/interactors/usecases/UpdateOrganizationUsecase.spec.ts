@@ -70,7 +70,7 @@ describe('UpdateOrganizationUsecase', () => {
 
   it('should update an user with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return VALID_ORGANIZATION.id;
+      return VALID_ORGANIZATION;
     });
 
     jest.spyOn(repository, 'findByCode').mockImplementation(async () => {

@@ -14,6 +14,7 @@ import {
 } from '../../helpers';
 import { CreateClientUsecase } from '../../../src/modules/clients/interactors/usecases/CreateClientUsecase';
 import { ClientRepository } from '../../../src/modules/clients/domain/repositories/ClientRepository';
+import { ClientEntity } from '../../../src/modules/clients/domain/entities/Client.entity';
 
 describe('CreateClientUsecase', () => {
   let useCase: CreateClientUsecase;
@@ -94,12 +95,21 @@ describe('CreateClientUsecase', () => {
     });
 
     const response = await useCase.execute(
-      VALID_USER.name,
+      VALID_CLIENT.name,
       VALID_ORGANIZATION.id,
-      '123456',
+      VALID_CLIENT.registrationId,
     );
 
     expect(response.isRight()).toBeTruthy();
-    expect(response.value).toMatch(UUID_V4_REGEX_EXPRESSION);
+    expect((response.value as ClientEntity).id).toMatch(
+      UUID_V4_REGEX_EXPRESSION,
+    );
+    expect((response.value as ClientEntity).name).toEqual(VALID_CLIENT.name);
+    expect((response.value as ClientEntity).organizationId).toEqual(
+      VALID_ORGANIZATION.id,
+    );
+    expect((response.value as ClientEntity).registrationId).toEqual(
+      VALID_CLIENT.registrationId,
+    );
   });
 });

@@ -13,6 +13,7 @@ import {
 } from '../../helpers';
 import { CreateOrganizationUsecase } from '../../../src/modules/organizations/interactors/usecases/CreateOrganizationUsecase';
 import { OrganizationRepository } from '../../../src/modules/organizations/domain/repositories/OrganizationRepository';
+import { OrganizationEntity } from '../../../src/modules/organizations/domain/entities/Organization.entity';
 
 describe('CreateOrganizationUsecase', () => {
   let useCase: CreateOrganizationUsecase;
@@ -61,16 +62,28 @@ describe('CreateOrganizationUsecase', () => {
 
   it('should create an organization with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return VALID_ORGANIZATION.id;
+      return VALID_ORGANIZATION;
     });
 
     jest.spyOn(repository, 'findByCode').mockImplementation(async () => {
       return undefined;
     });
 
-    const response = await useCase.execute('aa', 'AAAA', VALID_USER.id);
+    const response = await useCase.execute(
+      VALID_ORGANIZATION.name,
+      VALID_ORGANIZATION.code,
+      VALID_USER.id,
+    );
 
     expect(response.isRight()).toBeTruthy();
-    expect(response.value).toMatch(UUID_V4_REGEX_EXPRESSION);
+    expect((response.value as OrganizationEntity).id).toMatch(
+      UUID_V4_REGEX_EXPRESSION,
+    );
+    expect((response.value as OrganizationEntity).name).toEqual(
+      VALID_ORGANIZATION.name,
+    );
+    expect((response.value as OrganizationEntity).code).toEqual(
+      VALID_ORGANIZATION.code,
+    );
   });
 });

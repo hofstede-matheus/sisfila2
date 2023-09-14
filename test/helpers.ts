@@ -60,7 +60,7 @@ export const VALID_CLIENT = {
   createdAt: new Date(),
   updatedAt: new Date(),
   organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
-  registrationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  registrationId: '12345678',
 } as ClientEntity;
 
 export const VALID_GROUP = {

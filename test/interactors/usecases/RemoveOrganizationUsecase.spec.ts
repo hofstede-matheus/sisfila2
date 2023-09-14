@@ -33,7 +33,7 @@ describe('UpdateOrganizationUsecase', () => {
 
   it('should remove an organization with valid data', async () => {
     jest.spyOn(repository, 'create').mockImplementation(async () => {
-      return VALID_ORGANIZATION.id;
+      return VALID_ORGANIZATION;
     });
 
     jest.spyOn(repository, 'remove').mockImplementation(async () => {
