@@ -197,9 +197,9 @@ describe('groups', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '123456789',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
+        organizationId: bodyOfCreateOrganizationRequest.id,
       } as ImportClientsRequest)
       .set('Accept', 'application/json')
       .expect(201);
@@ -283,9 +283,9 @@ describe('groups', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '123456789',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
+        organizationId: bodyOfCreateOrganizationRequest.id,
       } as ImportClientsRequest)
       .set('Accept', 'application/json')
       .expect(201);
@@ -326,9 +326,9 @@ describe('groups', () => {
           {
             name: VALID_CLIENT.name,
             registrationId: '1234567890',
-            organizationId: bodyOfCreateOrganizationRequest.id,
           },
         ],
+        organizationId: bodyOfCreateOrganizationRequest.id,
       } as ImportClientsRequest)
       .set('Accept', 'application/json')
       .expect(201);

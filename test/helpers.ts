@@ -29,6 +29,8 @@ import { AuthorizationService } from '../src/modules/users/domain/services/Autho
 import { EncryptionService } from '../src/modules/users/domain/services/EncryptionService';
 import { OAuthService } from '../src/modules/users/domain/services/OauthAuthenticationService';
 import { GroupEntity } from '../src/modules/groups/domain/entities/Group.entity';
+import { Desk } from '../src/modules/desk/data/typeorm/entities/desks.typeorm-entity';
+import { DesksModule } from '../src/modules/desk/desk.module';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -155,12 +157,14 @@ export const ALL_TYPEORM_ENTITIES = [
   Queue,
   Group,
   Client,
+  Desk,
 ];
 
 export const TEST_CONFIG = [
   UsersModule,
   OrganizationsModule,
   ClientsModule,
+  DesksModule,
   CommonModule,
   ConfigModule.forRoot({
     envFilePath: '.env.test',

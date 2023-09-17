@@ -102,7 +102,7 @@ describe('organizations', () => {
       .expect(200);
 
     await request(app.getHttpServer())
-      .put('/v1/organizations')
+      .patch('/v1/organizations')
       .set('Authorization', USER.token)
       .send({
         id: bodyOfCreateRequest.id,

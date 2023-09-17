@@ -35,9 +35,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     queueId: string,
     clientId: string,
   ): Promise<void> {
-    await this.queuesRepository.manager.transaction(async (transaction) => {
-      await transaction.query(
-        `
+    await this.queuesRepository.query(
+      `
         UPDATE clients_position_in_queues
         SET
           attended_by_user = $1,
@@ -45,11 +44,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         WHERE
           queue_id = $2
         AND
-          client_id = $3
+          client_id = $3;
         `,
-        [callerId, clientId, queueId],
-      );
-    });
+      [callerId, queueId, clientId],
+    );
   }
 
   async attachClientToQueueByServiceIdOrganizationIdRegistrationId(
