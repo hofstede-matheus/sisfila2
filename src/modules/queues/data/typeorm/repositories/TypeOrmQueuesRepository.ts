@@ -7,6 +7,12 @@ import {
 import { QueueRepository } from '../../../domain/repositories/QueueRepository';
 import { Queue } from '../entities/queues.typeorm-entity';
 import { GroupEntity } from '../../../../groups/domain/entities/Group.entity';
+import { Either, left, right } from '../../../../common/shared/helpers/either';
+import { DomainError } from '../../../../common/shared/helpers/errors';
+import {
+  NoQueueAvaliabeError,
+  UserNotInAnyGroupError,
+} from '../../../../common/domain/errors';
 
 export class TypeOrmQueuesRepository implements QueueRepository {
   constructor(
@@ -50,11 +56,16 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     serviceId: string,
     organizationId: string,
     userId: string,
-  ): Promise<{
-    queueId: string;
-    queueName: string;
-    position: number;
-  }> {
+  ): Promise<
+    Either<
+      DomainError,
+      {
+        queueId: string;
+        queueName: string;
+        position: number;
+      }
+    >
+  > {
     let queuesOrderedByPriority = [];
     await this.queuesRepository.manager.transaction(async (transaction) => {
       const groupsThatUserBelongs = await transaction.query(
@@ -73,7 +84,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       );
 
       if (groupsThatUserBelongsIds.length === 0) {
-        return;
+        return left(new UserNotInAnyGroupError());
       }
 
       const queuesAssociatedWithGroups = await transaction.query(
@@ -85,6 +96,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
         [groupsThatUserBelongsIds],
       );
+
+      if (queuesAssociatedWithGroups.length === 0) {
+        return left(new NoQueueAvaliabeError());
+      }
 
       const queuesAssociatedWithGroupsIds = queuesAssociatedWithGroups.map(
         (queue) => queue.queue_id,
@@ -104,7 +119,6 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         [serviceId, organizationId, queuesAssociatedWithGroupsIds.join(',')],
       );
 
-      // check if user is already in a queue
       const userAlreadyInQueue = await transaction.query(
         `
       SELECT
@@ -123,9 +137,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       }
     });
 
-    if (queuesOrderedByPriority.length === 0) {
-      return;
-    }
+    // TODO: ver se esse check realmente é necessário, comentado pra ver se quebra
+    // if (queuesOrderedByPriority.length === 0) {
+    //   return;
+    // }
 
     const user = await this.queuesRepository.query(
       `
@@ -142,11 +157,11 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       user[0].registration_id,
     );
 
-    return {
+    return right({
       queueId: queuesOrderedByPriority[0].id,
       queueName: queuesOrderedByPriority[0].name,
       position: position + 1,
-    };
+    });
   }
 
   async getPositionOfClient(

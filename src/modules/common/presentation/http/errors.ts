@@ -13,11 +13,13 @@ import {
   InvalidPasswordError,
   InvalidUserTypeError,
   InvalidValueError,
+  NoQueueAvaliabeError,
   OrganizationCodeAlreadyUsedError,
   QueueNotFoundError,
   ServiceNotOpenError,
   UserNotFoundError,
   UserNotFromOrganizationError,
+  UserNotInAnyGroupError,
   UserNotInGroupError,
 } from '../../domain/errors';
 import { DomainError } from '../../shared/helpers/errors';
@@ -89,6 +91,12 @@ export function toPresentationError(error: DomainError): HttpException {
 
     case ClientNotInQueueError:
       return new PresentationException(error, 400);
+
+    case UserNotInAnyGroupError:
+      return new PresentationException(error, 401);
+
+    case NoQueueAvaliabeError:
+      return new PresentationException(error, 404);
 
     default:
       console.error('ERROR NOT MAPPED', error);

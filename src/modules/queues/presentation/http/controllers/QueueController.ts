@@ -134,6 +134,7 @@ export class QueueController {
       body.organizationId,
       body.serviceId,
       body.description,
+      body.groupIds,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);

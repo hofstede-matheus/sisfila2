@@ -5,10 +5,7 @@ import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { Validator } from '../../../common/shared/helpers/validator';
-import {
-  QueueNotFoundError,
-  ServiceNotOpenError,
-} from '../../../common/domain/errors';
+import { ServiceNotOpenError } from '../../../common/domain/errors';
 import { ServiceRepository } from '../../domain/repositories/ServiceRepository';
 import { isServiceOpen } from '../../../common/shared/helpers/moment';
 
@@ -66,8 +63,8 @@ export class AttachClientToServiceUsecase implements UseCase {
         user.id,
       );
 
-    if (!queue) return left(new QueueNotFoundError());
+    if (queue.isLeft()) return left(queue.value);
 
-    return right(queue);
+    return right(queue.value);
   }
 }

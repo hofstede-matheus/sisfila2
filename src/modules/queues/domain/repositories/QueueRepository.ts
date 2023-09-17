@@ -1,3 +1,5 @@
+import { Either } from '../../../common/shared/helpers/either';
+import { DomainError } from '../../../common/shared/helpers/errors';
 import { QueueEntity } from '../entities/Queue.entity';
 
 export interface QueueRepository {
@@ -26,11 +28,16 @@ export interface QueueRepository {
     serviceId: string,
     organizationId: string,
     userId: string,
-  ): Promise<{
-    queueId: string;
-    queueName: string;
-    position: number;
-  }>;
+  ): Promise<
+    Either<
+      DomainError,
+      {
+        queueId: string;
+        queueName: string;
+        position: number;
+      }
+    >
+  >;
 }
 
 export const QueueRepository = Symbol('QueueRepository');

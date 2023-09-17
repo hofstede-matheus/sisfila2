@@ -23,7 +23,7 @@ export class AttachGroupsAndServiceToQueueUsecase implements UseCase {
     });
     if (validation.isLeft()) return left(validation.value);
 
-    if (groupIds && groupIds.length === 0) {
+    if (groupIds && groupIds.length !== 0) {
       await this.queueRepository.attachGroupsToQueue(groupIds, queueId);
     }
     if (serviceId)

@@ -51,3 +51,7 @@ export class InvalidClientError extends DomainError {}
 export class UserNotInGroupError extends DomainError {}
 
 export class ServiceNotOpenError extends DomainError {}
+
+export class UserNotInAnyGroupError extends DomainError {}
+
+export class NoQueueAvaliabeError extends DomainError {}

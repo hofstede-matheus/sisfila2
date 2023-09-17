@@ -60,24 +60,33 @@ export class TypeOrmServicesRepository implements ServiceRepository {
     return serviceInDatabase.id;
   }
   async findByOrganizationId(organizationId: string): Promise<ServiceEntity[]> {
-    const services = await this.servicesRepository.find({
-      where: { organization_id: organizationId },
-    });
+    // TODO: Test when service has more than one queue
+    const servicesWithAtLeastOneQueueAttached =
+      await this.servicesRepository.query(
+        `
+      SELECT s.id, s.name, s.subscription_token, s.guest_enroll, s.opens_at, s.closes_at, s.organization_id, s.created_at, s.updated_at
+      FROM services s
+      INNER JOIN queues q ON s.id = q.service_id
+      WHERE s.organization_id = $1
+      GROUP BY s.id
+    `,
+        [organizationId],
+      );
 
-    const mappedServices: ServiceEntity[] = services.map((service: Service) => {
-      return {
-        id: service.id,
-        name: service.name,
-        subscriptionToken: service.subscription_token,
-        guestEnrollment: service.guest_enroll,
-        opensAt: service.opensAt,
-        closesAt: service.closesAt,
-        organizationId: service.organization_id,
-        isOpened: isServiceOpen(service.opensAt, service.closesAt),
-        createdAt: service.createdAt,
-        updatedAt: service.updatedAt,
-      };
-    });
+    const mappedServices: ServiceEntity[] =
+      servicesWithAtLeastOneQueueAttached.map((service) => {
+        return {
+          id: service.id,
+          name: service.name,
+          subscriptionToken: service.subscription_token,
+          guestEnrollment: service.guest_enroll,
+          opensAt: service.opens_at,
+          closesAt: service.closes_at,
+          organizationId: service.organization_id,
+          createdAt: service.created_at,
+          updatedAt: service.updated_at,
+        };
+      });
 
     return mappedServices;
   }

@@ -25,6 +25,7 @@ export class CreateQueueUsecase implements UseCase {
     organizationId: string,
     serviceId: string,
     description?: string,
+    groupIds?: string[],
   ): Promise<Either<DomainError, QueueEntity>> {
     const validation = Validator.validate({
       id: [organizationId],
@@ -48,7 +49,7 @@ export class CreateQueueUsecase implements UseCase {
     if (!isUserFromOrganization)
       return left(new UserNotFromOrganizationError());
 
-    const queue = await this.queueRepository.create(
+    let queue = await this.queueRepository.create(
       name,
       priority,
       code,
@@ -56,6 +57,11 @@ export class CreateQueueUsecase implements UseCase {
       serviceId,
       description,
     );
+
+    if (groupIds && groupIds.length !== 0) {
+      await this.queueRepository.attachGroupsToQueue(groupIds, queue.id);
+      queue = await this.queueRepository.findById(queue.id);
+    }
 
     return right(queue);
   }
