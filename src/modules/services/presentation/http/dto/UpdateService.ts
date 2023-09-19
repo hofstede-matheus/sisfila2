@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Service } from '../../../../common/presentation/http/dto/_shared';
 
-export class CreateServiceRequest {
+export class UpdateServiceRequest {
   @ApiProperty({
     example: 'Service name',
   })
@@ -18,11 +18,6 @@ export class CreateServiceRequest {
   guestEnrollment: boolean;
 
   @ApiProperty({
-    example: 'valid_uuid',
-  })
-  organizationId: string;
-
-  @ApiProperty({
     example: '2021-01-01T00:00:00.000Z',
   })
   opensAt: string;
@@ -33,4 +28,4 @@ export class CreateServiceRequest {
   closesAt: string;
 }
 
-export class CreateServiceResponse extends Service {}
+export class UpdateServiceResponse extends Service {}

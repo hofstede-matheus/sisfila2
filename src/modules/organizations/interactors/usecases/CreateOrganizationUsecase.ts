@@ -45,7 +45,7 @@ export class CreateOrganizationUsecase implements UseCase {
       validation.value.code,
     );
 
-    const serviceId = await this.serviceRepository.create(
+    const service = await this.serviceRepository.create(
       'Default Service',
       true,
       new Date(),
@@ -59,7 +59,7 @@ export class CreateOrganizationUsecase implements UseCase {
       1,
       'DEFAULT',
       organization.id,
-      serviceId,
+      service.id,
       'default',
     );
 

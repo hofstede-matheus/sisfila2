@@ -4,6 +4,7 @@ import {
   ClientNotFoundError,
   ClientNotInQueueError,
   EmailAlreadyExistsError,
+  GuestEnrollmentError,
   InvalidClientError,
   InvalidCodeError,
   InvalidCredentialsError,
@@ -97,6 +98,9 @@ export function toPresentationError(error: DomainError): HttpException {
 
     case NoQueueAvaliabeError:
       return new PresentationException(error, 404);
+
+    case GuestEnrollmentError:
+      return new PresentationException(error, 400);
 
     default:
       console.error('ERROR NOT MAPPED', error);

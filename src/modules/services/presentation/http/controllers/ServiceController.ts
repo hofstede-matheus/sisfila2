@@ -1,11 +1,6 @@
-import { Body, Controller, Get, Param, Post, Req, Patch } from '@nestjs/common';
-import { Request } from 'express';
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { FindOneOrAllServicesUsecase } from '../../../interactors/usecases/FindOneOrAllServicesUsecase';
-import {
-  CreateServiceRequest,
-  CreateServiceResponse,
-} from '../dto/CreateService';
 import { Service } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { CreateServiceUsecase } from '../../../interactors/usecases/CreateServiceUsecase';

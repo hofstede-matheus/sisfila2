@@ -19,6 +19,8 @@ import { AttachClientToServiceUsecase } from './interactors/usecases/AttachClien
 import { ClientsModule } from '../clients/clients.module';
 import { QueuesModule } from '../queues/queues.module';
 import { AdminServiceController } from './presentation/http/controllers/AdminServiceController';
+import { RemoveServiceUsecase } from './interactors/usecases/RemoveServiceUsecase';
+import { UpdateServiceUsecase } from './interactors/usecases/UpdateServiceUsecase';
 
 @Module({
   imports: [
@@ -46,6 +48,14 @@ import { AdminServiceController } from './presentation/http/controllers/AdminSer
       provide: AttachClientToServiceUsecase,
       useClass: AttachClientToServiceUsecase,
     },
+    {
+      provide: RemoveServiceUsecase,
+      useClass: RemoveServiceUsecase,
+    },
+    {
+      provide: UpdateServiceUsecase,
+      useClass: UpdateServiceUsecase,
+    },
   ],
   exports: [ServiceRepository],
 })
@@ -63,6 +73,9 @@ export class ServicesModule implements NestModule {
           method: RequestMethod.GET,
         },
       )
-      .forRoutes({ path: 'v1/services*', method: RequestMethod.ALL });
+      .forRoutes(
+        { path: 'v1/services*', method: RequestMethod.ALL },
+        { path: 'v1/admin/services*', method: RequestMethod.ALL },
+      );
   }
 }

@@ -11,6 +11,41 @@ export class TypeOrmServicesRepository implements ServiceRepository {
     private readonly servicesRepository: Repository<Service>,
   ) {}
 
+  async update(
+    id: string,
+    name: string,
+    subscriptionToken: string,
+    guestEnrollment: boolean,
+    opensAt: Date,
+    closesAt: Date,
+  ): Promise<ServiceEntity> {
+    const updatedService = await this.servicesRepository.save({
+      id,
+      name,
+      subscription_token: subscriptionToken,
+      guest_enroll: guestEnrollment,
+      opensAt: opensAt,
+      closesAt: closesAt,
+    });
+
+    return {
+      id: updatedService.id,
+      name: updatedService.name,
+      subscriptionToken: updatedService.subscription_token,
+      guestEnrollment: updatedService.guest_enroll,
+      opensAt: updatedService.opensAt,
+      closesAt: updatedService.closesAt,
+      organizationId: updatedService.organization_id,
+      createdAt: updatedService.createdAt,
+      updatedAt: updatedService.updatedAt,
+      isOpened: isServiceOpen(opensAt, closesAt),
+    };
+  }
+
+  async remove(serviceId: string): Promise<void> {
+    await this.servicesRepository.delete(serviceId);
+  }
+
   async findByDeskId(deskId: string): Promise<ServiceEntity[]> {
     const services = await this.servicesRepository.query(
       `
@@ -45,7 +80,7 @@ export class TypeOrmServicesRepository implements ServiceRepository {
     closesAt: Date,
     organizationId: string,
     subscriptionToken: string,
-  ): Promise<string> {
+  ): Promise<ServiceEntity> {
     const serviceEntity = this.servicesRepository.create({
       name,
       subscription_token: subscriptionToken,
@@ -57,7 +92,18 @@ export class TypeOrmServicesRepository implements ServiceRepository {
 
     const serviceInDatabase = await this.servicesRepository.save(serviceEntity);
 
-    return serviceInDatabase.id;
+    return {
+      id: serviceInDatabase.id,
+      name: serviceInDatabase.name,
+      subscriptionToken: serviceInDatabase.subscription_token,
+      guestEnrollment: serviceInDatabase.guest_enroll,
+      opensAt: serviceInDatabase.opensAt,
+      closesAt: serviceInDatabase.closesAt,
+      organizationId: serviceInDatabase.organization_id,
+      createdAt: serviceInDatabase.createdAt,
+      updatedAt: serviceInDatabase.updatedAt,
+      isOpened: isServiceOpen(opensAt, closesAt),
+    };
   }
   async findByOrganizationId(
     organizationId: string,

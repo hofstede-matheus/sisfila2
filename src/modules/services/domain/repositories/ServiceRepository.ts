@@ -12,9 +12,18 @@ export interface ServiceRepository {
     closesAt: Date,
     organizationId: string,
     subscriptionToken: string,
-  ): Promise<string>;
+  ): Promise<ServiceEntity>;
   findById(serviceId: string): Promise<ServiceEntity>;
   findByDeskId(deskId: string): Promise<ServiceEntity[]>;
+  remove(serviceId: string): Promise<void>;
+  update(
+    id: string,
+    name: string,
+    subscriptionToken: string,
+    guestEnrollment: boolean,
+    opensAt: Date,
+    closesAt: Date,
+  ): Promise<ServiceEntity>;
 }
 
 export const ServiceRepository = Symbol('ServiceRepository');

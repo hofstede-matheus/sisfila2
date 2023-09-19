@@ -26,7 +26,7 @@ export class CreateServiceUsecase implements UseCase {
     organizationId: string,
     opensAt: string,
     closesAt: string,
-  ): Promise<Either<DomainError, string>> {
+  ): Promise<Either<DomainError, ServiceEntity>> {
     const validation = Validator.validate({
       id: [organizationId],
     });

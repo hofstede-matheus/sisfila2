@@ -55,3 +55,5 @@ export class ServiceNotOpenError extends DomainError {}
 export class UserNotInAnyGroupError extends DomainError {}
 
 export class NoQueueAvaliabeError extends DomainError {}
+
+export class GuestEnrollmentError extends DomainError {}

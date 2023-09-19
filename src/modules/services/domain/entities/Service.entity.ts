@@ -8,6 +8,8 @@ import { DomainError } from '../../../common/shared/helpers/errors';
 import {
   InvalidNameError,
   InvalidDateError,
+  InvalidIdError,
+  GuestEnrollmentError,
 } from '../../../common/domain/errors';
 
 export interface ServiceEntity {
@@ -40,6 +42,7 @@ export class ServiceEntity {
     opens_at: Date,
     closes_at: Date,
   ): Either<DomainError, ServiceEntity> {
+    // TODO: Remove POG
     if (guest_enrollment !== true) guest_enrollment = false;
     const schema = Joi.object({
       name: Joi.string()
@@ -60,5 +63,38 @@ export class ServiceEntity {
     return right(
       new ServiceEntity(name, guest_enrollment, opens_at, closes_at),
     );
+  }
+
+  public static validateEdit(
+    id: string,
+    name: string,
+    guest_enrollment: boolean,
+    opens_at: Date,
+    closes_at: Date,
+  ): Either<DomainError, void> {
+    const schema = Joi.object({
+      id: Joi.string()
+        .uuid()
+        .required()
+        .error(() => new InvalidIdError()),
+      name: Joi.string()
+        .min(2)
+        .error(() => new InvalidNameError()),
+      opens_at: Joi.date().error(() => new InvalidDateError()),
+      closes_at: Joi.date().error(() => new InvalidDateError()),
+      guest_enrollment: Joi.boolean().error(() => new GuestEnrollmentError()),
+    });
+
+    const validation = schema.validate({
+      id,
+      name,
+      guest_enrollment,
+      opens_at,
+      closes_at,
+    });
+
+    if (validation.error) return left(validation.error);
+
+    return right();
   }
 }
