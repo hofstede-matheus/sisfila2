@@ -13,11 +13,17 @@ export class FindOneOrAllServicesUsecase implements UseCase {
     @Inject(ServiceRepository)
     private serviceRepository: ServiceRepository,
   ) {}
-  async execute(id?: string): Promise<Either<DomainError, ServiceEntity[]>> {
+  async execute(
+    id: string,
+    listServicesWithNoQueue: boolean,
+  ): Promise<Either<DomainError, ServiceEntity[]>> {
     const validation = Validator.validate({ id: [id] });
     if (validation.isLeft()) return left(validation.value);
 
-    const services = await this.serviceRepository.findByOrganizationId(id);
+    const services = await this.serviceRepository.findByOrganizationId(
+      id,
+      listServicesWithNoQueue,
+    );
 
     if (!services) return left(new ServiceNotFoundError());
     return right(services);

@@ -18,6 +18,7 @@ import { OrganizationsModule } from '../organizations/organizations.module';
 import { AttachClientToServiceUsecase } from './interactors/usecases/AttachClientToServiceUsecase';
 import { ClientsModule } from '../clients/clients.module';
 import { QueuesModule } from '../queues/queues.module';
+import { AdminServiceController } from './presentation/http/controllers/AdminServiceController';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { QueuesModule } from '../queues/queues.module';
     CommonModule,
     TypeOrmModule.forFeature([Service]),
   ],
-  controllers: [ServiceController],
+  controllers: [ServiceController, AdminServiceController],
   providers: [
     {
       provide: ServiceRepository,

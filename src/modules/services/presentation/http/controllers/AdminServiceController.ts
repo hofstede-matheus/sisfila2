@@ -9,11 +9,10 @@ import {
 import { Service } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { CreateServiceUsecase } from '../../../interactors/usecases/CreateServiceUsecase';
-import { EnterServiceRequest, EnterServiceResponse } from '../dto/EnterService';
 import { AttachClientToServiceUsecase } from '../../../interactors/usecases/AttachClientToServiceUsecase';
 
-@Controller({ path: 'services', version: '1' })
-export class ServiceController {
+@Controller({ path: 'admin/services', version: '1' })
+export class AdminServiceController {
   constructor(
     private readonly findOneOrAllServicesUsecase: FindOneOrAllServicesUsecase,
     private readonly createServiceUsecase: CreateServiceUsecase,
@@ -22,8 +21,9 @@ export class ServiceController {
 
   @Get('organizations/:id')
   @ApiResponse({ type: [Service] })
+  @ApiBearerAuth()
   async getAllFromOrganization(@Param('id') id: string): Promise<Service[]> {
-    const result = await this.findOneOrAllServicesUsecase.execute(id, false);
+    const result = await this.findOneOrAllServicesUsecase.execute(id, true);
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
@@ -44,23 +44,27 @@ export class ServiceController {
     return mappedServices;
   }
 
-  @Patch('enter')
-  @ApiResponse({ type: EnterServiceResponse })
-  async enterService(
-    @Body() body: EnterServiceRequest,
-  ): Promise<EnterServiceResponse> {
-    const result = await this.attachClientToServiceUsecase.execute(
-      body.registrationId,
+  @Post()
+  @ApiResponse({ type: CreateServiceResponse })
+  @ApiBearerAuth()
+  async create(
+    @Body() body: CreateServiceRequest,
+    @Req() request: Request,
+  ): Promise<CreateServiceResponse> {
+    const userId = request.user.sub;
+
+    const result = await this.createServiceUsecase.execute(
+      userId,
+      body.name,
+      body.subscriptionToken,
+      body.guestEnrollment,
       body.organizationId,
-      body.serviceId,
+      body.opensAt,
+      body.closesAt,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return {
-      queueId: result.value.queueId,
-      queueName: result.value.queueName,
-      position: result.value.position,
-    };
+    return { id: result.value };
   }
 }

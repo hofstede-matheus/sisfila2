@@ -1,7 +1,10 @@
 import { ServiceEntity } from '../entities/Service.entity';
 
 export interface ServiceRepository {
-  findByOrganizationId(organizationId: string): Promise<ServiceEntity[]>;
+  findByOrganizationId(
+    organizationId: string,
+    listServicesWithNoQueue: boolean,
+  ): Promise<ServiceEntity[]>;
   create(
     name: string,
     guestEnrollment: boolean,
