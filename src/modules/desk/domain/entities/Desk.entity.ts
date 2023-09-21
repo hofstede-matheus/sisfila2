@@ -70,7 +70,6 @@ export class DeskEntity {
 
       attendantId: Joi.string()
         .uuid()
-        .optional()
         .error(() => new InvalidIdError()),
 
       services: Joi.array()
@@ -81,7 +80,7 @@ export class DeskEntity {
     const validation = schema.validate({
       name,
       id,
-      attendantId,
+      attendantId: attendantId ?? undefined,
       services,
     });
 
