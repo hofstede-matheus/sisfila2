@@ -1,15 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { GroupEntity } from '../../domain/entities/Group.entity';
-import { UserNotFromOrganizationError } from '../../../common/domain/errors';
-import { GroupRepository } from '../../domain/repositories/GroupRepository';
-import { OrganizationRepository } from '../../../organizations/domain/repositories/OrganizationRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { Validator } from '../../../common/shared/helpers/validator';
+import { GroupRepository } from '../../domain/repositories/GroupRepository';
+import { UserNotFromOrganizationError } from '../../../common/domain/errors';
+import { OrganizationRepository } from '../../../organizations/domain/repositories/OrganizationRepository';
 
 @Injectable()
-export class CreateGroupUsecase implements UseCase {
+export class RemoveGroupUsecase implements UseCase {
   constructor(
     @Inject(GroupRepository)
     private groupRepository: GroupRepository,
@@ -17,17 +16,15 @@ export class CreateGroupUsecase implements UseCase {
     private organizationRepository: OrganizationRepository,
   ) {}
   async execute(
-    name: string,
+    id: string,
     organizationId: string,
     userId: string,
-  ): Promise<Either<DomainError, GroupEntity>> {
+  ): Promise<Either<DomainError, void>> {
     const validation = Validator.validate({
-      id: [userId, organizationId],
+      id: [id, organizationId, userId],
     });
-    if (validation.isLeft()) return left(validation.value);
 
-    const entityValidation = GroupEntity.build(name);
-    if (entityValidation.isLeft()) return left(entityValidation.value);
+    if (validation.isLeft()) return left(validation.value);
 
     const isUserFromOrganization =
       await this.organizationRepository.checkIfUserIsFromOrganization(
@@ -38,8 +35,7 @@ export class CreateGroupUsecase implements UseCase {
     if (!isUserFromOrganization)
       return left(new UserNotFromOrganizationError());
 
-    const group = await this.groupRepository.create(name, organizationId);
-
-    return right(group);
+    this.groupRepository.remove(id);
+    return right();
   }
 }

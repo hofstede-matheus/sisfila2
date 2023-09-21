@@ -17,6 +17,8 @@ import { AuthenticationMiddleware } from '../common/presentation/http/middleware
 import { ClientsModule } from '../clients/clients.module';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
+import { UpdateGroupUsecase } from './interactors/usecases/UpdateGroupUsecase';
+import { RemoveGroupUsecase } from './interactors/usecases/RemoveGroupUsecase';
 
 @Module({
   imports: [
@@ -42,6 +44,14 @@ import { OrganizationsModule } from '../organizations/organizations.module';
     {
       provide: ImportClientsToGroupUsecase,
       useClass: ImportClientsToGroupUsecase,
+    },
+    {
+      provide: UpdateGroupUsecase,
+      useClass: UpdateGroupUsecase,
+    },
+    {
+      provide: RemoveGroupUsecase,
+      useClass: RemoveGroupUsecase,
     },
   ],
   exports: [GroupRepository],

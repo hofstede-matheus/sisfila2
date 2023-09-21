@@ -6,10 +6,9 @@ import { OrganizationRepository } from '../../../organizations/domain/repositori
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
-import { Validator } from '../../../common/shared/helpers/validator';
 
 @Injectable()
-export class CreateGroupUsecase implements UseCase {
+export class UpdateGroupUsecase implements UseCase {
   constructor(
     @Inject(GroupRepository)
     private groupRepository: GroupRepository,
@@ -17,17 +16,13 @@ export class CreateGroupUsecase implements UseCase {
     private organizationRepository: OrganizationRepository,
   ) {}
   async execute(
+    id: string,
     name: string,
     organizationId: string,
     userId: string,
   ): Promise<Either<DomainError, GroupEntity>> {
-    const validation = Validator.validate({
-      id: [userId, organizationId],
-    });
+    const validation = GroupEntity.validateEdit(id, name, organizationId);
     if (validation.isLeft()) return left(validation.value);
-
-    const entityValidation = GroupEntity.build(name);
-    if (entityValidation.isLeft()) return left(entityValidation.value);
 
     const isUserFromOrganization =
       await this.organizationRepository.checkIfUserIsFromOrganization(
@@ -38,8 +33,8 @@ export class CreateGroupUsecase implements UseCase {
     if (!isUserFromOrganization)
       return left(new UserNotFromOrganizationError());
 
-    const group = await this.groupRepository.create(name, organizationId);
+    const updatedGroup = await this.groupRepository.update(id, name);
 
-    return right(group);
+    return right(updatedGroup);
   }
 }

@@ -5,7 +5,10 @@ import {
   DomainEntity,
 } from '../../../common/shared/helpers/entity';
 import { DomainError } from '../../../common/shared/helpers/errors';
-import { InvalidNameError } from '../../../common/domain/errors';
+import {
+  InvalidIdError,
+  InvalidNameError,
+} from '../../../common/domain/errors';
 import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
 
 export interface GroupEntity {
@@ -35,5 +38,33 @@ export class GroupEntity {
     if (validation.error) return left(validation.error);
 
     return right(new GroupEntity(name));
+  }
+
+  public static validateEdit(
+    id: string,
+    name: string,
+    organizationId: string,
+  ): Either<DomainError, void> {
+    const schema = Joi.object({
+      id: Joi.string()
+        .uuid()
+        .required()
+        .error(() => new InvalidIdError()),
+
+      name: Joi.string()
+        .min(2)
+        .required()
+        .error(() => new InvalidNameError()),
+
+      organizationId: Joi.string()
+        .uuid()
+        .required()
+        .error(() => new InvalidIdError()),
+    });
+
+    const validation = schema.validate({ id, name, organizationId });
+    if (validation.error) return left(validation.error);
+
+    return right();
   }
 }

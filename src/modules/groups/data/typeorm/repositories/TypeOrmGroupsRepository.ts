@@ -10,6 +10,48 @@ export class TypeOrmGroupsRepository implements GroupRepository {
     private readonly groupsRepository: Repository<Group>,
   ) {}
 
+  async remove(id: string): Promise<void> {
+    await this.groupsRepository.delete(id);
+  }
+
+  async update(id: string, name: string): Promise<GroupEntity> {
+    await this.groupsRepository.update(id, {
+      name,
+    });
+
+    const updatedGroup = await this.groupsRepository.findOneBy({ id });
+
+    const clientsFromGroup = await this.groupsRepository.query(
+      `
+      SELECT clients.id, clients.name, clients.organization_id, clients.registration_id, clients.created_at, clients.updated_at
+      FROM clients_in_groups
+      LEFT JOIN clients ON clients.id = clients_in_groups.client_id
+      WHERE clients_in_groups.group_id = $1
+    `,
+      [id],
+    );
+
+    const clients = clientsFromGroup.map((client) => {
+      return {
+        id: client.id,
+        name: client.name,
+        organizationId: client.organization_id,
+        registrationId: client.registration_id,
+        createdAt: client.created_at,
+        updatedAt: client.updated_at,
+      };
+    });
+
+    return {
+      id: updatedGroup.id,
+      name: updatedGroup.name,
+      organizationId: updatedGroup.organization_id,
+      createdAt: updatedGroup.createdAt,
+      updatedAt: updatedGroup.updatedAt,
+      clients,
+    };
+  }
+
   async removeAllClientsFromGroup(groupId: string): Promise<void> {
     await this.groupsRepository.query(
       `DELETE FROM clients_in_groups WHERE group_id = $1`,
@@ -43,7 +85,7 @@ export class TypeOrmGroupsRepository implements GroupRepository {
 
     return mapGroupsWithClients(groupsFromDatabase);
   }
-  async create(name: string, organizationId: string): Promise<string> {
+  async create(name: string, organizationId: string): Promise<GroupEntity> {
     const groupEntity = this.groupsRepository.create({
       name,
       organization_id: organizationId,
@@ -51,7 +93,14 @@ export class TypeOrmGroupsRepository implements GroupRepository {
 
     const groupInDatabase = await this.groupsRepository.save(groupEntity);
 
-    return groupInDatabase.id;
+    return {
+      id: groupInDatabase.id,
+      name: groupInDatabase.name,
+      organizationId: groupInDatabase.organization_id,
+      createdAt: groupInDatabase.createdAt,
+      updatedAt: groupInDatabase.updatedAt,
+      clients: [],
+    };
   }
 
   async findGroupsByQueueId(queueId: string): Promise<GroupEntity[]> {
