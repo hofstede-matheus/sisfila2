@@ -336,11 +336,19 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     groupIds: string[],
     queueId: string,
   ): Promise<void> {
-    for (const groupId of groupIds) {
+    // if no groups, remove all groups from queue
+    if (groupIds.length === 0) {
       await this.queuesRepository.query(
-        `INSERT INTO groups_from_queues (queue_id, group_id) VALUES ($1, $2)`,
-        [queueId, groupId],
+        `DELETE FROM groups_from_queues WHERE queue_id = $1`,
+        [queueId],
       );
+    } else {
+      for (const groupId of groupIds) {
+        await this.queuesRepository.query(
+          `INSERT INTO groups_from_queues (queue_id, group_id) VALUES ($1, $2)`,
+          [queueId, groupId],
+        );
+      }
     }
   }
 

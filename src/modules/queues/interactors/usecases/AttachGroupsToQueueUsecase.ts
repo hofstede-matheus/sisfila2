@@ -4,6 +4,7 @@ import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { Validator } from '../../../common/shared/helpers/validator';
+import { QueueEntity } from '../../domain/entities/Queue.entity';
 
 @Injectable()
 export class AttachGroupsAndServiceToQueueUsecase implements UseCase {
@@ -17,18 +18,20 @@ export class AttachGroupsAndServiceToQueueUsecase implements UseCase {
     queueId: string,
     groupIds?: string[],
     serviceId?: string,
-  ): Promise<Either<DomainError, void>> {
+  ): Promise<Either<DomainError, QueueEntity>> {
     const validation = Validator.validate({
       id: [userId, organizationId, queueId, ...(groupIds ?? [])],
     });
     if (validation.isLeft()) return left(validation.value);
 
-    if (groupIds && groupIds.length !== 0) {
+    if (groupIds) {
       await this.queueRepository.attachGroupsToQueue(groupIds, queueId);
     }
     if (serviceId)
       await this.queueRepository.attachServiceToQueue(serviceId, queueId);
 
-    return right();
+    const queue = await this.queueRepository.findById(queueId);
+
+    return right(queue);
   }
 }

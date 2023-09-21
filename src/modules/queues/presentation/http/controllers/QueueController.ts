@@ -163,7 +163,7 @@ export class QueueController {
     @Param('organizationId') organizationId: string,
     @Body() body: AttachGroupsToQueueRequest,
     @Req() request: Request,
-  ): Promise<void> {
+  ): Promise<Queue> {
     const userId = request.user.sub;
 
     const result = await this.attachGroupsToQueueUsecase.execute(
@@ -176,6 +176,28 @@ export class QueueController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return;
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      organizationId: result.value.organizationId,
+      serviceId: result.value.serviceId,
+      code: result.value.code,
+      description: result.value.description,
+      priority: result.value.priority,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+      clients: result.value.clientsInQueue.map((client) => {
+        return {
+          id: client.id,
+          name: client.name,
+          organizationId: client.organizationId,
+          registrationId: client.registrationId,
+          createdAt: client.createdAt,
+          updatedAt: client.updatedAt,
+        };
+      }),
+      lastClientCalled: result.value.lastClientCalled,
+      groups: result.value.groups,
+    };
   }
 }
