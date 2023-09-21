@@ -8,7 +8,7 @@ import { CreateGroupRequest } from '../../src/modules/groups/presentation/http/d
 import { ImportClientsRequest } from '../../src/modules/groups/presentation/http/dto/ImportClients';
 import { SetUserRoleInOrganizationRequest } from '../../src/modules/users/presentation/http/dto/SetUserRoleInOrganization';
 import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/dto/CreateQueue';
-import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/AttachGroupsToQueue';
+import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/UpdateQueue';
 import { EnterQueueRequest } from '../../src/modules/queues/presentation/http/dto/EnterQueue';
 import { CallNextOnQueueRequest } from '../../src/modules/queues/presentation/http/dto/CallNextOnQueue';
 import * as moment from 'moment';

@@ -9,7 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Queue } from './data/typeorm/entities/queues.typeorm-entity';
 import { TypeOrmQueuesRepository } from './data/typeorm/repositories/TypeOrmQueuesRepository';
 import { QueueRepository } from './domain/repositories/QueueRepository';
-import { AttachGroupsAndServiceToQueueUsecase } from './interactors/usecases/AttachGroupsToQueueUsecase';
+import { UpdateQueueUsecase } from './interactors/usecases/UpdateQueueUsecase';
 import { CreateQueueUsecase } from './interactors/usecases/CreateQueueUsecase';
 import { FindOneOrAllQueuesUsecase } from './interactors/usecases/FindOneOrAllQueuesUsecase';
 import { FindQueueByIdUsecase } from './interactors/usecases/FindQueueByIdUsecase';
@@ -19,6 +19,7 @@ import { ClientsModule } from '../clients/clients.module';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
 import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClientPositionInQueueUsecase';
+import { RemoveQueueUsecase } from './interactors/usecases/RemoveQueueUsecase';
 
 @Module({
   imports: [
@@ -42,8 +43,8 @@ import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClien
       useClass: CreateQueueUsecase,
     },
     {
-      provide: AttachGroupsAndServiceToQueueUsecase,
-      useClass: AttachGroupsAndServiceToQueueUsecase,
+      provide: UpdateQueueUsecase,
+      useClass: UpdateQueueUsecase,
     },
     {
       provide: FindQueueByIdUsecase,
@@ -52,6 +53,10 @@ import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClien
     {
       provide: GetClientPositionInQueueUsecase,
       useClass: GetClientPositionInQueueUsecase,
+    },
+    {
+      provide: RemoveQueueUsecase,
+      useClass: RemoveQueueUsecase,
     },
   ],
   exports: [QueueRepository],

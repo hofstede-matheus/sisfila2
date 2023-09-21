@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -11,16 +12,17 @@ import {
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { CreateQueueUsecase } from '../../../interactors/usecases/CreateQueueUsecase';
 import { FindOneOrAllQueuesUsecase } from '../../../interactors/usecases/FindOneOrAllQueuesUsecase';
-import { AttachGroupsAndServiceToQueueUsecase } from '../../../interactors/usecases/AttachGroupsToQueueUsecase';
+import { UpdateQueueUsecase } from '../../../interactors/usecases/UpdateQueueUsecase';
 
 import { Queue } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { Request } from 'express';
-import { AttachGroupsToQueueRequest } from '../dto/AttachGroupsToQueue';
+import { UpdateQueueRequest } from '../dto/UpdateQueue';
 import { FindQueueByIdUsecase } from '../../../interactors/usecases/FindQueueByIdUsecase';
 import { GetClientPositionInQueueResponse } from '../dto/GetClientPositionInQueue';
 import { GetClientPositionInQueueUsecase } from '../../../interactors/usecases/GetClientPositionInQueueUsecase';
 import { CreateQueueRequest } from '../dto/CreateQueue';
+import { RemoveQueueUsecase } from '../../../interactors/usecases/RemoveQueueUsecase';
 
 @Controller({ path: 'queues', version: '1' })
 export class QueueController {
@@ -28,8 +30,9 @@ export class QueueController {
     private readonly findOneOrAllQueuesUsecase: FindOneOrAllQueuesUsecase,
     private readonly findQueueByIdUsecase: FindQueueByIdUsecase,
     private readonly createQueueUsecase: CreateQueueUsecase,
-    private readonly attachGroupsToQueueUsecase: AttachGroupsAndServiceToQueueUsecase,
+    private readonly attachGroupsToQueueUsecase: UpdateQueueUsecase,
     private readonly getClientPositionInQueueUsecase: GetClientPositionInQueueUsecase,
+    private readonly removeQueueUsecase: RemoveQueueUsecase,
   ) {}
 
   @Get('organizations/:id')
@@ -158,10 +161,10 @@ export class QueueController {
   @Patch(':queueId/organizations/:organizationId')
   @HttpCode(200)
   @ApiBearerAuth()
-  async attachGroupsAndServiceToQueue(
+  async updateQueue(
     @Param('queueId') queueId: string,
     @Param('organizationId') organizationId: string,
-    @Body() body: AttachGroupsToQueueRequest,
+    @Body() body: UpdateQueueRequest,
     @Req() request: Request,
   ): Promise<Queue> {
     const userId = request.user.sub;
@@ -172,6 +175,10 @@ export class QueueController {
       queueId,
       body.groups,
       body.serviceId,
+      body.name,
+      body.description,
+      body.code,
+      body.priority,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);
@@ -199,5 +206,24 @@ export class QueueController {
       lastClientCalled: result.value.lastClientCalled,
       groups: result.value.groups,
     };
+  }
+
+  @Delete(':queueId/organizations/:organizationId')
+  @HttpCode(200)
+  @ApiBearerAuth()
+  async removeQueue(
+    @Param('queueId') queueId: string,
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request,
+  ): Promise<void> {
+    const userId = request.user.sub;
+
+    const result = await this.removeQueueUsecase.execute(
+      queueId,
+      userId,
+      organizationId,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
   }
 }

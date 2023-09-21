@@ -38,6 +38,14 @@ export interface QueueRepository {
       }
     >
   >;
+  update(
+    queueId: string,
+    name?: string,
+    description?: string,
+    code?: string,
+    priority?: number,
+  ): Promise<QueueEntity>;
+  remove(queueId: string): Promise<void>;
 }
 
 export const QueueRepository = Symbol('QueueRepository');

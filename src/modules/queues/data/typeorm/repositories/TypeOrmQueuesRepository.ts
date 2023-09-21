@@ -20,6 +20,29 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     private readonly queuesRepository: Repository<Queue>,
   ) {}
 
+  async remove(queueId: string): Promise<void> {
+    await this.queuesRepository.delete({ id: queueId });
+  }
+
+  async update(
+    queueId: string,
+    name?: string,
+    description?: string,
+    code?: string,
+    priority?: number,
+  ): Promise<QueueEntity> {
+    await this.queuesRepository.save({
+      id: queueId,
+      name,
+      description,
+      code,
+      priority,
+    });
+
+    const queue = await this.findById(queueId);
+    return queue;
+  }
+
   async attachServiceToQueue(
     serviceId: string,
     queueId: string,

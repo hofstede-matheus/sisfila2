@@ -6,7 +6,7 @@ import { CreateGroupRequest } from '../../src/modules/groups/presentation/http/d
 import { VALID_CLIENT } from '../helpers';
 import { ImportClientsRequest } from '../../src/modules/groups/presentation/http/dto/ImportClients';
 import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/dto/CreateQueue';
-import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/AttachGroupsToQueue';
+import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/UpdateQueue';
 import { EnterServiceRequest } from '../../src/modules/services/presentation/http/dto/EnterService';
 import { CreateDeskRequest } from '../../src/modules/desk/presentation/http/dto/CreateDesk';
 import { UpdateDeskRequest } from '../../src/modules/desk/presentation/http/dto/UpdateDesk';

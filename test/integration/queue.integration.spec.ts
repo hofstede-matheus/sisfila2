@@ -12,7 +12,7 @@ import { CreateClientRequest } from '../../src/modules/clients/presentation/http
 import { CreateGroupRequest } from '../../src/modules/groups/presentation/http/dto/CreateGroup';
 import { ImportClientsRequest } from '../../src/modules/groups/presentation/http/dto/ImportClients';
 import * as moment from 'moment';
-import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/AttachGroupsToQueue';
+import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/UpdateQueue';
 import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/dto/CreateQueue';
 import { CreateServiceRequest } from '../../src/modules/services/presentation/http/dto/CreateService';
 import { CallNextOnQueueRequest } from '../../src/modules/queues/presentation/http/dto/CallNextOnQueue';
