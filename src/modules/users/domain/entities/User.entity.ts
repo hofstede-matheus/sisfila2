@@ -7,9 +7,16 @@ import {
 import { DomainError } from '../../../common/shared/helpers/errors';
 import {
   InvalidEmailError,
+  InvalidIdError,
   InvalidNameError,
   InvalidPasswordError,
+  InvalidUserTypeError,
 } from '../../../common/domain/errors';
+
+export interface RolesInOrganizations {
+  readonly organizationId: string;
+  readonly role: UserEntityTypes;
+}
 
 export interface UserEntity {
   readonly id: string;
@@ -18,11 +25,18 @@ export interface UserEntity {
   readonly password?: string;
   readonly isSuperAdmin: boolean;
 
+  readonly rolesInOrganizations: RolesInOrganizations[];
+
   readonly createdAt: Date;
   readonly updatedAt: Date;
 }
 
-export type UserEntityTypes = 'TYPE_COORDINATOR' | 'TYPE_ATTENDENT';
+export enum UserEntityTypes {
+  TYPE_COORDINATOR = 'TYPE_COORDINATOR',
+  TYPE_ATTENDENT = 'TYPE_ATTENDENT',
+}
+
+// export type UserEntityTypes = 'TYPE_COORDINATOR' | 'TYPE_ATTENDENT';
 
 @staticImplements<DomainEntity<UserEntity>>()
 export class UserEntity {
@@ -56,5 +70,39 @@ export class UserEntity {
     if (validation.error) return left(validation.error);
 
     return right(new UserEntity(name, email, password));
+  }
+
+  public static validateEdit(
+    userId: string,
+    organizationId: string,
+    role: UserEntityTypes,
+    userEmail: string,
+  ): Either<DomainError, void> {
+    const schema = Joi.object({
+      id: Joi.string()
+        .uuid()
+        .error(() => new InvalidIdError()),
+      organizationId: Joi.string()
+        .uuid()
+        .required()
+        .error(() => new InvalidIdError()),
+      role: Joi.string()
+        .valid(UserEntityTypes.TYPE_COORDINATOR, UserEntityTypes.TYPE_ATTENDENT)
+        .required()
+        .error(() => new InvalidUserTypeError()),
+      email: Joi.string()
+        .email()
+        .error(() => new InvalidEmailError()),
+    });
+
+    const validation = schema.validate({
+      id: userId,
+      organizationId,
+      role,
+      email: userEmail,
+    });
+    if (validation.error) return left(validation.error);
+
+    return right();
   }
 }

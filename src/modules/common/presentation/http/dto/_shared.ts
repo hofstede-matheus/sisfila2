@@ -1,4 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserEntityTypes } from '../../../../users/domain/entities/User.entity';
+
+export class RolesInOrganizations {
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  readonly organizationId: string;
+  @ApiProperty({
+    example: 'TYPE_COORDINATOR',
+  })
+  readonly role: UserEntityTypes;
+}
 
 export class User {
   @ApiProperty({
@@ -15,6 +27,9 @@ export class User {
     example: 'example@email.com',
   })
   email: string;
+
+  @ApiProperty({ type: [RolesInOrganizations] })
+  rolesInOrganizations: RolesInOrganizations[];
 
   @ApiProperty({
     example: '2022-12-19T23:03:44.662Z',

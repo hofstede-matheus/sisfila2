@@ -7,7 +7,7 @@ export interface UserRepository {
     userId: string,
     organizationId: string,
     role: UserEntityTypes | undefined,
-  ): Promise<void>;
+  ): Promise<UserEntity | undefined>;
   findOneByIdOrAll(id?: string): Promise<UserEntity[] | undefined>;
   findOneOrAllByIdAsAdmin({
     searchedUserId,

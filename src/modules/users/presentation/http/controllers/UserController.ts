@@ -8,8 +8,11 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
-import { UserEntityTypes } from '../../../domain/entities/User.entity';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import {
+  UserEntity,
+  UserEntityTypes,
+} from '../../../domain/entities/User.entity';
 import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticateWithGoogleUsecase } from '../../../interactors/usecases/AuthenticateWithGoogleUsecase';
 import { CreateUserUsecase } from '../../../interactors/usecases/CreateUserUsecase';
@@ -95,45 +98,70 @@ export class UserController {
 
   @Patch(':userId/organizations/:organizationId')
   @HttpCode(200)
+  @ApiResponse({ type: User })
+  @ApiBearerAuth()
   async setUserRoleInOrganizationById(
     @Param('userId') userId: string,
     @Param('organizationId') organizationId: string,
     @Body() body: SetUserRoleInOrganizationRequest,
-  ): Promise<void> {
+    @Req() request: Request,
+  ): Promise<User> {
+    const requestingUserId = request.user.sub;
     const result = await this.setUserRoleInOrganizationUsecase.execute(
       organizationId,
       body.role as UserEntityTypes,
+      requestingUserId,
       userId,
       undefined,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return;
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      email: result.value.email,
+      rolesInOrganizations: result.value.rolesInOrganizations,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+    };
   }
 
   @Patch('email/:userEmail/organizations/:organizationId')
   @HttpCode(200)
+  @ApiResponse({ type: User })
+  @ApiBearerAuth()
   async setUserRoleInOrganizationByEmail(
     @Param('organizationId') organizationId: string,
     @Param('userEmail') userEmail: string,
     @Body() body: SetUserRoleInOrganizationRequest,
-  ): Promise<void> {
+    @Req() request: Request,
+  ): Promise<User> {
+    const requestingUserId = request.user.sub;
     const result = await this.setUserRoleInOrganizationUsecase.execute(
       organizationId,
       body.role as UserEntityTypes,
+      requestingUserId,
       undefined,
       userEmail,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    return;
+    return {
+      id: result.value.id,
+      name: result.value.name,
+      email: result.value.email,
+      rolesInOrganizations: result.value.rolesInOrganizations,
+      createdAt: result.value.createdAt,
+      updatedAt: result.value.updatedAt,
+    };
   }
 
   @Get(':userId/organizations/:organizationId')
   @ApiResponse({ type: User })
   @HttpCode(200)
+  @ApiBearerAuth()
   async getOne(
     @Param('userId') userId: string,
     @Param('organizationId') organizationId: string,
@@ -153,6 +181,7 @@ export class UserController {
       email: result.value[0].email,
       createdAt: result.value[0].createdAt,
       updatedAt: result.value[0].updatedAt,
+      rolesInOrganizations: result.value[0].rolesInOrganizations,
     };
   }
 }

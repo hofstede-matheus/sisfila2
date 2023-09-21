@@ -57,3 +57,5 @@ export class UserNotInAnyGroupError extends DomainError {}
 export class NoQueueAvaliabeError extends DomainError {}
 
 export class GuestEnrollmentError extends DomainError {}
+
+export class RequestingUserNotFoundError extends DomainError {}

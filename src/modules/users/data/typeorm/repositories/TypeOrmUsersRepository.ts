@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
+  RolesInOrganizations,
   UserEntity,
   UserEntityTypes,
 } from '../../../domain/entities/User.entity';
@@ -24,6 +25,10 @@ export class TypeOrmUsersRepository implements UserRepository {
   }): Promise<UserEntity[]> {
     const users = await this.usersRepository.findBy({ id: searchedUserId });
 
+    const rolesInOrganizations = await this.getRolesInAllOrganizations(
+      searchedUserId,
+    );
+
     const usersEntities: UserEntity[] = users.map((user) => {
       return {
         id: user.id,
@@ -32,6 +37,7 @@ export class TypeOrmUsersRepository implements UserRepository {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         isSuperAdmin: user.isSuperAdmin,
+        rolesInOrganizations,
       };
     });
 
@@ -68,6 +74,10 @@ export class TypeOrmUsersRepository implements UserRepository {
 
     if (users.length === 0) return undefined;
 
+    const rolesInOrganizations = await this.getRolesInAllOrganizations(
+      searchedUserId,
+    );
+
     return users.map((user) => {
       return {
         id: user.id,
@@ -76,12 +86,15 @@ export class TypeOrmUsersRepository implements UserRepository {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         isSuperAdmin: user.isSuperAdmin,
+        rolesInOrganizations,
       };
     });
   }
 
   async findOneByIdOrAll(id?: string): Promise<UserEntity[]> {
     const users = await this.usersRepository.findBy({ id });
+
+    const rolesInOrganizations = await this.getRolesInAllOrganizations(id);
 
     const usersEntities: UserEntity[] = users.map((user) => {
       return {
@@ -91,6 +104,7 @@ export class TypeOrmUsersRepository implements UserRepository {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         isSuperAdmin: user.isSuperAdmin,
+        rolesInOrganizations,
       };
     });
 
@@ -101,7 +115,7 @@ export class TypeOrmUsersRepository implements UserRepository {
     userId: string,
     organizationId: string,
     role: UserEntityTypes | undefined,
-  ): Promise<void> {
+  ): Promise<UserEntity | undefined> {
     const user = await this.usersRepository.findOneBy({ id: userId });
 
     if (!user) return;
@@ -119,7 +133,8 @@ export class TypeOrmUsersRepository implements UserRepository {
         `,
         [userId, organizationId],
       );
-      return;
+      const updatedUser = await this.findOneByIdOrAll(userId);
+      return updatedUser[0];
     }
 
     const relation: [] = await this.usersRepository.query(
@@ -135,7 +150,8 @@ export class TypeOrmUsersRepository implements UserRepository {
         `,
         [role, userId, organizationId],
       );
-      return;
+      const updatedUser = await this.findOneByIdOrAll(userId);
+      return updatedUser[0];
     } else {
       await this.usersRepository.query(
         `
@@ -143,9 +159,11 @@ export class TypeOrmUsersRepository implements UserRepository {
         `,
         [userId, organizationId, role],
       );
-      return;
+      const updatedUser = await this.findOneByIdOrAll(userId);
+      return updatedUser[0];
     }
   }
+
   async create(
     name: string,
     email: string,
@@ -166,6 +184,7 @@ export class TypeOrmUsersRepository implements UserRepository {
       createdAt: userInDatabase.createdAt,
       updatedAt: userInDatabase.updatedAt,
       isSuperAdmin: userInDatabase.isSuperAdmin,
+      rolesInOrganizations: [],
     };
   }
   async findByEmail(email: string): Promise<UserEntity> {
@@ -175,6 +194,10 @@ export class TypeOrmUsersRepository implements UserRepository {
 
     if (!userInDatabase) return undefined;
 
+    const rolesInOrganizations = await this.getRolesInAllOrganizations(
+      userInDatabase.id,
+    );
+
     return {
       id: userInDatabase.id,
       name: userInDatabase.name,
@@ -183,6 +206,25 @@ export class TypeOrmUsersRepository implements UserRepository {
       createdAt: userInDatabase.createdAt,
       updatedAt: userInDatabase.updatedAt,
       isSuperAdmin: userInDatabase.isSuperAdmin,
+      rolesInOrganizations,
     };
+  }
+
+  async getRolesInAllOrganizations(
+    userId: string,
+  ): Promise<RolesInOrganizations[]> {
+    const rolesInOrganizations = await this.usersRepository.query(
+      `
+      select * from users_role_in_organizations where user_id = $1
+      `,
+      [userId],
+    );
+
+    return rolesInOrganizations.map((roleInOrganization) => {
+      return {
+        organizationId: roleInOrganization.organization_id,
+        role: roleInOrganization.role,
+      };
+    });
   }
 }

@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserEntityTypes } from '../../../domain/entities/User.entity';
 
 export class SetUserRoleInOrganizationRequest {
   @ApiProperty({
-    // examples: ['TYPE_COORDINATOR', 'TYPE_ATTENDENT', undefined],
+    enum: UserEntityTypes,
+    examples: [
+      UserEntityTypes.TYPE_ATTENDENT,
+      UserEntityTypes.TYPE_COORDINATOR,
+    ],
   })
-  role: string | undefined;
+  role: UserEntityTypes;
 }

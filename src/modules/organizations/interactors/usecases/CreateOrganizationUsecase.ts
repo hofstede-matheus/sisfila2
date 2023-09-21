@@ -9,6 +9,7 @@ import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { UserRepository } from '../../../users/domain/repositories/UserRepository';
+import { UserEntityTypes } from '../../../users/domain/entities/User.entity';
 
 @Injectable()
 export class CreateOrganizationUsecase implements UseCase {
@@ -68,7 +69,7 @@ export class CreateOrganizationUsecase implements UseCase {
     await this.userRepository.setUserRoleInOrganization(
       userId,
       organization.id,
-      'TYPE_COORDINATOR',
+      UserEntityTypes.TYPE_COORDINATOR,
     );
 
     return right(organization);

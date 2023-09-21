@@ -1,10 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserEntityTypes } from '../../domain/entities/User.entity';
+import { UserEntity, UserEntityTypes } from '../../domain/entities/User.entity';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
-import { Validator } from '../../../common/shared/helpers/validator';
+import {
+  RequestingUserNotFoundError,
+  UserNotFromOrganizationError,
+} from '../../../common/domain/errors';
 
 @Injectable()
 export class SetUserRoleInOrganizationUsecase implements UseCase {
@@ -15,35 +18,56 @@ export class SetUserRoleInOrganizationUsecase implements UseCase {
   async execute(
     organizationId: string,
     role: UserEntityTypes | undefined,
+    requestingUserId: string,
     userId?: string,
     userEmail?: string,
-  ): Promise<Either<DomainError, void>> {
-    const validation = Validator.validate({
-      id: [userId, organizationId],
-      userEntityTypes: [role],
-      email: [userEmail],
-    });
+  ): Promise<Either<DomainError, UserEntity>> {
+    const validation = UserEntity.validateEdit(
+      userId,
+      organizationId,
+      role,
+      userEmail,
+    );
     if (validation.isLeft()) return left(validation.value);
 
+    const requestingUser = await this.userRepository.findOneByIdOrAll(
+      requestingUserId,
+    );
+
+    if (!requestingUser) {
+      return left(new RequestingUserNotFoundError());
+    }
+
+    // check if requesting user is from organization
+    const isRequestingUserFromOrganization =
+      requestingUser[0].rolesInOrganizations.find(
+        (roleInOrganization) =>
+          roleInOrganization.organizationId === organizationId,
+      );
+
+    if (!isRequestingUserFromOrganization) {
+      return left(new UserNotFromOrganizationError());
+    }
+
     if (userId) {
-      await this.userRepository.setUserRoleInOrganization(
+      const updateduser = await this.userRepository.setUserRoleInOrganization(
         userId,
         organizationId,
         role,
       );
-      return right();
+      return right(updateduser);
     }
 
     const { id: userToUpdateId } = await this.userRepository.findByEmail(
       userEmail,
     );
 
-    await this.userRepository.setUserRoleInOrganization(
+    const updateduser = await this.userRepository.setUserRoleInOrganization(
       userToUpdateId,
       organizationId,
       role,
     );
 
-    return right();
+    return right(updateduser);
   }
 }
