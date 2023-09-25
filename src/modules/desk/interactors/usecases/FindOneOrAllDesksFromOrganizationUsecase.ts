@@ -7,7 +7,7 @@ import { DomainError } from '../../../common/shared/helpers/errors';
 import { Validator } from '../../../common/shared/helpers/validator';
 
 @Injectable()
-export class FindOneOrAllDesksUsecase implements UseCase {
+export class FindOneOrAllDesksFromOrganizationUsecase implements UseCase {
   constructor(
     @Inject(DeskRepository)
     private deskRepository: DeskRepository,
@@ -15,13 +15,17 @@ export class FindOneOrAllDesksUsecase implements UseCase {
 
   async execute({
     organizationId,
+    id,
   }: {
-    organizationId?: string;
-  }): Promise<Either<DomainError, DeskEntity[]>> {
+    organizationId: string;
+    id?: string;
+  }): Promise<Either<DomainError, DeskEntity[] | DeskEntity>> {
     const validation = Validator.validate({ id: [organizationId] });
     if (validation.isLeft()) return left(validation.value);
 
-    const isFindAll = !!organizationId;
+    // TODO: check if desk is from organization
+
+    const isFindAll = !id;
 
     if (isFindAll) {
       const desks = await this.deskRepository.findAllByOrganizationId(
@@ -30,8 +34,8 @@ export class FindOneOrAllDesksUsecase implements UseCase {
 
       return right(desks);
     } else {
-      // get one desk
-      // thow error if not found
+      const desk = await this.deskRepository.findById(id);
+      return right(desk);
     }
   }
 }

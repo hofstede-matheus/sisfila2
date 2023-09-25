@@ -16,7 +16,7 @@ export class RemoveQueueUsecase implements UseCase {
     private organizationRepository: OrganizationRepository,
   ) {}
   async execute(
-    id: string, 
+    id: string,
     userId: string,
     organizationId: string,
   ): Promise<Either<DomainError, void>> {

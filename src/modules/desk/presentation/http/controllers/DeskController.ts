@@ -12,7 +12,7 @@ import { CreateDeskRequest, CreateDeskResponse } from '../dto/CreateDesk';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { CreateDeskUsecase } from '../../../interactors/usecases/CreateDeskUsecase';
-import { FindOneOrAllDesksUsecase } from '../../../interactors/usecases/FindOneOrAllDesksUsecase';
+import { FindOneOrAllDesksFromOrganizationUsecase } from '../../../interactors/usecases/FindOneOrAllDesksFromOrganizationUsecase';
 import { Desk } from '../../../../common/presentation/http/dto/_shared';
 import { RemoveDeskUsecase } from '../../../interactors/usecases/RemoveDeskUsecase';
 import { UpdateDeskRequest, UpdateDeskResponse } from '../dto/UpdateDesk';
@@ -20,12 +20,13 @@ import { UpdateDeskUsecase } from '../../../interactors/usecases/UpdateDeskUseca
 import { CallNextOnDeskResponse } from '../dto/CallNextOnDesk';
 import { CallNextClientOfDeskUsecase } from '../../../interactors/usecases/CallNextClientOfDeskUsecase';
 import { Request } from 'express';
+import { DeskEntity } from '../../../domain/entities/Desk.entity';
 
 @Controller({ path: 'desks', version: '1' })
 export class DeskController {
   constructor(
     private readonly createDeskUsecase: CreateDeskUsecase,
-    private readonly findOneOrAllDesksUsecase: FindOneOrAllDesksUsecase,
+    private readonly findDesksFromOrganizationUsecase: FindOneOrAllDesksFromOrganizationUsecase,
     private readonly removeDeskUsecase: RemoveDeskUsecase,
     private readonly updateDeskUsecase: UpdateDeskUsecase,
     private readonly callNextClientOfDeskUsecase: CallNextClientOfDeskUsecase,
@@ -74,13 +75,13 @@ export class DeskController {
   async getAllDesks(
     @Param('organizationId') organizationId: string,
   ): Promise<Desk[]> {
-    const result = await this.findOneOrAllDesksUsecase.execute({
+    const result = await this.findDesksFromOrganizationUsecase.execute({
       organizationId,
     });
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    const mappedDesks: Desk[] = result.value.map((desk) => {
+    const mappedDesks: Desk[] = (result.value as DeskEntity[]).map((desk) => {
       return {
         id: desk.id,
         name: desk.name,
@@ -95,16 +96,100 @@ export class DeskController {
           isOpened: service.isOpened,
           opensAt: service.opensAt,
           closesAt: service.closesAt,
+          queues: service.queues.map((queue) => ({
+            id: queue.id,
+            name: queue.name,
+            description: queue.description,
+            code: queue.code,
+            organizationId: queue.organizationId,
+            priority: queue.priority,
+            serviceId: queue.serviceId,
+            createdAt: queue.createdAt,
+            updatedAt: queue.updatedAt,
+            clients: queue.clientsInQueue.map((client) => {
+              return {
+                id: client.id,
+                name: client.name,
+                organizationId: client.organizationId,
+                registrationId: client.registrationId,
+                createdAt: client.createdAt,
+                updatedAt: client.updatedAt,
+              };
+            }),
+            lastClientCalled: queue.lastClientCalled,
+            groups: queue.groups,
+          })),
 
-          createdAt: service.createdAt,
-          updatedAt: service.updatedAt,
+          createdAt: desk.createdAt,
+          updatedAt: desk.updatedAt,
         })),
-
         createdAt: desk.createdAt,
         updatedAt: desk.updatedAt,
       };
     });
     return mappedDesks;
+  }
+
+  @Get(':deskId/organizations/:organizationId')
+  @ApiResponse({ type: Desk })
+  @ApiBearerAuth()
+  async getDesk(
+    @Param('organizationId') organizationId: string,
+    @Param('deskId') deskId: string,
+  ): Promise<Desk> {
+    const result = await this.findDesksFromOrganizationUsecase.execute({
+      organizationId,
+      id: deskId,
+    });
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    const desk = result.value as DeskEntity;
+
+    return {
+      id: desk.id,
+      name: desk.name,
+      organizationId: desk.organizationId,
+      attendantId: desk.attendantId,
+      services: desk.services.map((service) => ({
+        id: service.id,
+        name: service.name,
+        subscriptionToken: service.subscriptionToken,
+        guestEnroll: service.guestEnrollment,
+        organizationId: service.organizationId,
+        isOpened: service.isOpened,
+        opensAt: service.opensAt,
+        closesAt: service.closesAt,
+        queues: service.queues.map((queue) => ({
+          id: queue.id,
+          name: queue.name,
+          description: queue.description,
+          code: queue.code,
+          organizationId: queue.organizationId,
+          priority: queue.priority,
+          serviceId: queue.serviceId,
+          createdAt: queue.createdAt,
+          updatedAt: queue.updatedAt,
+          clients: queue.clientsInQueue.map((client) => {
+            return {
+              id: client.id,
+              name: client.name,
+              organizationId: client.organizationId,
+              registrationId: client.registrationId,
+              createdAt: client.createdAt,
+              updatedAt: client.updatedAt,
+            };
+          }),
+          lastClientCalled: queue.lastClientCalled,
+          groups: queue.groups,
+        })),
+
+        createdAt: desk.createdAt,
+        updatedAt: desk.updatedAt,
+      })),
+      createdAt: desk.createdAt,
+      updatedAt: desk.updatedAt,
+    };
   }
 
   @Delete(':id')
@@ -155,6 +240,7 @@ export class DeskController {
   }
 
   @Patch(':id/next')
+  @ApiResponse({ type: CallNextOnDeskResponse })
   @ApiBearerAuth()
   async callNextClientOfQueue(
     @Param('id') id: string,
@@ -170,12 +256,58 @@ export class DeskController {
     if (result.value === null) return null;
 
     return {
-      id: result.value.id,
-      name: result.value.name,
-      organizationId: result.value.organizationId,
-      registrationId: result.value.registrationId,
-      createdAt: result.value.createdAt,
-      updatedAt: result.value.updatedAt,
+      client: {
+        id: result.value.client.id,
+        name: result.value.client.name,
+        organizationId: result.value.client.organizationId,
+        registrationId: result.value.client.registrationId,
+        createdAt: result.value.client.createdAt,
+        updatedAt: result.value.client.updatedAt,
+      },
+      desk: {
+        id: result.value.desk.id,
+        name: result.value.desk.name,
+        organizationId: result.value.desk.organizationId,
+        attendantId: result.value.desk.attendantId,
+        services: result.value.desk.services.map((service) => ({
+          id: service.id,
+          name: service.name,
+          subscriptionToken: service.subscriptionToken,
+          guestEnroll: service.guestEnrollment,
+          organizationId: service.organizationId,
+          isOpened: service.isOpened,
+          opensAt: service.opensAt,
+          closesAt: service.closesAt,
+          queues: service.queues.map((queue) => ({
+            id: queue.id,
+            name: queue.name,
+            description: queue.description,
+            code: queue.code,
+            organizationId: queue.organizationId,
+            priority: queue.priority,
+            serviceId: queue.serviceId,
+            createdAt: queue.createdAt,
+            updatedAt: queue.updatedAt,
+            clients: queue.clientsInQueue.map((client) => {
+              return {
+                id: client.id,
+                name: client.name,
+                organizationId: client.organizationId,
+                registrationId: client.registrationId,
+                createdAt: client.createdAt,
+                updatedAt: client.updatedAt,
+              };
+            }),
+            lastClientCalled: queue.lastClientCalled,
+            groups: queue.groups,
+          })),
+
+          createdAt: result.value.desk.createdAt,
+          updatedAt: result.value.desk.updatedAt,
+        })),
+        createdAt: result.value.desk.createdAt,
+        updatedAt: result.value.desk.updatedAt,
+      },
     };
   }
 }

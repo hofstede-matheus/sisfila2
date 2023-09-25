@@ -143,58 +143,6 @@ export class Organization {
   updatedAt: Date;
 }
 
-export class Service {
-  @ApiProperty({
-    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
-  })
-  id: string;
-
-  @ApiProperty({
-    example: 'John Doe',
-  })
-  name: string;
-
-  @ApiProperty({
-    example: 'ABCDEF',
-  })
-  subscriptionToken: string;
-
-  @ApiProperty({
-    example: true,
-  })
-  guestEnroll: boolean;
-
-  @ApiProperty({
-    example: '2022-12-19T23:03:44.662Z',
-  })
-  opensAt: Date;
-
-  @ApiProperty({
-    example: '2022-12-19T23:03:44.662Z',
-  })
-  closesAt: Date;
-
-  @ApiProperty({
-    example: '2022-12-19T23:03:44.662Z',
-  })
-  createdAt: Date;
-
-  @ApiProperty({
-    example: '2022-12-19T23:03:44.662Z',
-  })
-  updatedAt: Date;
-
-  @ApiProperty({
-    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
-  })
-  organizationId: string;
-
-  @ApiProperty({
-    example: true,
-  })
-  isOpened: boolean;
-}
-
 export class Group {
   @ApiProperty({
     example: '73be6348-a46d-4371-8a28-70988f39f7b7',
@@ -285,6 +233,61 @@ export class Queue {
     type: [Group],
   })
   groups: Group[];
+}
+
+export class Service {
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  id: string;
+
+  @ApiProperty({
+    example: 'John Doe',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: 'ABCDEF',
+  })
+  subscriptionToken: string;
+
+  @ApiProperty({
+    example: true,
+  })
+  guestEnroll: boolean;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  opensAt: Date;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  closesAt: Date;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  updatedAt: Date;
+
+  @ApiProperty({
+    example: '73be6348-a46d-4371-8a28-70988f39f7b7',
+  })
+  organizationId: string;
+
+  @ApiProperty({
+    example: true,
+  })
+  isOpened: boolean;
+
+  @ApiProperty({ type: [Queue] })
+  queues?: Queue[];
 }
 
 export class Desk {

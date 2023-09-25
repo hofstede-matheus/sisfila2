@@ -10,6 +10,7 @@ import {
 } from '../../../common/shared/helpers/entity';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { ServiceEntity } from '../../../services/domain/entities/Service.entity';
+import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
 
 export interface DeskEntity {
   readonly id: string;
@@ -21,6 +22,11 @@ export interface DeskEntity {
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
+}
+
+export interface DeskWithCalledClient {
+  desk: DeskEntity;
+  client: ClientEntity | null;
 }
 
 @staticImplements<DomainEntity<DeskEntity>>()

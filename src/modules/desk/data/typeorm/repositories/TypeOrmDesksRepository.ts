@@ -5,12 +5,49 @@ import { DeskRepository } from '../../../domain/repositories/DeskRepository';
 import { Desk } from '../entities/desks.typeorm-entity';
 import { ServiceEntity } from '../../../../services/domain/entities/Service.entity';
 import { isServiceOpen } from '../../../../common/shared/helpers/moment';
+import { QueueRepository } from '../../../../queues/domain/repositories/QueueRepository';
+import { Inject } from '@nestjs/common';
 
 export class TypeOrmDesksRepository implements DeskRepository {
   constructor(
     @InjectRepository(Desk)
     private readonly desksRepository: Repository<Desk>,
+
+    @Inject(QueueRepository)
+    private queueRepository: QueueRepository,
   ) {}
+
+  async findById(id: string): Promise<DeskEntity> {
+    const desksWithServicesByOrganizationId = await this.desksRepository.query(
+      `
+      SELECT desks.id, desks.name, desks.organization_id, desks.attendant_id, desks.created_at, desks.updated_at, services.id as service_id, services.name as service_name, services.organization_id as service_organization_id, services.guest_enroll as service_guest_enroll, services.opens_at as service_opens_at, services.closes_at as service_closes_at, services.created_at as service_created_at, services.updated_at as service_updated_at
+      FROM desks
+      LEFT JOIN desks_has_services dhs ON dhs.desk_id = desks.id
+      LEFT JOIN services ON services.id = dhs.service_id
+      WHERE desks.id = $1
+    `,
+      [id],
+    );
+
+    const desk = mapDesksWithServices(desksWithServicesByOrganizationId)[0];
+
+    if (desk) {
+      const services = await Promise.all(
+        desk.services.map(async (service) => {
+          const queues = await this.queueRepository.findByServiceId(service.id);
+          return {
+            ...service,
+            queues,
+          };
+        }),
+      );
+
+      return {
+        ...desk,
+        services,
+      };
+    }
+  }
 
   async update(
     id: string,

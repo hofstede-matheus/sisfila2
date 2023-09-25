@@ -31,6 +31,10 @@ import { OAuthService } from '../src/modules/users/domain/services/OauthAuthenti
 import { GroupEntity } from '../src/modules/groups/domain/entities/Group.entity';
 import { Desk } from '../src/modules/desk/data/typeorm/entities/desks.typeorm-entity';
 import { DesksModule } from '../src/modules/desk/desk.module';
+import { DeskRepository } from '../src/modules/desk/domain/repositories/DeskRepository';
+import { ServiceEntity } from '../src/modules/services/domain/entities/Service.entity';
+import { QueueEntity } from '../src/modules/queues/domain/entities/Queue.entity';
+import * as moment from 'moment';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -48,6 +52,12 @@ export const VALID_USER = {
   createdAt: new Date(),
   updatedAt: new Date(),
   isSuperAdmin: false,
+  rolesInOrganizations: [
+    {
+      organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+      role: 'TYPE_COORDINATOR',
+    },
+  ],
 } as UserEntity;
 
 export const VALID_ORGANIZATION = {
@@ -72,6 +82,36 @@ export const VALID_GROUP = {
   updatedAt: new Date(),
   organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
 } as GroupEntity;
+
+export const VALID_SERVICE = {
+  id: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  name: 'Valid Name',
+  subscriptionToken: 'valid_token',
+  guestEnrollment: true,
+  organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  isOpened: true,
+  opensAt: new Date(),
+  closesAt: moment().add(1, 'day').toDate(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
+} as ServiceEntity;
+
+export const VALID_QUEUE = {
+  id: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  name: 'Valid Name',
+  serviceId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+} as QueueEntity;
+
+export const VALID_DESK = {
+  id: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  name: 'Valid Name',
+  organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+} as Desk;
 
 export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
   {
@@ -104,6 +144,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       create: jest.fn(),
       findById: jest.fn(),
       findByDeskId: jest.fn(),
+      remove: jest.fn(),
+      update: jest.fn(),
     } as ServiceRepository,
   },
   {
@@ -122,6 +164,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       attachServiceToQueue: jest.fn(),
       callClient: jest.fn(),
       attachClientToQueueByServiceIdOrganizationIdRegistrationId: jest.fn(),
+      remove: jest.fn(),
+      update: jest.fn(),
     } as QueueRepository,
   },
   {
@@ -132,6 +176,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       create: jest.fn(),
       attachClientsToGroup: jest.fn(),
       removeAllClientsFromGroup: jest.fn(),
+      remove: jest.fn(),
+      update: jest.fn(),
     } as GroupRepository,
   },
   {
@@ -147,6 +193,15 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       attachClientToQueue: jest.fn(),
       update: jest.fn(),
     } as ClientRepository,
+  },
+  {
+    provide: DeskRepository,
+    useValue: {
+      create: jest.fn(),
+      findAllByOrganizationId: jest.fn(),
+      removeFromOrganization: jest.fn(),
+      update: jest.fn(),
+    } as DeskRepository,
   },
 ];
 

@@ -11,6 +11,7 @@ import {
   InvalidIdError,
   GuestEnrollmentError,
 } from '../../../common/domain/errors';
+import { QueueEntity } from '../../../queues/domain/entities/Queue.entity';
 
 export interface ServiceEntity {
   readonly id: string;
@@ -22,6 +23,8 @@ export interface ServiceEntity {
   readonly closesAt: Date;
   readonly organizationId: string;
   readonly isOpened: boolean;
+
+  readonly queues?: QueueEntity[];
 
   readonly createdAt: Date;
   readonly updatedAt: Date;

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Client } from '../../../../common/presentation/http/dto/_shared';
+import { Client, Desk } from '../../../../common/presentation/http/dto/_shared';
 
 export class CallNextOnDeskRequest {
   @ApiProperty({
@@ -8,4 +8,14 @@ export class CallNextOnDeskRequest {
   deskId: string;
 }
 
-export class CallNextOnDeskResponse extends Client {}
+export class CallNextOnDeskResponse {
+  @ApiProperty({
+    type: Desk,
+  })
+  desk: Desk;
+
+  @ApiProperty({
+    type: Client,
+  })
+  client: Client;
+}

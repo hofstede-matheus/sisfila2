@@ -10,6 +10,7 @@ export interface DeskRepository {
     attendantId: string,
     services: string[],
   ): Promise<DeskEntity>;
+  findById(id: string): Promise<DeskEntity>;
 }
 
 export const DeskRepository = Symbol('DeskRepository');

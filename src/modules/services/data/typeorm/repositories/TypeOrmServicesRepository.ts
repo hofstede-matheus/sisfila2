@@ -105,6 +105,7 @@ export class TypeOrmServicesRepository implements ServiceRepository {
       isOpened: isServiceOpen(opensAt, closesAt),
     };
   }
+
   async findByOrganizationId(
     organizationId: string,
     listServicesWithNoQueue: boolean,

@@ -3,11 +3,12 @@ import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { Validator } from '../../../common/shared/helpers/validator';
-import { DeskRepository } from '../../domain/repositories/DeskRepository';
 import { ServiceRepository } from '../../../services/domain/repositories/ServiceRepository';
 import { isServiceOpen } from '../../../common/shared/helpers/moment';
 import { QueueRepository } from '../../../queues/domain/repositories/QueueRepository';
-import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
+import { QueueEntity } from '../../../queues/domain/entities/Queue.entity';
+import { DeskWithCalledClient } from '../../domain/entities/Desk.entity';
+import { DeskRepository } from '../../domain/repositories/DeskRepository';
 
 @Injectable()
 export class CallNextClientOfDeskUsecase implements UseCase {
@@ -24,19 +25,17 @@ export class CallNextClientOfDeskUsecase implements UseCase {
   async execute(
     deskId: string,
     attendentId: string,
-  ): Promise<Either<DomainError, ClientEntity | undefined>> {
+  ): Promise<Either<DomainError, DeskWithCalledClient>> {
     const validation = Validator.validate({
       id: [deskId],
     });
     if (validation.isLeft()) return left(validation.value);
 
-    // get services from desk
     const services = await this.serviceRepository.findByDeskId(deskId);
-    // filter out services that are not open
     const openServices = services.filter((service) => {
       return isServiceOpen(service.opensAt, service.closesAt);
     });
-    // get queues from services
+
     const queues = await Promise.all(
       openServices.map((service) => {
         return this.queueRepository.findByServiceId(service.id);
@@ -45,24 +44,7 @@ export class CallNextClientOfDeskUsecase implements UseCase {
 
     const queuesFlat = queues.flat();
 
-    // get queues with highest priority (can be more then one) (lower is more priority)
-    const queuesWithHighestPriority = queuesFlat.filter((queue) => {
-      return queue.priority === Math.min(...queuesFlat.map((q) => q.priority));
-    });
-    // merge clientsInQueue from queues and sort by createdAt
-    const clientsInQueue = queuesWithHighestPriority
-      .map((queue) =>
-        queue.clientsInQueue.map((client) => {
-          return { ...client, queueId: queue.id };
-        }),
-      )
-      .flat()
-      .sort((a, b) => {
-        return a.createdAt.getTime() - b.createdAt.getTime();
-      });
-
-    // get first client in queue
-    const client = clientsInQueue[0];
+    const client = findNextClientOnQueue(queuesFlat);
 
     if (client) {
       await this.queueRepository.callClient(
@@ -73,16 +55,52 @@ export class CallNextClientOfDeskUsecase implements UseCase {
 
       // TODO: notify queue subscriber
 
-      return right({
-        id: client.id,
-        name: client.name,
-        organizationId: client.organizationId,
-        registrationId: client.registrationId,
-        createdAt: client.createdAt,
-        updatedAt: client.updatedAt,
-      });
-    }
+      const desk = await this.deskRepository.findById(deskId);
 
-    return right(null);
+      return right({
+        client: {
+          id: client.id,
+          name: client.name,
+          organizationId: client.organizationId,
+          registrationId: client.registrationId,
+          createdAt: client.createdAt,
+          updatedAt: client.updatedAt,
+        },
+        desk: desk,
+      });
+    } else {
+      return right(null);
+    }
+  }
+}
+
+function findNextClientOnQueue(queues: QueueEntity[]) {
+  if (queues.length === 0) return null;
+
+  const queuesWithHighestPriority = queues.filter((queue) => {
+    return queue.priority === Math.min(...queues.map((q) => q.priority));
+  });
+
+  const clientsInQueue = queuesWithHighestPriority
+    .map((queue) =>
+      queue.clientsInQueue.map((client) => {
+        return { ...client, queueId: queue.id };
+      }),
+    )
+    .flat()
+    .sort((a, b) => {
+      return a.createdAt.getTime() - b.createdAt.getTime();
+    });
+
+  // get first client in queue
+  const client = clientsInQueue[0];
+
+  if (client) return client;
+  else {
+    const queuesWithoutHighestPriority = queues.filter((queue) => {
+      return queue.priority !== Math.min(...queues.map((q) => q.priority));
+    });
+
+    return findNextClientOnQueue(queuesWithoutHighestPriority);
   }
 }

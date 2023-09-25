@@ -13,7 +13,7 @@ import { DeskRepository } from './domain/repositories/DeskRepository';
 import { TypeOrmDesksRepository } from './data/typeorm/repositories/TypeOrmDesksRepository';
 import { Desk } from './data/typeorm/entities/desks.typeorm-entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FindOneOrAllDesksUsecase } from './interactors/usecases/FindOneOrAllDesksUsecase';
+import { FindOneOrAllDesksFromOrganizationUsecase } from './interactors/usecases/FindOneOrAllDesksFromOrganizationUsecase';
 import { RemoveDeskUsecase } from './interactors/usecases/RemoveDeskUsecase';
 import { UpdateDeskUsecase } from './interactors/usecases/UpdateDeskUsecase';
 import { CallNextClientOfDeskUsecase } from './interactors/usecases/CallNextClientOfDeskUsecase';
@@ -31,7 +31,10 @@ import { QueuesModule } from '../queues/queues.module';
   providers: [
     { provide: DeskRepository, useClass: TypeOrmDesksRepository },
     { provide: CreateDeskUsecase, useClass: CreateDeskUsecase },
-    { provide: FindOneOrAllDesksUsecase, useClass: FindOneOrAllDesksUsecase },
+    {
+      provide: FindOneOrAllDesksFromOrganizationUsecase,
+      useClass: FindOneOrAllDesksFromOrganizationUsecase,
+    },
     { provide: RemoveDeskUsecase, useClass: RemoveDeskUsecase },
     { provide: UpdateDeskUsecase, useClass: UpdateDeskUsecase },
     {
