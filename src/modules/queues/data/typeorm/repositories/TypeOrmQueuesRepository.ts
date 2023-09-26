@@ -263,6 +263,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       where: { id: queueId },
     });
 
+    if (!queue) {
+      return undefined;
+    }
+
     const clientsInQueueFromDatabase = await this.queuesRepository.query(
       `
       SELECT 
@@ -366,6 +370,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         [queueId],
       );
     } else {
+      await this.queuesRepository.query(
+        `DELETE FROM groups_from_queues WHERE queue_id = $1`,
+        [queueId],
+      );
       for (const groupId of groupIds) {
         await this.queuesRepository.query(
           `INSERT INTO groups_from_queues (queue_id, group_id) VALUES ($1, $2)`,
