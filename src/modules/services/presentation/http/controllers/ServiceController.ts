@@ -3,16 +3,17 @@ import { ApiResponse } from '@nestjs/swagger';
 import { FindOneOrAllServicesUsecase } from '../../../interactors/usecases/FindOneOrAllServicesUsecase';
 import { Service } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
-import { CreateServiceUsecase } from '../../../interactors/usecases/CreateServiceUsecase';
 import { EnterServiceRequest, EnterServiceResponse } from '../dto/EnterService';
 import { AttachClientToServiceUsecase } from '../../../interactors/usecases/AttachClientToServiceUsecase';
+import { GetClientPositionInServiceUsecase } from '../../../../queues/interactors/usecases/GetClientPositionInQueueUsecase';
+import { GetClientPositionInQueueResponse } from '../../../../queues/presentation/http/dto/GetClientPositionInQueue';
 
 @Controller({ path: 'services', version: '1' })
 export class ServiceController {
   constructor(
     private readonly findOneOrAllServicesUsecase: FindOneOrAllServicesUsecase,
-    private readonly createServiceUsecase: CreateServiceUsecase,
     private readonly attachClientToServiceUsecase: AttachClientToServiceUsecase,
+    private readonly getClientPositionInServiceUsecase: GetClientPositionInServiceUsecase,
   ) {}
 
   @Get('organizations/:id')
@@ -56,6 +57,23 @@ export class ServiceController {
       queueId: result.value.queueId,
       queueName: result.value.queueName,
       position: result.value.position,
+    };
+  }
+
+  @Get(':serviceId/position/:registrationId')
+  @ApiResponse({ type: Number })
+  async getClientPositionInService(
+    @Param('serviceId') serviceId: string,
+    @Param('registrationId') registrationId: string,
+  ): Promise<GetClientPositionInQueueResponse> {
+    const result = await this.getClientPositionInServiceUsecase.execute(
+      serviceId,
+      registrationId,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+    return {
+      position: result.value,
     };
   }
 }

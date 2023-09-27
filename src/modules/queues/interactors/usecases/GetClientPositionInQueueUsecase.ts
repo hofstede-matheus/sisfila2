@@ -1,32 +1,39 @@
 import { Injectable, Inject } from '@nestjs/common';
-import {
-  ClientNotInQueueError,
-  QueueNotFoundError,
-} from '../../../common/domain/errors';
+import { ClientNotInQueueError } from '../../../common/domain/errors';
 import { QueueRepository } from '../../domain/repositories/QueueRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { Validator } from '../../../common/shared/helpers/validator';
+import { ServiceRepository } from '../../../services/domain/repositories/ServiceRepository';
 
 @Injectable()
-export class GetClientPositionInQueueUsecase implements UseCase {
+export class GetClientPositionInServiceUsecase implements UseCase {
   constructor(
     @Inject(QueueRepository)
     private queueRepository: QueueRepository,
+
+    @Inject(ServiceRepository)
+    private serviceRepository: ServiceRepository,
   ) {}
   async execute(
-    queueId?: string,
-    registrationId?: string,
+    serviceId: string,
+    registrationId: string,
   ): Promise<Either<DomainError, number>> {
-    const validation = Validator.validate({ id: [queueId] });
+    const validation = Validator.validate({ id: [serviceId] });
     if (validation.isLeft()) return left(validation.value);
 
-    const queue = await this.queueRepository.findById(queueId);
-    if (!queue) return left(new QueueNotFoundError());
+    const service = await this.serviceRepository.findById(serviceId);
+
+    const bestQueueForClient =
+      await this.queueRepository.selectBestQueueForClient(
+        serviceId,
+        service.organizationId,
+        registrationId,
+      );
 
     const position = await this.queueRepository.getPositionOfClient(
-      queueId,
+      bestQueueForClient.id,
       registrationId,
     );
 

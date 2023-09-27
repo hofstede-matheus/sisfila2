@@ -46,6 +46,11 @@ export interface QueueRepository {
     priority?: number,
   ): Promise<QueueEntity>;
   remove(queueId: string): Promise<void>;
+  selectBestQueueForClient(
+    serviceId: string,
+    organizationId: string,
+    userId: string,
+  ): Promise<QueueEntity>;
 }
 
 export const QueueRepository = Symbol('QueueRepository');

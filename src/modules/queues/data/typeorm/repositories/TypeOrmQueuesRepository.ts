@@ -20,6 +20,81 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     private readonly queuesRepository: Repository<Queue>,
   ) {}
 
+  async selectBestQueueForClient(
+    serviceId: string,
+    organizationId: string,
+    registrationId: string,
+  ): Promise<QueueEntity> {
+    const user = await this.queuesRepository.query(
+      `
+      SELECT
+        clients.id
+      FROM clients
+      WHERE clients.registration_id = $1
+      `,
+      [registrationId],
+    );
+    const userId = user[0].id;
+
+    let queuesOrderedByPriority = [];
+    const groupsThatUserBelongs = await this.queuesRepository.query(
+      `
+      SELECT
+        groups.id
+      FROM groups
+      INNER JOIN clients_in_groups ON groups.id = clients_in_groups.group_id
+      WHERE clients_in_groups.client_id = $1
+      `,
+      [userId],
+    );
+
+    const groupsThatUserBelongsIds = groupsThatUserBelongs.map(
+      (group) => group.id,
+    );
+
+    const queuesAssociatedWithGroups = await this.queuesRepository.query(
+      `
+      SELECT
+        groups_from_queues.queue_id
+      FROM groups_from_queues
+      WHERE groups_from_queues.group_id = ANY($1)
+      `,
+      [groupsThatUserBelongsIds],
+    );
+
+    const queuesAssociatedWithGroupsIds = queuesAssociatedWithGroups.map(
+      (queue) => queue.queue_id,
+    );
+
+    queuesOrderedByPriority = await this.queuesRepository.query(
+      `
+      SELECT
+        queues.id,
+        queues.name
+      FROM queues
+      WHERE queues.service_id = $1
+      AND queues.organization_id = $2
+      AND queues.id IN ($3)
+      ORDER BY queues.priority DESC
+      `,
+      [serviceId, organizationId, queuesAssociatedWithGroupsIds.join(',')],
+    );
+
+    return {
+      id: queuesOrderedByPriority[0].id,
+      name: queuesOrderedByPriority[0].name,
+      code: undefined,
+      priority: undefined,
+      description: undefined,
+      organizationId: undefined,
+      serviceId: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      clientsInQueue: [],
+      groups: [],
+    };
+  }
+
   async remove(queueId: string): Promise<void> {
     await this.queuesRepository.delete({ id: queueId });
   }
@@ -140,7 +215,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         [serviceId, organizationId, queuesAssociatedWithGroupsIds.join(',')],
       );
 
-      const userAlreadyInQueue = await transaction.query(
+      const occurrenceOfUserInQueue = await transaction.query(
         `
       SELECT
         clients_position_in_queues.queue_id
@@ -150,7 +225,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         [userId],
       );
 
-      if (userAlreadyInQueue.length === 0) {
+      const isUserAlreadyInQueue = occurrenceOfUserInQueue.length !== 0;
+
+      if (!isUserAlreadyInQueue) {
         await transaction.query(
           `INSERT INTO clients_position_in_queues (client_id, queue_id) VALUES ($1, $2)`,
           [userId, queuesOrderedByPriority[0].id],

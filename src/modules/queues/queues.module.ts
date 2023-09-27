@@ -18,7 +18,7 @@ import { AuthenticationMiddleware } from '../common/presentation/http/middleware
 import { ClientsModule } from '../clients/clients.module';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
-import { GetClientPositionInQueueUsecase } from './interactors/usecases/GetClientPositionInQueueUsecase';
+import { GetClientPositionInServiceUsecase } from './interactors/usecases/GetClientPositionInQueueUsecase';
 import { RemoveQueueUsecase } from './interactors/usecases/RemoveQueueUsecase';
 
 @Module({
@@ -51,10 +51,6 @@ import { RemoveQueueUsecase } from './interactors/usecases/RemoveQueueUsecase';
       useClass: FindQueueByIdUsecase,
     },
     {
-      provide: GetClientPositionInQueueUsecase,
-      useClass: GetClientPositionInQueueUsecase,
-    },
-    {
       provide: RemoveQueueUsecase,
       useClass: RemoveQueueUsecase,
     },
@@ -65,16 +61,10 @@ export class QueuesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
-      .exclude(
-        {
-          path: 'v1/queues/:queueId',
-          method: RequestMethod.GET,
-        },
-        {
-          path: 'v1/queues/:queueId/position/:registrationId',
-          method: RequestMethod.GET,
-        },
-      )
+      .exclude({
+        path: 'v1/queues/:queueId',
+        method: RequestMethod.GET,
+      })
       .forRoutes({ path: 'v1/queues*', method: RequestMethod.ALL });
   }
 }

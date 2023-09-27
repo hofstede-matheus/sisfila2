@@ -19,8 +19,6 @@ import { toPresentationError } from '../../../../common/presentation/http/errors
 import { Request } from 'express';
 import { UpdateQueueRequest } from '../dto/UpdateQueue';
 import { FindQueueByIdUsecase } from '../../../interactors/usecases/FindQueueByIdUsecase';
-import { GetClientPositionInQueueResponse } from '../dto/GetClientPositionInQueue';
-import { GetClientPositionInQueueUsecase } from '../../../interactors/usecases/GetClientPositionInQueueUsecase';
 import { CreateQueueRequest } from '../dto/CreateQueue';
 import { RemoveQueueUsecase } from '../../../interactors/usecases/RemoveQueueUsecase';
 
@@ -31,7 +29,6 @@ export class QueueController {
     private readonly findQueueByIdUsecase: FindQueueByIdUsecase,
     private readonly createQueueUsecase: CreateQueueUsecase,
     private readonly attachGroupsToQueueUsecase: UpdateQueueUsecase,
-    private readonly getClientPositionInQueueUsecase: GetClientPositionInQueueUsecase,
     private readonly removeQueueUsecase: RemoveQueueUsecase,
   ) {}
 
@@ -69,23 +66,6 @@ export class QueueController {
       };
     });
     return mappedQueues;
-  }
-
-  @Get(':queueId/position/:registrationId')
-  @ApiResponse({ type: Number })
-  async getClientPositionInQueue(
-    @Param('queueId') queueId: string,
-    @Param('registrationId') registrationId: string,
-  ): Promise<GetClientPositionInQueueResponse> {
-    const result = await this.getClientPositionInQueueUsecase.execute(
-      queueId,
-      registrationId,
-    );
-
-    if (result.isLeft()) throw toPresentationError(result.value);
-    return {
-      position: result.value,
-    };
   }
 
   @Get(':queueId')

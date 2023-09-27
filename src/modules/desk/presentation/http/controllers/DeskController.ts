@@ -96,7 +96,7 @@ export class DeskController {
           isOpened: service.isOpened,
           opensAt: service.opensAt,
           closesAt: service.closesAt,
-          queues: service.queues.map((queue) => ({
+          queues: service.queues?.map((queue) => ({
             id: queue.id,
             name: queue.name,
             description: queue.description,

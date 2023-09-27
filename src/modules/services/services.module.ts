@@ -21,6 +21,7 @@ import { QueuesModule } from '../queues/queues.module';
 import { AdminServiceController } from './presentation/http/controllers/AdminServiceController';
 import { RemoveServiceUsecase } from './interactors/usecases/RemoveServiceUsecase';
 import { UpdateServiceUsecase } from './interactors/usecases/UpdateServiceUsecase';
+import { GetClientPositionInServiceUsecase } from '../queues/interactors/usecases/GetClientPositionInQueueUsecase';
 
 @Module({
   imports: [
@@ -56,6 +57,10 @@ import { UpdateServiceUsecase } from './interactors/usecases/UpdateServiceUsecas
       provide: UpdateServiceUsecase,
       useClass: UpdateServiceUsecase,
     },
+    {
+      provide: GetClientPositionInServiceUsecase,
+      useClass: GetClientPositionInServiceUsecase,
+    },
   ],
   exports: [ServiceRepository],
 })
@@ -70,6 +75,10 @@ export class ServicesModule implements NestModule {
         },
         {
           path: 'v1/services/organizations/:id',
+          method: RequestMethod.GET,
+        },
+        {
+          path: 'v1/services/:queueId/position/:registrationId',
           method: RequestMethod.GET,
         },
       )
