@@ -18,6 +18,40 @@ export class TypeOrmUsersRepository implements UserRepository {
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
 
+  async findAllFromOrganizationAsUser({
+    organizationId,
+  }: {
+    organizationId: string;
+  }): Promise<UserEntity[]> {
+    const users = await this.usersRepository.query(
+      `
+      select * from users where id in (
+        select user_id from users_role_in_organizations where organization_id = $1
+      )
+      `,
+      [organizationId],
+    );
+
+    const usersEntities: UserEntity[] = [];
+
+    for (const user of users) {
+      const rolesInOrganizations = await this.getRolesInAllOrganizations(
+        user.id,
+      );
+      usersEntities.push({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        isSuperAdmin: user.isSuperAdmin,
+        rolesInOrganizations,
+      });
+    }
+
+    return usersEntities;
+  }
+
   async findOneOrAllByIdAsAdmin({
     searchedUserId,
   }: {

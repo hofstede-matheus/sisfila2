@@ -46,6 +46,8 @@ export class ClientNotFoundError extends DomainError {}
 
 export class UserNotFromOrganizationError extends DomainError {}
 
+export class UserHasNoPermissionInOrganization extends DomainError {}
+
 export class InvalidClientError extends DomainError {}
 
 export class UserNotInGroupError extends DomainError {}

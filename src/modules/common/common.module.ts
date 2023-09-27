@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AuthenticationService } from '../users/domain/services/AuthenticationService';
-import { BcryptEncryptionService } from '../users/data/services/BcryptjsEncryptionService';
-import { GoogleOauthAuthenticationService } from '../users/data/services/GoogleOauthAuthenticationService';
-import { JWTAuthService } from '../users/data/services/JWTAuthService';
-import { EncryptionService } from '../users/domain/services/EncryptionService';
-import { OAuthService } from '../users/domain/services/OauthAuthenticationService';
+import { AuthenticationService } from './domain/services/AuthenticationService';
+import { BcryptEncryptionService } from './data/services/BcryptjsEncryptionService';
+import { GoogleOauthAuthenticationService } from './data/services/GoogleOauthAuthenticationService';
+import { JWTAuthService } from './data/services/JWTAuthService';
+import { EncryptionService } from './domain/services/EncryptionService';
+import { OAuthService } from './domain/services/OauthAuthenticationService';
+import { EmailService } from './domain/services/EmailService';
+import { TwillioEmailService } from './data/services/TwillioEmailService';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
+  imports: [ConfigModule],
   providers: [
     {
       provide: EncryptionService,
@@ -20,7 +24,16 @@ import { OAuthService } from '../users/domain/services/OauthAuthenticationServic
       provide: OAuthService,
       useClass: GoogleOauthAuthenticationService,
     },
+    {
+      provide: EmailService,
+      useClass: TwillioEmailService,
+    },
   ],
-  exports: [EncryptionService, AuthenticationService, OAuthService],
+  exports: [
+    EncryptionService,
+    AuthenticationService,
+    OAuthService,
+    EmailService,
+  ],
 })
 export class CommonModule {}

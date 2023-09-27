@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UserEntity } from '../../domain/entities/User.entity';
 import { EmailAlreadyExistsError } from '../../../common/domain/errors';
 import { UserRepository } from '../../domain/repositories/UserRepository';
-import { AuthenticationService } from '../../domain/services/AuthenticationService';
+import { AuthenticationService } from '../../../common/domain/services/AuthenticationService';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
-import { EncryptionService } from '../../domain/services/EncryptionService';
+import { EncryptionService } from '../../../common/domain/services/EncryptionService';
 
 @Injectable()
 export class CreateUserUsecase implements UseCase {

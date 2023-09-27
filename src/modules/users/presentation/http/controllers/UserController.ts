@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Param,
-  Patch,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import {
   UserEntity,
@@ -16,7 +7,7 @@ import {
 import { AuthenticateUserUsecase } from '../../../interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticateWithGoogleUsecase } from '../../../interactors/usecases/AuthenticateWithGoogleUsecase';
 import { CreateUserUsecase } from '../../../interactors/usecases/CreateUserUsecase';
-import { FindOneOrAllUsersUsecase } from '../../../interactors/usecases/FindOneOrAllUsersUsecase';
+import { FindOneUserUsecase } from '../../../interactors/usecases/FindOneUserUsecase';
 import { SetUserRoleInOrganizationUsecase } from '../../../interactors/usecases/SetUserRoleInOrganizationUsecase';
 import {
   AuthenticateUserResponse,
@@ -28,6 +19,7 @@ import { SetUserRoleInOrganizationRequest } from '../dto/SetUserRoleInOrganizati
 import { User } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { Request } from 'express';
+import { FindAllFromOrganizationUsecase } from '../../../interactors/usecases/FindAllFromOrganizationUsecase';
 
 @Controller({ path: 'users', version: '1' })
 export class UserController {
@@ -36,7 +28,8 @@ export class UserController {
     private readonly authenticateUserUsecase: AuthenticateUserUsecase,
     private readonly authenticateWithGoogleUsecase: AuthenticateWithGoogleUsecase,
     private readonly setUserRoleInOrganizationUsecase: SetUserRoleInOrganizationUsecase,
-    private readonly findOneOrAllUsersUsecase: FindOneOrAllUsersUsecase,
+    private readonly findOneUsersUsecase: FindOneUserUsecase,
+    private readonly findAllFromOrganizationUsecase: FindAllFromOrganizationUsecase,
   ) {}
 
   @Post()
@@ -60,7 +53,6 @@ export class UserController {
 
   @Post('auth')
   @ApiResponse({ type: AuthenticateUserResponse })
-  @HttpCode(200)
   async authenticateUser(
     @Body() body: AuthenticateUserRequest,
   ): Promise<AuthenticateUserResponse> {
@@ -79,7 +71,6 @@ export class UserController {
 
   @Post('auth/google')
   @ApiResponse({ type: AuthenticateUserResponse })
-  @HttpCode(200)
   async authenticateWithGoogle(
     @Body() body: AuthenticateWithGoogleRequest,
   ): Promise<AuthenticateUserResponse> {
@@ -97,7 +88,6 @@ export class UserController {
   }
 
   @Patch(':userId/organizations/:organizationId')
-  @HttpCode(200)
   @ApiResponse({ type: User })
   @ApiBearerAuth()
   async setUserRoleInOrganizationById(
@@ -128,7 +118,6 @@ export class UserController {
   }
 
   @Patch('email/:userEmail/organizations/:organizationId')
-  @HttpCode(200)
   @ApiResponse({ type: User })
   @ApiBearerAuth()
   async setUserRoleInOrganizationByEmail(
@@ -160,14 +149,13 @@ export class UserController {
 
   @Get(':userId/organizations/:organizationId')
   @ApiResponse({ type: User })
-  @HttpCode(200)
   @ApiBearerAuth()
   async getOne(
     @Param('userId') userId: string,
     @Param('organizationId') organizationId: string,
     @Req() request: Request,
   ): Promise<User> {
-    const result = await this.findOneOrAllUsersUsecase.execute({
+    const result = await this.findOneUsersUsecase.execute({
       organizationId,
       requestingUserId: request.user.sub,
       searchedUserId: userId,
@@ -183,5 +171,29 @@ export class UserController {
       updatedAt: result.value[0].updatedAt,
       rolesInOrganizations: result.value[0].rolesInOrganizations,
     };
+  }
+
+  @Get('organizations/:organizationId')
+  @ApiResponse({ type: [User] })
+  @ApiBearerAuth()
+  async getAllFromOrganization(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request,
+  ): Promise<User[]> {
+    const result = await this.findAllFromOrganizationUsecase.execute({
+      organizationId,
+      requestingUserId: request.user.sub,
+    });
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return result.value.map((user: UserEntity) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      rolesInOrganizations: user.rolesInOrganizations,
+    }));
   }
 }

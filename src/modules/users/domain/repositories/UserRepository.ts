@@ -24,6 +24,12 @@ export interface UserRepository {
     requestingUserId?: string;
     searchedUserId?: string;
   }): Promise<UserEntity[] | undefined>;
+
+  findAllFromOrganizationAsUser({
+    organizationId,
+  }: {
+    organizationId: string;
+  }): Promise<UserEntity[] | undefined>;
 }
 
 export const UserRepository = Symbol('UserRepository');

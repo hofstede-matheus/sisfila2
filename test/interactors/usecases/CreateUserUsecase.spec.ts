@@ -15,7 +15,7 @@ import {
   VALID_USER,
 } from '../../helpers';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
-import { AuthenticationService } from '../../../src/modules/users/domain/services/AuthenticationService';
+import { AuthenticationService } from '../../../src/modules/common/domain/services/AuthenticationService';
 
 describe('CreateUserUsecase', () => {
   let useCase: CreateUserUsecase;

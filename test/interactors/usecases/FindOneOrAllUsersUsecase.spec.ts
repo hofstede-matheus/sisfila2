@@ -9,12 +9,12 @@ import {
   VALID_ORGANIZATION,
   VALID_USER,
 } from '../../helpers';
-import { FindOneOrAllUsersUsecase } from '../../../src/modules/users/interactors/usecases/FindOneOrAllUsersUsecase';
+import { FindOneUserUsecase } from '../../../src/modules/users/interactors/usecases/FindOneUserUsecase';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 import { UserEntity } from '../../../src/modules/users/domain/entities/User.entity';
 
 describe('FindOneOrAllUsersUsecase', () => {
-  let useCase: FindOneOrAllUsersUsecase;
+  let useCase: FindOneUserUsecase;
   let userRepository: UserRepository;
 
   beforeEach(async () => {
@@ -22,11 +22,11 @@ describe('FindOneOrAllUsersUsecase', () => {
       providers: [
         ...ALL_REPOSITORIES_PROVIDERS,
         ...ALL_SERVICES_PROVIDERS,
-        FindOneOrAllUsersUsecase,
+        FindOneUserUsecase,
       ],
     }).compile();
 
-    useCase = module.get(FindOneOrAllUsersUsecase);
+    useCase = module.get(FindOneUserUsecase);
     userRepository = module.get<UserRepository>(UserRepository);
   });
 

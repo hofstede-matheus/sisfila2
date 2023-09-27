@@ -13,7 +13,7 @@ import { OrganizationRepository } from '../src/modules/organizations/domain/repo
 import { QueueRepository } from '../src/modules/queues/domain/repositories/QueueRepository';
 import { ServiceRepository } from '../src/modules/services/domain/repositories/ServiceRepository';
 import { UserRepository } from '../src/modules/users/domain/repositories/UserRepository';
-import { AuthenticationService } from '../src/modules/users/domain/services/AuthenticationService';
+import { AuthenticationService } from '../src/modules/common/domain/services/AuthenticationService';
 import { CommonModule } from '../src/modules/common/common.module';
 import { OrganizationsModule } from '../src/modules/organizations/organizations.module';
 import { UsersModule } from '../src/modules/users/users.module';

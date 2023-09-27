@@ -6,14 +6,17 @@ import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import {
   RequestingUserNotFoundError,
-  UserNotFromOrganizationError,
+  UserHasNoPermissionInOrganization,
 } from '../../../common/domain/errors';
+import { EmailService } from '../../../common/domain/services/EmailService';
 
 @Injectable()
 export class SetUserRoleInOrganizationUsecase implements UseCase {
   constructor(
     @Inject(UserRepository)
     private userRepository: UserRepository,
+    @Inject(EmailService)
+    private emailService: EmailService,
   ) {}
   async execute(
     organizationId: string,
@@ -38,15 +41,15 @@ export class SetUserRoleInOrganizationUsecase implements UseCase {
       return left(new RequestingUserNotFoundError());
     }
 
-    // check if requesting user is from organization
-    const isRequestingUserFromOrganization =
+    const isRequestingUserFromOrganizationAndRoleIsCoordinator =
       requestingUser[0].rolesInOrganizations.find(
         (roleInOrganization) =>
-          roleInOrganization.organizationId === organizationId,
+          roleInOrganization.organizationId === organizationId &&
+          roleInOrganization.role === UserEntityTypes.TYPE_COORDINATOR,
       );
 
-    if (!isRequestingUserFromOrganization) {
-      return left(new UserNotFromOrganizationError());
+    if (!isRequestingUserFromOrganizationAndRoleIsCoordinator) {
+      return left(new UserHasNoPermissionInOrganization());
     }
 
     if (userId) {
@@ -66,6 +69,12 @@ export class SetUserRoleInOrganizationUsecase implements UseCase {
       userToUpdateId,
       organizationId,
       role,
+    );
+
+    await this.emailService.sendEmail(
+      userEmail,
+      'Você foi adicionado a uma organização',
+      `Você foi adicionado a uma organização com id ${organizationId} e role ${role}`,
     );
 
     return right(updateduser);

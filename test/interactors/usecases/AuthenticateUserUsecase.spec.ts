@@ -13,7 +13,7 @@ import {
 } from '../../helpers';
 import { UserRepository } from '../../../src/modules/users/domain/repositories/UserRepository';
 import { AuthenticateUserUsecase } from '../../../src/modules/users/interactors/usecases/AuthenticateUserUsecase';
-import { AuthenticationService } from '../../../src/modules/users/domain/services/AuthenticationService';
+import { AuthenticationService } from '../../../src/modules/common/domain/services/AuthenticationService';
 import { EncryptionService } from '../../../src/modules/users/domain/services/EncryptionService';
 
 describe('AuthenticateUserUsecase', () => {

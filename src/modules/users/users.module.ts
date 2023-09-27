@@ -3,6 +3,7 @@ import {
   Module,
   NestModule,
   RequestMethod,
+  forwardRef,
 } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from '../organizations/data/typeorm/entities/organizations.typeorm-entity';
@@ -12,16 +13,26 @@ import { UserRepository } from './domain/repositories/UserRepository';
 import { AuthenticateUserUsecase } from './interactors/usecases/AuthenticateUserUsecase';
 import { AuthenticateWithGoogleUsecase } from './interactors/usecases/AuthenticateWithGoogleUsecase';
 import { CreateUserUsecase } from './interactors/usecases/CreateUserUsecase';
-import { FindOneOrAllUsersUsecase } from './interactors/usecases/FindOneOrAllUsersUsecase';
+import { FindOneUserUsecase } from './interactors/usecases/FindOneUserUsecase';
 import { SetUserRoleInOrganizationUsecase } from './interactors/usecases/SetUserRoleInOrganizationUsecase';
 import { UserController } from './presentation/http/controllers/UserController';
 import { AuthenticationMiddleware } from '../common/presentation/http/middleware/AuthenticationMiddleware';
 import { CommonModule } from '../common/common.module';
+import { FindAllFromOrganizationUsecase } from './interactors/usecases/FindAllFromOrganizationUsecase';
+import { OrganizationsModule } from '../organizations/organizations.module';
 
 @Module({
-  imports: [CommonModule, TypeOrmModule.forFeature([User, Organization])],
+  imports: [
+    CommonModule,
+    forwardRef(() => OrganizationsModule),
+    TypeOrmModule.forFeature([User, Organization]),
+  ],
   controllers: [UserController],
   providers: [
+    {
+      provide: UserRepository,
+      useClass: TypeOrmUsersRepository,
+    },
     { provide: CreateUserUsecase, useClass: CreateUserUsecase },
     { provide: AuthenticateUserUsecase, useClass: AuthenticateUserUsecase },
     {
@@ -32,10 +43,10 @@ import { CommonModule } from '../common/common.module';
       provide: SetUserRoleInOrganizationUsecase,
       useClass: SetUserRoleInOrganizationUsecase,
     },
-    { provide: FindOneOrAllUsersUsecase, useClass: FindOneOrAllUsersUsecase },
+    { provide: FindOneUserUsecase, useClass: FindOneUserUsecase },
     {
-      provide: UserRepository,
-      useClass: TypeOrmUsersRepository,
+      provide: FindAllFromOrganizationUsecase,
+      useClass: FindAllFromOrganizationUsecase,
     },
   ],
   exports: [UserRepository],
