@@ -112,7 +112,6 @@ export class QueueController {
     const result = await this.createQueueUsecase.execute(
       userId,
       body.name,
-      body.priority,
       body.code,
       body.organizationId,
       body.serviceId,

@@ -8,7 +8,6 @@ export interface QueueRepository {
   findById(queueId: string): Promise<QueueEntity>;
   create(
     name: string,
-    priority: number,
     code: string,
     organizationId: string,
     serviceId: string,
@@ -51,6 +50,7 @@ export interface QueueRepository {
     organizationId: string,
     userId: string,
   ): Promise<QueueEntity>;
+  setPriority(queueId: string): Promise<void>;
 }
 
 export const QueueRepository = Symbol('QueueRepository');

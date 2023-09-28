@@ -48,14 +48,12 @@ export interface ClientInQueue {
 export class QueueEntity {
   private constructor(
     readonly name: string,
-    readonly priority: number,
     readonly code: string,
     readonly description?: string,
   ) {}
 
   public static build(
     name: string,
-    priority: number,
     code: string,
     description?: string,
   ): Either<DomainError, QueueEntity> {
@@ -64,22 +62,16 @@ export class QueueEntity {
         .min(2)
         .required()
         .error(() => new InvalidNameError()),
-      priority: Joi.number()
-        .integer()
-        .min(1)
-        .max(10)
-        .required()
-        .error(() => new InvalidPriorityError()),
       code: Joi.string()
         .required()
         .min(2)
         .error(() => new InvalidCodeError()),
     });
 
-    const validation = schema.validate({ name, priority, code });
+    const validation = schema.validate({ name, code });
     if (validation.error) return left(validation.error);
 
-    return right(new QueueEntity(name, priority, code, description));
+    return right(new QueueEntity(name, code, description));
   }
 
   public static validateEdit(

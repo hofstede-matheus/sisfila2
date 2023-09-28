@@ -20,7 +20,6 @@ export class CreateQueueUsecase implements UseCase {
   async execute(
     userId: string,
     name: string,
-    priority: number,
     code: string,
     organizationId: string,
     serviceId: string,
@@ -32,12 +31,7 @@ export class CreateQueueUsecase implements UseCase {
     });
     if (validation.isLeft()) return left(validation.value);
 
-    const entityValidation = QueueEntity.build(
-      name,
-      priority,
-      code,
-      description,
-    );
+    const entityValidation = QueueEntity.build(name, code, description);
     if (entityValidation.isLeft()) return left(entityValidation.value);
 
     const isUserFromOrganization =
@@ -51,7 +45,6 @@ export class CreateQueueUsecase implements UseCase {
 
     let queue = await this.queueRepository.create(
       name,
-      priority,
       code,
       organizationId,
       serviceId,

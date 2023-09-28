@@ -12,11 +12,6 @@ export class CreateQueueRequest {
   description: string;
 
   @ApiProperty({
-    example: 1,
-  })
-  priority: number;
-
-  @ApiProperty({
     example: 'code',
   })
   code: string;

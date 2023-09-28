@@ -57,7 +57,6 @@ export class CreateOrganizationUsecase implements UseCase {
 
     await this.queueRepository.create(
       'Default Queue',
-      1,
       'DEFAULT',
       organization.id,
       service.id,

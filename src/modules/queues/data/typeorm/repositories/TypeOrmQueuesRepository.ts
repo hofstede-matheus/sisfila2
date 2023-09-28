@@ -20,6 +20,25 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     private readonly queuesRepository: Repository<Queue>,
   ) {}
 
+  async setPriority(queueId: string): Promise<void> {
+    const queue = await this.queuesRepository.findOne({
+      where: { id: queueId },
+    });
+
+    const queuesFromServiceCount = await this.queuesRepository.count({
+      where: { service_id: queue.service_id },
+    });
+
+    if (queuesFromServiceCount === 0) {
+      await this.queuesRepository.update({ id: queueId }, { priority: 1 });
+    } else {
+      await this.queuesRepository.update(
+        { id: queueId },
+        { priority: queuesFromServiceCount + 1 },
+      );
+    }
+  }
+
   async selectBestQueueForClient(
     serviceId: string,
     organizationId: string,
@@ -486,7 +505,6 @@ export class TypeOrmQueuesRepository implements QueueRepository {
 
   async create(
     name: string,
-    priority: number,
     code: string,
     organizationId: string,
     serviceId: string,
@@ -496,23 +514,28 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       name,
       description,
       code,
-      priority,
       organization_id: organizationId,
       service_id: serviceId,
     });
 
     const queueInDatabase = await this.queuesRepository.save(queueEntity);
 
+    await this.setPriority(queueInDatabase.id);
+
+    const queue = await this.queuesRepository.findOne({
+      where: { id: queueInDatabase.id },
+    });
+
     return {
-      id: queueInDatabase.id,
-      name: queueInDatabase.name,
-      code: queueInDatabase.code,
-      priority: queueInDatabase.priority,
-      description: queueInDatabase.description,
-      organizationId: queueInDatabase.organization_id,
-      serviceId: queueInDatabase.service_id,
-      createdAt: queueInDatabase.createdAt,
-      updatedAt: queueInDatabase.updatedAt,
+      id: queue.id,
+      name: queue.name,
+      code: queue.code,
+      priority: queue.priority,
+      description: queue.description,
+      organizationId: queue.organization_id,
+      serviceId: queue.service_id,
+      createdAt: queue.createdAt,
+      updatedAt: queue.updatedAt,
       clientsInQueue: [],
       groups: [],
     };
