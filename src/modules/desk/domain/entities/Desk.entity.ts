@@ -36,6 +36,7 @@ export class DeskEntity {
   public static build(
     name: string,
     organizationId: string,
+    services: string[],
   ): Either<DomainError, DeskEntity> {
     const schema = Joi.object({
       name: Joi.string()
@@ -47,11 +48,16 @@ export class DeskEntity {
         .uuid()
         .required()
         .error(() => new InvalidIdError()),
+
+      services: Joi.array()
+        .items(Joi.string().uuid())
+        .error(() => new InvalidIdError()),
     });
 
     const validation = schema.validate({
       name,
       organizationId,
+      services,
     });
     if (validation.error) return left(validation.error);
 

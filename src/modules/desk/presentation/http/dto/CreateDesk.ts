@@ -11,6 +11,12 @@ export class CreateDeskRequest {
     example: 'valid_uuid',
   })
   organizationId: string;
+
+  // services ids
+  @ApiProperty({
+    example: ['valid_uuid'],
+  })
+  servicesIds: string[];
 }
 
 export class CreateDeskResponse extends Desk {}

@@ -41,6 +41,7 @@ export class DeskController {
     const result = await this.createDeskUsecase.execute(
       body.name,
       body.organizationId,
+      body.servicesIds,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);

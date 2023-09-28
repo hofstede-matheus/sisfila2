@@ -15,12 +15,20 @@ export class CreateDeskUsecase implements UseCase {
   async execute(
     name: string,
     organizationId: string,
+    servicesIds: string[],
   ): Promise<Either<DomainError, DeskEntity>> {
-    const validation = DeskEntity.build(name, organizationId);
+    const validation = DeskEntity.build(name, organizationId, servicesIds);
     if (validation.isLeft()) return left(validation.value);
 
-    const newClient = await this.deskRepository.create(name, organizationId);
+    const newDesk = await this.deskRepository.create(name, organizationId);
 
-    return right(newClient);
+    const updatedDesk = await this.deskRepository.update(
+      newDesk.id,
+      undefined,
+      undefined,
+      servicesIds,
+    );
+
+    return right(updatedDesk);
   }
 }
