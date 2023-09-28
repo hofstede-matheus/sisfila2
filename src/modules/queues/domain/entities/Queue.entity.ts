@@ -10,6 +10,7 @@ import {
   InvalidPriorityError,
   InvalidCodeError,
   InvalidIdError,
+  InvalidDescriptionError,
 } from '../../../common/domain/errors';
 import { GroupEntity } from '../../../groups/domain/entities/Group.entity';
 
@@ -113,7 +114,9 @@ export class QueueEntity {
       name: Joi.string()
         .min(2)
         .error(() => new InvalidNameError()),
-      description: Joi.string().error(() => new InvalidNameError()),
+      description: Joi.string()
+        .allow('')
+        .error(() => new InvalidDescriptionError()),
       priority: Joi.number()
         .integer()
         .min(1)

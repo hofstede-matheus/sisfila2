@@ -2,6 +2,8 @@ import { DomainError } from '../shared/helpers/errors';
 
 export class InvalidNameError extends DomainError {}
 
+export class InvalidDescriptionError extends DomainError {}
+
 export class InvalidEmailError extends DomainError {}
 
 export class InvalidPasswordError extends DomainError {}
