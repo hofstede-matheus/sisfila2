@@ -87,7 +87,7 @@ jobs:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           # NOTE: If required, update to the appropriate source folder
-          source: ./
+          source: ./Dockerfile.prod
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
