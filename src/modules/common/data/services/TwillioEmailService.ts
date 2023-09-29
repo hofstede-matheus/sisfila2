@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EmailService } from '../../domain/services/EmailService';
-import * as sgMail from '@sendgrid/mail';
+import sgMail from '@sendgrid/mail';
 
 @Injectable()
 export class TwillioEmailService implements EmailService {

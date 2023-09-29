@@ -8,6 +8,8 @@ import { OAuthService } from './domain/services/OauthAuthenticationService';
 import { EmailService } from './domain/services/EmailService';
 import { TwillioEmailService } from './data/services/TwillioEmailService';
 import { ConfigModule } from '@nestjs/config';
+import { NotificationService } from './domain/services/NotificationService';
+import { FirebaseNotificationService } from './data/services/FirebaseNotificationService';
 
 @Module({
   imports: [ConfigModule],
@@ -28,12 +30,17 @@ import { ConfigModule } from '@nestjs/config';
       provide: EmailService,
       useClass: TwillioEmailService,
     },
+    {
+      provide: NotificationService,
+      useClass: FirebaseNotificationService,
+    },
   ],
   exports: [
     EncryptionService,
     AuthenticationService,
     OAuthService,
     EmailService,
+    NotificationService,
   ],
 })
 export class CommonModule {}

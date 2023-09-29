@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientEntity } from '../../domain/entities/Client.entity';
-import {
-  ClientAlreadyExistsError,
-  ClientNotFoundError,
-} from '../../../common/domain/errors';
+import { ClientNotFoundError } from '../../../common/domain/errors';
 import { ClientRepository } from '../../domain/repositories/ClientRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';

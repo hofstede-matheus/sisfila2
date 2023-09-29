@@ -16,10 +16,13 @@ import { AuthenticationMiddleware } from '../common/presentation/http/middleware
 import { CommonModule } from '../common/common.module';
 import { UsersModule } from '../users/users.module';
 import { UpdateClientUsecase } from './interactors/usecases/UpdateClientUsecase';
+import { AddTokenToClientUsecase } from './interactors/usecases/AddTokenToClientUsecase';
+import { SubscribeToQueueUsecase } from './interactors/usecases/SubscribeToQueueUsecase';
+import { ClientNotificationController } from './presentation/http/controllers/v1/ClientNotificationController';
 
 @Module({
   imports: [CommonModule, TypeOrmModule.forFeature([Client]), UsersModule],
-  controllers: [ClientController],
+  controllers: [ClientController, ClientNotificationController],
   providers: [
     {
       provide: ClientRepository,
@@ -38,6 +41,8 @@ import { UpdateClientUsecase } from './interactors/usecases/UpdateClientUsecase'
       useClass: RemoveClientUsecase,
     },
     { provide: UpdateClientUsecase, useClass: UpdateClientUsecase },
+    { provide: AddTokenToClientUsecase, useClass: AddTokenToClientUsecase },
+    { provide: SubscribeToQueueUsecase, useClass: SubscribeToQueueUsecase },
   ],
   exports: [ClientRepository],
 })

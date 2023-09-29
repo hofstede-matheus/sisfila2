@@ -56,6 +56,8 @@ export interface ClientRepository {
     userId?: string;
     clientId?: string;
   }): Promise<void>;
+
+  addTokenToClient(clientId: string, token: string): Promise<void>;
 }
 
 export const ClientRepository = Symbol('ClientRepository');
