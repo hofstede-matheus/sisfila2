@@ -50,7 +50,6 @@ on:
 
 env:
   PROJECT_ID: sisfila2 # TODO: update Google Cloud project id
-  GAR_LOCATION: YOUR_GAR_LOCATION # TODO: update Artifact Registry location
   SERVICE: sisfila2 # TODO: update Cloud Run service name
   REGION: us-central1 # TODO: update Cloud Run service region
 
@@ -79,7 +78,7 @@ jobs:
         id: auth
         uses: 'google-github-actions/auth@v0'
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}''
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
       # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
 
