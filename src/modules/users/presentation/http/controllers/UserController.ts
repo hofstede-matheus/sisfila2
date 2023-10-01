@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import {
   UserEntity,
@@ -20,6 +29,7 @@ import { User } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { Request } from 'express';
 import { FindAllFromOrganizationUsecase } from '../../../interactors/usecases/FindAllFromOrganizationUsecase';
+import { RemoveUserFromOrganizationUsecase } from '../../../interactors/usecases/RemoveUserFromOrganizationUsecase';
 
 @Controller({ path: 'users', version: '1' })
 export class UserController {
@@ -30,6 +40,7 @@ export class UserController {
     private readonly setUserRoleInOrganizationUsecase: SetUserRoleInOrganizationUsecase,
     private readonly findOneUsersUsecase: FindOneUserUsecase,
     private readonly findAllFromOrganizationUsecase: FindAllFromOrganizationUsecase,
+    private readonly removeUserFromOrganizationUsecase: RemoveUserFromOrganizationUsecase,
   ) {}
 
   @Post()
@@ -115,6 +126,25 @@ export class UserController {
       createdAt: result.value.createdAt,
       updatedAt: result.value.updatedAt,
     };
+  }
+
+  @Delete(':userId/organizations/:organizationId')
+  @ApiBearerAuth()
+  async removeUserFromOrganizationById(
+    @Param('userId') userId: string,
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request,
+  ): Promise<void> {
+    const requestingUserId = request.user.sub;
+    const result = await this.removeUserFromOrganizationUsecase.execute(
+      organizationId,
+      requestingUserId,
+      userId,
+    );
+
+    if (result.isLeft()) throw toPresentationError(result.value);
+
+    return;
   }
 
   @Patch('email/:userEmail/organizations/:organizationId')

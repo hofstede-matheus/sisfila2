@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Req,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
@@ -87,9 +86,14 @@ export class OrganizationController {
   @Get(':id')
   @ApiResponse({ type: Organization })
   @ApiBearerAuth()
-  async getOne(@Param('id') id: string): Promise<Organization> {
+  async getOne(
+    @Param('id') id: string,
+    @Req() request: Request,
+  ): Promise<Organization> {
+    const userId = request.user.sub;
     const result = await this.findOneOrAllOrganizationsUsecase.execute({
       organizationId: id,
+      userId,
     });
 
     if (result.isLeft()) throw toPresentationError(result.value);
@@ -100,6 +104,7 @@ export class OrganizationController {
       code: result.value[0].code,
       createdAt: result.value[0].createdAt,
       updatedAt: result.value[0].updatedAt,
+      userRoleInOrganization: result.value[0].roleInOrganization,
     };
   }
 
@@ -113,12 +118,13 @@ export class OrganizationController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    const organizations = result.value.map((organization) => ({
+    const organizations: Organization[] = result.value.map((organization) => ({
       id: organization.id,
       name: organization.name,
       code: organization.code,
       createdAt: organization.createdAt,
       updatedAt: organization.updatedAt,
+      userRoleInOrganization: organization.roleInOrganization,
     }));
 
     return organizations;

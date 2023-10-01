@@ -53,6 +53,6 @@ export class OrganizationsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
-      .forRoutes({ path: 'v1/organizations', method: RequestMethod.ALL });
+      .forRoutes({ path: 'v1/organizations*', method: RequestMethod.ALL });
   }
 }

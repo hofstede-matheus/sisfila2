@@ -47,6 +47,7 @@ export class TypeOrmOrganizationsRepository implements OrganizationRepository {
 
     return organizationsEntity;
   }
+
   async findOneOrAllByIdAsUser({
     organizationId,
     userId,

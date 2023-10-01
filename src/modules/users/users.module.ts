@@ -20,6 +20,7 @@ import { AuthenticationMiddleware } from '../common/presentation/http/middleware
 import { CommonModule } from '../common/common.module';
 import { FindAllFromOrganizationUsecase } from './interactors/usecases/FindAllFromOrganizationUsecase';
 import { OrganizationsModule } from '../organizations/organizations.module';
+import { RemoveUserFromOrganizationUsecase } from './interactors/usecases/RemoveUserFromOrganizationUsecase';
 
 @Module({
   imports: [
@@ -47,6 +48,10 @@ import { OrganizationsModule } from '../organizations/organizations.module';
     {
       provide: FindAllFromOrganizationUsecase,
       useClass: FindAllFromOrganizationUsecase,
+    },
+    {
+      provide: RemoveUserFromOrganizationUsecase,
+      useClass: RemoveUserFromOrganizationUsecase,
     },
   ],
   exports: [UserRepository],

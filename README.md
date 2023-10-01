@@ -11,9 +11,12 @@ Sisfila é uma aplicação para gerenciamento de filas de atendimento. Apesar de
 
 ## algumas variáveis do .env podem precisar de modificação
 
+## preencha o arquivo serviceAccountKey.json com as credenciais do firebase
+
 cp .env.example .env
 cp .env.test.example .env.test
 npm ci
+touch serviceAccountKey.json
 ```
 
 ## Subir ambiente de desenvolvimento

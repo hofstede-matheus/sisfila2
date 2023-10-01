@@ -10,6 +10,7 @@ import {
   InvalidIdError,
   InvalidNameError,
 } from '../../../common/domain/errors';
+import { UserEntityTypes } from '../../../users/domain/entities/User.entity';
 
 export interface OrganizationEntity {
   readonly id: string;
@@ -20,7 +21,9 @@ export interface OrganizationEntity {
   readonly updatedAt: Date;
 }
 
-export type OrganizationEntityTypes = 'TYPE_COORDINATOR' | 'TYPE_ATTENDENT';
+export type OrganizationEntityWithRoleInOrganization = OrganizationEntity & {
+  readonly roleInOrganization: UserEntityTypes;
+};
 
 @staticImplements<DomainEntity<OrganizationEntity>>()
 export class OrganizationEntity {

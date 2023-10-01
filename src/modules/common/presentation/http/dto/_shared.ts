@@ -141,6 +141,11 @@ export class Organization {
     example: '2022-12-19T23:03:44.662Z',
   })
   updatedAt: Date;
+
+  @ApiProperty({
+    example: 'TYPE_COORDINATOR',
+  })
+  userRoleInOrganization?: UserEntityTypes;
 }
 
 export class Group {

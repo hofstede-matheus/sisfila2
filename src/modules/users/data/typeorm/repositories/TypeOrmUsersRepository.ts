@@ -18,6 +18,32 @@ export class TypeOrmUsersRepository implements UserRepository {
     private readonly organizationsRepository: Repository<Organization>,
   ) {}
 
+  getRoleInOrganization(
+    userId: string,
+    organizationId: string,
+  ): Promise<RolesInOrganizations> {
+    const rolesInOrganization = this.usersRepository.query(
+      `
+      select * from users_role_in_organizations where user_id = $1 and organization_id = $2
+      `,
+      [userId, organizationId],
+    );
+
+    return rolesInOrganization;
+  }
+
+  async removeUserFromOrganization(
+    userId: string,
+    organizationId: string,
+  ): Promise<void> {
+    await this.usersRepository.query(
+      `
+      delete from users_role_in_organizations where user_id = $1 and organization_id = $2
+      `,
+      [userId, organizationId],
+    );
+  }
+
   async findAllFromOrganizationAsUser({
     organizationId,
   }: {
@@ -221,6 +247,7 @@ export class TypeOrmUsersRepository implements UserRepository {
       rolesInOrganizations: [],
     };
   }
+
   async findByEmail(email: string): Promise<UserEntity> {
     const userInDatabase = await this.usersRepository.findOne({
       where: { email },

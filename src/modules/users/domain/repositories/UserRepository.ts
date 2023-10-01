@@ -1,4 +1,8 @@
-import { UserEntity, UserEntityTypes } from '../entities/User.entity';
+import {
+  RolesInOrganizations,
+  UserEntity,
+  UserEntityTypes,
+} from '../entities/User.entity';
 
 export interface UserRepository {
   create(name: string, email: string, password?: string): Promise<UserEntity>;
@@ -30,6 +34,17 @@ export interface UserRepository {
   }: {
     organizationId: string;
   }): Promise<UserEntity[] | undefined>;
+
+  removeUserFromOrganization(
+    userId: string,
+    organizationId: string,
+  ): Promise<void>;
+
+  getRolesInAllOrganizations(userId: string): Promise<RolesInOrganizations[]>;
+  getRoleInOrganization(
+    userId: string,
+    organizationId: string,
+  ): Promise<RolesInOrganizations | undefined>;
 }
 
 export const UserRepository = Symbol('UserRepository');
