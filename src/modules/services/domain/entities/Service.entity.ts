@@ -70,10 +70,11 @@ export class ServiceEntity {
 
   public static validateEdit(
     id: string,
-    name: string,
-    guest_enrollment: boolean,
-    opens_at: Date,
-    closes_at: Date,
+    name?: string,
+    guest_enrollment?: boolean,
+    opens_at?: Date,
+    closes_at?: Date,
+    queueIds?: string[],
   ): Either<DomainError, void> {
     const schema = Joi.object({
       id: Joi.string()
@@ -86,6 +87,11 @@ export class ServiceEntity {
       opens_at: Joi.date().error(() => new InvalidDateError()),
       closes_at: Joi.date().error(() => new InvalidDateError()),
       guest_enrollment: Joi.boolean().error(() => new GuestEnrollmentError()),
+      queueIds: Joi.array()
+        .items(Joi.string().uuid())
+        .error(() => {
+          return new InvalidIdError();
+        }),
     });
 
     const validation = schema.validate({
@@ -94,6 +100,7 @@ export class ServiceEntity {
       guest_enrollment,
       opens_at,
       closes_at,
+      queueIds,
     });
 
     if (validation.error) return left(validation.error);

@@ -8,6 +8,7 @@ import {
   InvalidClientError,
   InvalidCodeError,
   InvalidCredentialsError,
+  InvalidDateError,
   InvalidDescriptionError,
   InvalidEmailError,
   InvalidIdError,
@@ -104,6 +105,9 @@ export function toPresentationError(error: DomainError): HttpException {
       return new PresentationException(error, 400);
 
     case InvalidDescriptionError:
+      return new PresentationException(error, 400);
+
+    case InvalidDateError:
       return new PresentationException(error, 400);
 
     default:

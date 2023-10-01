@@ -17,7 +17,7 @@ import { AuthenticationService } from '../src/modules/common/domain/services/Aut
 import { CommonModule } from '../src/modules/common/common.module';
 import { OrganizationsModule } from '../src/modules/organizations/organizations.module';
 import { UsersModule } from '../src/modules/users/users.module';
-import * as request from 'supertest';
+import request from 'supertest';
 import { CreateUserRequest } from '../src/modules/users/presentation/http/dto/CreateUser';
 import { INestApplication, Provider, VersioningType } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -25,16 +25,17 @@ import { ClientEntity } from '../src/modules/clients/domain/entities/Client.enti
 import { ClientRepository } from '../src/modules/clients/domain/repositories/ClientRepository';
 import { ClientsModule } from '../src/modules/clients/clients.module';
 import { Client } from '../src/modules/clients/data/typeorm/entities/clients.typeorm-entity';
-import { AuthorizationService } from '../src/modules/users/domain/services/AuthorizationService';
-import { EncryptionService } from '../src/modules/users/domain/services/EncryptionService';
-import { OAuthService } from '../src/modules/users/domain/services/OauthAuthenticationService';
+
 import { GroupEntity } from '../src/modules/groups/domain/entities/Group.entity';
 import { Desk } from '../src/modules/desk/data/typeorm/entities/desks.typeorm-entity';
 import { DesksModule } from '../src/modules/desk/desk.module';
 import { DeskRepository } from '../src/modules/desk/domain/repositories/DeskRepository';
 import { ServiceEntity } from '../src/modules/services/domain/entities/Service.entity';
 import { QueueEntity } from '../src/modules/queues/domain/entities/Queue.entity';
-import * as moment from 'moment';
+import moment from 'moment';
+import { AuthorizationService } from '../src/modules/common/domain/services/AuthorizationService';
+import { EncryptionService } from '../src/modules/common/domain/services/EncryptionService';
+import { OAuthService } from '../src/modules/common/domain/services/OauthAuthenticationService';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -123,6 +124,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findOneByIdOrAll: jest.fn(),
       findOneOrAllByIdAsAdmin: jest.fn(),
       findOneOrAllByIdAsUser: jest.fn(),
+      findAllFromOrganizationAsUser: jest.fn(),
     } as UserRepository,
   },
   {
@@ -166,6 +168,8 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       attachClientToQueueByServiceIdOrganizationIdRegistrationId: jest.fn(),
       remove: jest.fn(),
       update: jest.fn(),
+      selectBestQueueForClient: jest.fn(),
+      setPriority: jest.fn(),
     } as QueueRepository,
   },
   {
@@ -192,6 +196,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findManyIdsByRegistrationIds: jest.fn(),
       attachClientToQueue: jest.fn(),
       update: jest.fn(),
+      addTokenToClient: jest.fn(),
     } as ClientRepository,
   },
   {
@@ -201,6 +206,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findAllByOrganizationId: jest.fn(),
       removeFromOrganization: jest.fn(),
       update: jest.fn(),
+      findById: jest.fn(),
     } as DeskRepository,
   },
 ];

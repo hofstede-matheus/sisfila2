@@ -13,31 +13,43 @@ export class UpdateServiceUsecase implements UseCase {
   ) {}
   async execute(
     id: string,
-    name: string,
-    subscriptionToken: string,
-    guestEnrollment: boolean,
-    opensAt: string,
-    closesAt: string,
+    name?: string,
+    subscriptionToken?: string,
+    guestEnrollment?: boolean,
+    opensAt?: string,
+    closesAt?: string,
+    queueIds?: string[],
   ): Promise<Either<DomainError, ServiceEntity>> {
+    const opensAtDate = opensAt ? new Date(opensAt) : undefined;
+    const closesAtDate = closesAt ? new Date(closesAt) : undefined;
+
     const entityValidation = ServiceEntity.validateEdit(
       id,
       name,
       guestEnrollment,
-      new Date(opensAt),
-      new Date(closesAt),
+      opensAtDate,
+      closesAtDate,
     );
 
     if (entityValidation.isLeft()) return left(entityValidation.value);
 
     // TODO: check if user is TYPE_COORDINATOR for this organization
 
+    const mapOfQueueIdsIndexedByPosition: Map<number, string> = new Map();
+    if (queueIds) {
+      queueIds.forEach((queueId, index) => {
+        mapOfQueueIdsIndexedByPosition.set(index, queueId);
+      });
+    }
+
     const updatedService = await this.serviceRepository.update(
       id,
       name,
       subscriptionToken,
       guestEnrollment,
-      new Date(opensAt),
-      new Date(closesAt),
+      opensAtDate,
+      closesAtDate,
+      mapOfQueueIdsIndexedByPosition,
     );
 
     return right(updatedService);

@@ -13,14 +13,24 @@ export class TypeOrmServicesRepository implements ServiceRepository {
 
   async update(
     id: string,
-    name: string,
-    subscriptionToken: string,
-    guestEnrollment: boolean,
-    opensAt: Date,
-    closesAt: Date,
+    name?: string,
+    subscriptionToken?: string,
+    guestEnrollment?: boolean,
+    opensAt?: Date,
+    closesAt?: Date,
+    mapOfQueueIdsIndexedByPosition?: Map<number, string>,
   ): Promise<ServiceEntity> {
-    const updatedService = await this.servicesRepository.save({
-      id,
+    // const updatedService = await this.servicesRepository.save({
+    //   id,
+    //   name,
+    //   subscription_token: subscriptionToken,
+    //   guest_enroll: guestEnrollment,
+    //   opensAt: opensAt,
+    //   closesAt: closesAt,
+    // });
+
+    // update instead of save
+    await this.servicesRepository.update(id, {
       name,
       subscription_token: subscriptionToken,
       guest_enroll: guestEnrollment,
@@ -28,14 +38,36 @@ export class TypeOrmServicesRepository implements ServiceRepository {
       closesAt: closesAt,
     });
 
+    for (const [position, queueId] of mapOfQueueIdsIndexedByPosition) {
+      // await this.servicesRepository.query(
+      //   `
+      //   UPDATE queues
+      //   SET service_id = NULL
+      //   WHERE id = $1
+      // `,
+      //   [queueId],
+      // );
+
+      await this.servicesRepository.query(
+        `
+        UPDATE queues
+        SET service_id = $1, priority = $2
+        WHERE id = $3
+      `,
+        [id, position + 1, queueId],
+      );
+    }
+
+    const updatedService = await this.findById(id);
+
     return {
       id: updatedService.id,
       name: updatedService.name,
-      subscriptionToken: updatedService.subscription_token,
-      guestEnrollment: updatedService.guest_enroll,
+      subscriptionToken: updatedService.subscriptionToken,
+      guestEnrollment: updatedService.guestEnrollment,
       opensAt: updatedService.opensAt,
       closesAt: updatedService.closesAt,
-      organizationId: updatedService.organization_id,
+      organizationId: updatedService.organizationId,
       createdAt: updatedService.createdAt,
       updatedAt: updatedService.updatedAt,
       isOpened: isServiceOpen(opensAt, closesAt),
@@ -162,6 +194,15 @@ export class TypeOrmServicesRepository implements ServiceRepository {
       where: { id: serviceId },
     });
 
+    const queuesFromService = await this.servicesRepository.query(
+      `
+      SELECT q.id, q.name, q.service_id, q.created_at, q.updated_at
+      FROM queues q
+      WHERE q.service_id = $1
+    `,
+      [serviceId],
+    );
+
     return {
       id: service.id,
       name: service.name,
@@ -173,6 +214,15 @@ export class TypeOrmServicesRepository implements ServiceRepository {
       isOpened: isServiceOpen(service.opensAt, service.closesAt),
       createdAt: service.createdAt,
       updatedAt: service.updatedAt,
+      queues: queuesFromService.map((queue) => {
+        return {
+          id: queue.id,
+          name: queue.name,
+          serviceId: queue.service_id,
+          createdAt: queue.created_at,
+          updatedAt: queue.updated_at,
+        };
+      }),
     };
   }
 }

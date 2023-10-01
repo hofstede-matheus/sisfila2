@@ -112,6 +112,7 @@ export class AdminServiceController {
       body.guestEnrollment,
       body.opensAt,
       body.closesAt,
+      body.queueIds,
     );
 
     if (result.isLeft()) throw toPresentationError(result.value);

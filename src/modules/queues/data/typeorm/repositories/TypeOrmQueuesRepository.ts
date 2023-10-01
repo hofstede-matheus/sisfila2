@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import {
   ClientInQueue,
   QueueEntity,
@@ -26,7 +26,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     });
 
     const queuesFromServiceCount = await this.queuesRepository.count({
-      where: { service_id: queue.service_id },
+      where: { service_id: queue.service_id, id: Not(queueId) },
     });
 
     if (queuesFromServiceCount === 0) {

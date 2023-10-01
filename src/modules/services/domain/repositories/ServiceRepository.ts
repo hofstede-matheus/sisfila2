@@ -18,11 +18,12 @@ export interface ServiceRepository {
   remove(serviceId: string): Promise<void>;
   update(
     id: string,
-    name: string,
-    subscriptionToken: string,
-    guestEnrollment: boolean,
-    opensAt: Date,
-    closesAt: Date,
+    name?: string,
+    subscriptionToken?: string,
+    guestEnrollment?: boolean,
+    opensAt?: Date,
+    closesAt?: Date,
+    mapOfQueueIdsIndexedByPosition?: Map<number, string>,
   ): Promise<ServiceEntity>;
 }
 

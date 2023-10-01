@@ -1,22 +1,14 @@
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { CreateOrganizationRequest } from '../../src/modules/organizations/presentation/http/dto/CreateOrganization';
 import { CreateServiceRequest } from '../../src/modules/services/presentation/http/dto/CreateService';
 import { CreateGroupRequest } from '../../src/modules/groups/presentation/http/dto/CreateGroup';
 import { VALID_CLIENT } from '../helpers';
 import { ImportClientsRequest } from '../../src/modules/groups/presentation/http/dto/ImportClients';
 import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/dto/CreateQueue';
-import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/UpdateQueue';
 import { EnterServiceRequest } from '../../src/modules/services/presentation/http/dto/EnterService';
 import { CreateDeskRequest } from '../../src/modules/desk/presentation/http/dto/CreateDesk';
 import { UpdateDeskRequest } from '../../src/modules/desk/presentation/http/dto/UpdateDesk';
-
-interface Context {
-  app: INestApplication;
-  USER: { token: string; email: string; id: string };
-  opensAt: Date;
-  closesAt: Date;
-}
 
 let app = null;
 let USER = null;
@@ -148,23 +140,11 @@ export async function createQueue() {
       code: 'queue',
       organizationId: organization.body.id,
       serviceId: service.body.id,
+      groupIds: [group.body.id],
     } as CreateQueueRequest)
     .set('Accept', 'application/json')
     .expect(201);
   return queue;
-}
-
-export async function attachGroupToQueue() {
-  const attachGroupToQueueResponse = await request(app.getHttpServer())
-    .patch(`/v1/queues/${queue.body.id}/organizations/${organization.body.id}`)
-    .set('Authorization', USER.token)
-    .send({
-      groups: [group.body.id],
-    } as AttachGroupsToQueueRequest)
-    .set('Accept', 'application/json')
-    .expect(200);
-
-  return attachGroupToQueueResponse;
 }
 
 export async function enterService(registrationId: string) {

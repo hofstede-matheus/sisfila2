@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { generateTestingApp, generateUser, VALID_CLIENT } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
 import { CreateOrganizationRequest } from '../../src/modules/organizations/presentation/http/dto/CreateOrganization';
@@ -11,7 +11,7 @@ import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/d
 import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/UpdateQueue';
 import { EnterQueueRequest } from '../../src/modules/queues/presentation/http/dto/EnterQueue';
 import { CallNextOnQueueRequest } from '../../src/modules/queues/presentation/http/dto/CallNextOnQueue';
-import * as moment from 'moment';
+import moment from 'moment';
 import { EnterServiceRequest } from '../../src/modules/services/presentation/http/dto/EnterService';
 import {
   attachGroupToQueue,

@@ -26,6 +26,11 @@ export class UpdateServiceRequest {
     example: '2021-01-01T00:00:00.000Z',
   })
   closesAt: string;
+
+  @ApiProperty({
+    example: ['queueId1', 'queueId2'],
+  })
+  queueIds: string[];
 }
 
 export class UpdateServiceResponse extends Service {}
