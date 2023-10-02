@@ -19,12 +19,14 @@ import { UpdateDeskUsecase } from './interactors/usecases/UpdateDeskUsecase';
 import { CallNextClientOfDeskUsecase } from './interactors/usecases/CallNextClientOfDeskUsecase';
 import { ServicesModule } from '../services/services.module';
 import { QueuesModule } from '../queues/queues.module';
+import { ClientsModule } from '../clients/clients.module';
 
 @Module({
   imports: [
     CommonModule,
     forwardRef(() => ServicesModule),
     forwardRef(() => QueuesModule),
+    forwardRef(() => ClientsModule),
     TypeOrmModule.forFeature([Desk]),
   ],
   controllers: [DeskController],

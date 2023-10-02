@@ -9,6 +9,11 @@ import { QueueRepository } from '../../../queues/domain/repositories/QueueReposi
 import { QueueEntity } from '../../../queues/domain/entities/Queue.entity';
 import { DeskWithCalledClient } from '../../domain/entities/Desk.entity';
 import { DeskRepository } from '../../domain/repositories/DeskRepository';
+import {
+  NotificationService,
+  NotificationTypes,
+} from '../../../common/domain/services/NotificationService';
+import { ClientRepository } from '../../../clients/domain/repositories/ClientRepository';
 
 @Injectable()
 export class CallNextClientOfDeskUsecase implements UseCase {
@@ -21,6 +26,12 @@ export class CallNextClientOfDeskUsecase implements UseCase {
 
     @Inject(QueueRepository)
     private queueRepository: QueueRepository,
+
+    @Inject(NotificationService)
+    private notificationService: NotificationService,
+
+    @Inject(ClientRepository)
+    private clientRepository: ClientRepository,
   ) {}
   async execute(
     deskId: string,
@@ -54,6 +65,26 @@ export class CallNextClientOfDeskUsecase implements UseCase {
       );
 
       // TODO: notify queue subscriber
+      this.notificationService.sendNotification(
+        client.queueId,
+        'A fila andou',
+        'A fila andou',
+        NotificationTypes.TO_TOPIC,
+      );
+
+      // TODO: notify client when he is called
+      const tokenFromClient = await this.clientRepository.getTokenFromClient(
+        client.id,
+      );
+
+      if (tokenFromClient) {
+        this.notificationService.sendNotification(
+          tokenFromClient,
+          'Você foi chamado',
+          'Você foi chamado',
+          NotificationTypes.TO_TOKEN,
+        );
+      }
 
       const desk = await this.deskRepository.findById(deskId);
 

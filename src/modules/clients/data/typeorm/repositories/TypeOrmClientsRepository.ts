@@ -10,6 +10,17 @@ export class TypeOrmClientsRepository implements ClientRepository {
     private readonly clientsRepository: Repository<Client>,
   ) {}
 
+  getTokenFromClient(clientId: string): Promise<string> {
+    const token = this.clientsRepository.query(
+      `
+      select fcm_token from fcm_tokens where client_id = $1
+      `,
+      [clientId],
+    );
+
+    return token;
+  }
+
   async addTokenToClient(clientId: string, token: string): Promise<void> {
     const clientToken = await this.clientsRepository.query(
       `
