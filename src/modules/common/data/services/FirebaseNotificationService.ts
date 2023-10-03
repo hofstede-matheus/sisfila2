@@ -52,6 +52,7 @@ export class FirebaseNotificationService implements NotificationService {
             body,
           },
         });
+        break;
       case NotificationTypes.TO_TOPIC:
         await this.messaging.send({
           topic: to,
@@ -60,6 +61,7 @@ export class FirebaseNotificationService implements NotificationService {
             body,
           },
         });
+        break;
       default:
         break;
     }
