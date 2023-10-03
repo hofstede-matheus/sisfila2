@@ -65,12 +65,12 @@ export class CallNextClientOfDeskUsecase implements UseCase {
       );
 
       // TODO: notify queue subscriber
-      await this.notificationService.sendNotification(
-        client.queueId,
-        'A fila andou',
-        'A fila andou',
-        NotificationTypes.TO_TOPIC,
-      );
+      // await this.notificationService.sendNotification(
+      //   client.queueId,
+      //   'A fila andou',
+      //   'A fila andou',
+      //   NotificationTypes.TO_TOPIC,
+      // );
 
       // TODO: notify client when he is called
       const tokenFromClient = await this.clientRepository.getTokenFromClient(

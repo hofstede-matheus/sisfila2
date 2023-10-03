@@ -240,6 +240,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         clients_position_in_queues.queue_id
       FROM clients_position_in_queues
       WHERE clients_position_in_queues.client_id = $1
+      AND clients_position_in_queues.called_at IS NULL
+
       `,
         [userId],
       );
