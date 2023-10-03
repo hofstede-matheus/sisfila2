@@ -65,7 +65,7 @@ export class CallNextClientOfDeskUsecase implements UseCase {
       );
 
       // TODO: notify queue subscriber
-      this.notificationService.sendNotification(
+      await this.notificationService.sendNotification(
         client.queueId,
         'A fila andou',
         'A fila andou',
@@ -77,8 +77,10 @@ export class CallNextClientOfDeskUsecase implements UseCase {
         client.id,
       );
 
+      console.log('tokenFromClient', tokenFromClient);
+
       if (tokenFromClient) {
-        this.notificationService.sendNotification(
+        await this.notificationService.sendNotification(
           tokenFromClient,
           'Você foi chamado',
           'Você foi chamado',
