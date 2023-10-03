@@ -81,7 +81,7 @@ export class CallNextClientOfDeskUsecase implements UseCase {
 
       if (tokenFromClient) {
         const hardcodedToken =
-          'c5fDxLjhRoicSzsp1KyLJV:APA91bFbdaudfHLoDXjcUgi6zK7FGK4w9SuM9Ljv0ta1LNSLEAhr0SlKIlqTCeB6QbJC0PP6qEhwiENVQWZrZnOawHURSYWsFtF0FmjodIHGUQwMxWH5WO4h__gMnLV9vAyHmAKaMNHz';
+          'dVuCJfDRQ4OfogF1pn8Zjw:APA91bHwDtV4HdR1QUk_HKVR4xN15rcMHbbYtKXxiFe3SR4D_lZWGyeYrssxbf0wPkKgYDAyHHqCxMmrCubS9gGhMfhjc1H79IcD5Wx0c_gogX22-uA1YzviE0ubQA1yDNXzkboeWycC';
 
         await this.notificationService.sendNotification(
           hardcodedToken,

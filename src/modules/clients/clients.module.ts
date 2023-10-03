@@ -50,6 +50,7 @@ export class ClientsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
+      .exclude('v1/clients/notification*')
       .forRoutes({ path: 'v1/clients*', method: RequestMethod.ALL });
   }
 }
