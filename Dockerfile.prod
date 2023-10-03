@@ -8,6 +8,8 @@ RUN npm ci
 
 COPY . .
 
+COPY serviceAccountKey.json ./
+
 RUN npm run build
 
 EXPOSE 8080
