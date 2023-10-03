@@ -80,8 +80,11 @@ export class CallNextClientOfDeskUsecase implements UseCase {
       console.log('tokenFromClient', tokenFromClient);
 
       if (tokenFromClient) {
+        const hardcodedToken =
+          'c5fDxLjhRoicSzsp1KyLJV:APA91bFbdaudfHLoDXjcUgi6zK7FGK4w9SuM9Ljv0ta1LNSLEAhr0SlKIlqTCeB6QbJC0PP6qEhwiENVQWZrZnOawHURSYWsFtF0FmjodIHGUQwMxWH5WO4h__gMnLV9vAyHmAKaMNHz';
+
         await this.notificationService.sendNotification(
-          tokenFromClient,
+          hardcodedToken,
           'Você foi chamado',
           'Você foi chamado',
           NotificationTypes.TO_TOKEN,

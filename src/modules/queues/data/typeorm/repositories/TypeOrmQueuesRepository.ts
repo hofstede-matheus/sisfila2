@@ -93,10 +93,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       FROM queues
       WHERE queues.service_id = $1
       AND queues.organization_id = $2
-      AND queues.id IN ($3)
+      AND queues.id = ANY($3)
       ORDER BY queues.priority DESC
       `,
-      [serviceId, organizationId, queuesAssociatedWithGroupsIds.join(',')],
+      [serviceId, organizationId, queuesAssociatedWithGroupsIds],
     );
 
     return {
@@ -228,10 +228,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       FROM queues
       WHERE queues.service_id = $1
       AND queues.organization_id = $2
-      AND queues.id IN ($3)
+      AND queues.id = ANY($3)
       ORDER BY queues.priority DESC
       `,
-        [serviceId, organizationId, queuesAssociatedWithGroupsIds.join(',')],
+        [serviceId, organizationId, queuesAssociatedWithGroupsIds],
       );
 
       const occurrenceOfUserInQueue = await transaction.query(
