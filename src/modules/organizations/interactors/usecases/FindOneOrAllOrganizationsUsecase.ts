@@ -39,18 +39,18 @@ export class FindOneOrAllOrganizationsUsecase implements UseCase {
 
     if (!organizations) return left(new OrganizationNotFoundError());
 
-    if (!userId) {
-      return right([
-        {
-          id: organizations[0].id,
-          name: organizations[0].name,
-          code: organizations[0].code,
-          createdAt: organizations[0].createdAt,
-          updatedAt: organizations[0].updatedAt,
-          roleInOrganization: undefined,
-        },
-      ]);
-    }
+    // if (!userId) {
+    //   return right([
+    //     {
+    //       id: organizations[0].id,
+    //       name: organizations[0].name,
+    //       code: organizations[0].code,
+    //       createdAt: organizations[0].createdAt,
+    //       updatedAt: organizations[0].updatedAt,
+    //       roleInOrganization: undefined,
+    //     },
+    //   ]);
+    // }
 
     const organizationsWithRoleInOrganization: OrganizationEntityWithRoleInOrganization[] =
       organizations.map((organization) => {
