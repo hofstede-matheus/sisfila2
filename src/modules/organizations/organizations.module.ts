@@ -20,6 +20,7 @@ import { GroupsModule } from '../groups/groups.module';
 import { QueuesModule } from '../queues/queues.module';
 import { ServicesModule } from '../services/services.module';
 import { UsersModule } from '../users/users.module';
+import { AdminOrganizationController } from './presentation/http/controllers/AdminOrganizationController';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { UsersModule } from '../users/users.module';
     forwardRef(() => QueuesModule),
     forwardRef(() => GroupsModule),
   ],
-  controllers: [OrganizationController],
+  controllers: [OrganizationController, AdminOrganizationController],
   providers: [
     { provide: CreateOrganizationUsecase, useClass: CreateOrganizationUsecase },
     { provide: UpdateOrganizationUsecase, useClass: UpdateOrganizationUsecase },
@@ -53,10 +54,13 @@ export class OrganizationsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
-      // .exclude({
-      //   path: 'v1/organizations/:id',
-      //   method: RequestMethod.GET,
-      // })
-      .forRoutes({ path: 'v1/organizations*', method: RequestMethod.ALL });
+      .exclude({
+        path: 'v1/organizations/:id',
+        method: RequestMethod.GET,
+      })
+      .forRoutes({
+        path: 'v1/admin/organizations*',
+        method: RequestMethod.ALL,
+      });
   }
 }

@@ -173,6 +173,7 @@ export class TypeOrmServicesRepository implements ServiceRepository {
     `,
         [organizationId],
       );
+
       return services.map((service) => {
         return {
           id: service.id,
@@ -182,7 +183,7 @@ export class TypeOrmServicesRepository implements ServiceRepository {
           opensAt: service.opens_at,
           closesAt: service.closes_at,
           organizationId: service.organization_id,
-          isOpened: isServiceOpen(service.opens_at, service.opens_at),
+          isOpened: isServiceOpen(service.opens_at, service.closes_at),
           createdAt: service.created_at,
           updatedAt: service.updated_at,
         } as ServiceEntity;
