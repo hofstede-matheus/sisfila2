@@ -85,12 +85,11 @@ export class OrganizationController {
 
   @Get(':id')
   @ApiResponse({ type: Organization })
-  @ApiBearerAuth()
   async getOne(
     @Param('id') id: string,
     @Req() request: Request,
   ): Promise<Organization> {
-    const userId = request.user.sub;
+    const userId = request.user?.sub ?? undefined;
     const result = await this.findOneOrAllOrganizationsUsecase.execute({
       organizationId: id,
       userId,
@@ -104,7 +103,6 @@ export class OrganizationController {
       code: result.value[0].code,
       createdAt: result.value[0].createdAt,
       updatedAt: result.value[0].updatedAt,
-      userRoleInOrganization: result.value[0].roleInOrganization,
     };
   }
 

@@ -53,6 +53,10 @@ export class OrganizationsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
+      .exclude({
+        path: 'v1/organizations/:id',
+        method: RequestMethod.GET,
+      })
       .forRoutes({ path: 'v1/organizations*', method: RequestMethod.ALL });
   }
 }

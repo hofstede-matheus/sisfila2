@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  OrganizationEntity,
-  OrganizationEntityWithRoleInOrganization,
-} from '../../domain/entities/Organization.entity';
+import { OrganizationEntityWithRoleInOrganization } from '../../domain/entities/Organization.entity';
 import { OrganizationNotFoundError } from '../../../common/domain/errors';
 import { OrganizationRepository } from '../../domain/repositories/OrganizationRepository';
 import { UserRepository } from '../../../users/domain/repositories/UserRepository';
@@ -41,6 +38,19 @@ export class FindOneOrAllOrganizationsUsecase implements UseCase {
         });
 
     if (!organizations) return left(new OrganizationNotFoundError());
+
+    if (!userId) {
+      return right([
+        {
+          id: organizations[0].id,
+          name: organizations[0].name,
+          code: organizations[0].code,
+          createdAt: organizations[0].createdAt,
+          updatedAt: organizations[0].updatedAt,
+          roleInOrganization: undefined,
+        },
+      ]);
+    }
 
     const organizationsWithRoleInOrganization: OrganizationEntityWithRoleInOrganization[] =
       organizations.map((organization) => {

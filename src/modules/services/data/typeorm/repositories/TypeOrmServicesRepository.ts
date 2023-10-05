@@ -180,7 +180,7 @@ export class TypeOrmServicesRepository implements ServiceRepository {
           subscriptionToken: service.subscription_token,
           guestEnrollment: service.guest_enroll,
           opensAt: service.opens_at,
-          closesAt: service.opens_at,
+          closesAt: service.closes_at,
           organizationId: service.organization_id,
           isOpened: isServiceOpen(service.opens_at, service.opens_at),
           createdAt: service.created_at,
