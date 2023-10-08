@@ -5,7 +5,6 @@ import { ClientRepository } from '../../domain/repositories/ClientRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
-import { Validator } from '../../../common/shared/helpers/validator';
 
 @Injectable()
 export class UpdateClientUsecase implements UseCase {
@@ -18,9 +17,11 @@ export class UpdateClientUsecase implements UseCase {
     organizationId: string,
     name: string,
   ): Promise<Either<DomainError, ClientEntity>> {
-    const validation = Validator.validate({
-      id: [clientId, organizationId],
-    });
+    const validation = ClientEntity.validateEdit(
+      clientId,
+      name,
+      organizationId,
+    );
     if (validation.isLeft()) return left(validation.value);
 
     const updatedClient = await this.clientRepository.update(

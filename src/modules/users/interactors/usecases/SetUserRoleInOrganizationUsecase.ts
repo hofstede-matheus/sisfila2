@@ -37,7 +37,7 @@ export class SetUserRoleInOrganizationUsecase implements UseCase {
       requestingUserId,
     );
 
-    if (!requestingUser) {
+    if (requestingUser.length === 0) {
       return left(new RequestingUserNotFoundError());
     }
 

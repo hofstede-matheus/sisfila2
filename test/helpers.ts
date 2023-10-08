@@ -36,6 +36,9 @@ import moment from 'moment';
 import { AuthorizationService } from '../src/modules/common/domain/services/AuthorizationService';
 import { EncryptionService } from '../src/modules/common/domain/services/EncryptionService';
 import { OAuthService } from '../src/modules/common/domain/services/OauthAuthenticationService';
+import { NotificationService } from '../src/modules/common/domain/services/NotificationService';
+import { EmailService } from '../src/modules/common/domain/services/EmailService';
+import { DeskEntity } from '../src/modules/desk/domain/entities/Desk.entity';
 
 // export const VALID_EMAIL = 'valid@email.com';
 
@@ -112,7 +115,7 @@ export const VALID_DESK = {
   organizationId: 'bc7e1f21-4f06-48ad-a9b4-f6bd0e6973b9',
   createdAt: new Date(),
   updatedAt: new Date(),
-} as Desk;
+} as DeskEntity;
 
 export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
   {
@@ -125,6 +128,9 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       findOneOrAllByIdAsAdmin: jest.fn(),
       findOneOrAllByIdAsUser: jest.fn(),
       findAllFromOrganizationAsUser: jest.fn(),
+      getRoleInOrganization: jest.fn(),
+      getRolesInAllOrganizations: jest.fn(),
+      removeUserFromOrganization: jest.fn(),
     } as UserRepository,
   },
   {
@@ -197,6 +203,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       attachClientToQueue: jest.fn(),
       update: jest.fn(),
       addTokenToClient: jest.fn(),
+      getTokenFromClient: jest.fn(),
     } as ClientRepository,
   },
   {
@@ -270,6 +277,20 @@ export const ALL_SERVICES_PROVIDERS: Provider[] = [
     useValue: {
       checkIfUserHasRightsInOrganization: jest.fn(),
     } as AuthorizationService,
+  },
+  {
+    provide: NotificationService,
+    useValue: {
+      sendNotification: jest.fn(),
+      subscribeToTopic: jest.fn(),
+      unsubscribeFromTopic: jest.fn(),
+    } as NotificationService,
+  },
+  {
+    provide: EmailService,
+    useValue: {
+      sendEmail: jest.fn(),
+    } as EmailService,
   },
 ];
 

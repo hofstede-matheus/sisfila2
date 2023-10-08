@@ -4,6 +4,7 @@ import { ClientRepository } from '../../domain/repositories/ClientRepository';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
+import { Validator } from '../../../common/shared/helpers/validator';
 
 @Injectable()
 export class AddTokenToClientUsecase implements UseCase {
@@ -16,6 +17,9 @@ export class AddTokenToClientUsecase implements UseCase {
     organizationId: string,
     token: string,
   ): Promise<Either<DomainError, void>> {
+    const validId = Validator.validate({ id: [organizationId] });
+    if (validId.isLeft()) return left(validId.value);
+
     const client =
       await this.clientRepository.findByRegistrationIdFromOrganization(
         registrationId,

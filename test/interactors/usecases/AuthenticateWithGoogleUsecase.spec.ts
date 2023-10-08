@@ -9,7 +9,7 @@ import {
   checkForTokenAndUserId,
   VALID_USER,
 } from '../../helpers';
-import { OAuthService } from '../../../src/modules/users/domain/services/OauthAuthenticationService';
+import { OAuthService } from '../../../src/modules/common/domain/services/OauthAuthenticationService';
 
 describe('AuthenticateWithGoogleUsecase', () => {
   let useCase: AuthenticateWithGoogleUsecase;

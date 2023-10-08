@@ -30,7 +30,7 @@ describe('SetUserRoleInOrganizationUsecase', () => {
   it('should not be able to set user role with invalid user id', async () => {
     const response = await useCase.execute(
       VALID_ORGANIZATION.id,
-      'TYPE_ATTENDENT',
+      UserEntityTypes.TYPE_ATTENDENT,
       'invalid_id',
       VALID_USER.email,
     );
@@ -41,7 +41,7 @@ describe('SetUserRoleInOrganizationUsecase', () => {
   it('should not be able to set user role with invalid email id', async () => {
     const response = await useCase.execute(
       VALID_ORGANIZATION.id,
-      'TYPE_ATTENDENT',
+      UserEntityTypes.TYPE_ATTENDENT,
       VALID_USER.id,
       'invalid_email',
     );
@@ -52,7 +52,7 @@ describe('SetUserRoleInOrganizationUsecase', () => {
   it('should not be able to set user role with invalid organization id', async () => {
     const response = await useCase.execute(
       'invalid_id',
-      'TYPE_ATTENDENT',
+      UserEntityTypes.TYPE_ATTENDENT,
       VALID_USER.id,
       VALID_USER.email,
     );
@@ -73,16 +73,32 @@ describe('SetUserRoleInOrganizationUsecase', () => {
 
   it('should be able to set user role with userId', async () => {
     jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [VALID_USER];
+      });
+    jest
       .spyOn(userRepository, 'setUserRoleInOrganization')
       .mockImplementation(async () => {
-        return;
+        return {
+          ...VALID_USER,
+          organizationRoles: [
+            {
+              organizationId: VALID_ORGANIZATION.id,
+              type: UserEntityTypes.TYPE_ATTENDENT,
+            },
+          ],
+        };
       });
+    jest.spyOn(userRepository, 'findByEmail').mockImplementation(async () => {
+      return { ...VALID_USER };
+    });
 
     const response = await useCase.execute(
       VALID_ORGANIZATION.id,
-      'TYPE_ATTENDENT',
+      UserEntityTypes.TYPE_ATTENDENT,
       VALID_USER.id,
-      undefined,
+      VALID_USER.id,
     );
 
     expect(response.isRight()).toBeTruthy();
@@ -90,18 +106,31 @@ describe('SetUserRoleInOrganizationUsecase', () => {
 
   it('should be able to set user role with userEmail', async () => {
     jest
+      .spyOn(userRepository, 'findOneByIdOrAll')
+      .mockImplementation(async () => {
+        return [VALID_USER];
+      });
+    jest
       .spyOn(userRepository, 'setUserRoleInOrganization')
       .mockImplementation(async () => {
-        return;
+        return {
+          ...VALID_USER,
+          organizationRoles: [
+            {
+              organizationId: VALID_ORGANIZATION.id,
+              type: UserEntityTypes.TYPE_ATTENDENT,
+            },
+          ],
+        };
       });
-
     jest.spyOn(userRepository, 'findByEmail').mockImplementation(async () => {
       return { ...VALID_USER };
     });
 
     const response = await useCase.execute(
       VALID_ORGANIZATION.id,
-      'TYPE_ATTENDENT',
+      UserEntityTypes.TYPE_ATTENDENT,
+      VALID_USER.id,
       undefined,
       VALID_USER.email,
     );

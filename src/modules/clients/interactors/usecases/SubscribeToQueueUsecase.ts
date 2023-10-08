@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Either, right } from '../../../common/shared/helpers/either';
+import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { NotificationService } from '../../../common/domain/services/NotificationService';
+import { Validator } from '../../../common/shared/helpers/validator';
 
 @Injectable()
 export class SubscribeToQueueUsecase implements UseCase {
@@ -14,6 +15,9 @@ export class SubscribeToQueueUsecase implements UseCase {
     token: string,
     queueId: string,
   ): Promise<Either<DomainError, void>> {
+    const validId = Validator.validate({ id: [queueId] });
+    if (validId.isLeft()) return left(validId.value);
+
     await this.notificationService.subscribeToTopic(queueId, token);
     return right();
   }

@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ClientNotFoundError,
-  InvalidIdError,
-} from '../../../src/modules/common/domain/errors';
+import { InvalidIdError } from '../../../src/modules/common/domain/errors';
 import {
   ALL_REPOSITORIES_PROVIDERS,
   ALL_SERVICES_PROVIDERS,

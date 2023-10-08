@@ -59,4 +59,35 @@ export class ClientEntity {
 
     return right(new ClientEntity(name, organizationId, registrationId));
   }
+
+  public static validateEdit(
+    id: string,
+    name: string,
+    organizationId: string,
+  ): Either<DomainError, void> {
+    const schema = Joi.object({
+      name: Joi.string()
+        .min(2)
+        .error(() => new InvalidNameError()),
+
+      id: Joi.string()
+        .uuid()
+        .required()
+        .error(() => new InvalidIdError()),
+
+      organizationId: Joi.string()
+        .uuid()
+        .error(() => new InvalidIdError()),
+    });
+
+    const validation = schema.validate({
+      name,
+      id,
+      organizationId,
+    });
+
+    if (validation.error) return left(validation.error);
+
+    return right();
+  }
 }

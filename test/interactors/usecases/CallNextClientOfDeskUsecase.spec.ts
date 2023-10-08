@@ -12,10 +12,10 @@ import {
 } from '../../helpers';
 import { InvalidIdError } from '../../../src/modules/common/domain/errors';
 import { ClientInQueue } from '../../../src/modules/queues/domain/entities/Queue.entity';
-import * as moment from 'moment';
+import moment from 'moment';
 import { DeskRepository } from '../../../src/modules/desk/domain/repositories/DeskRepository';
+import { DeskWithCalledClient } from '../../../src/modules/desk/domain/entities/Desk.entity';
 
-// CallNextClientOfDeskUsecase
 describe('CallNextClientOfDeskUsecase', () => {
   let useCase: CallNextClientOfDeskUsecase;
   let serviceRepository: ServiceRepository;
@@ -39,6 +39,10 @@ describe('CallNextClientOfDeskUsecase', () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should not be able to call next client when deskId is invalid', async () => {
     const response = await useCase.execute('invalid_uuid', 'valid_uuid');
     expect(response.isLeft()).toBeTruthy();
@@ -47,7 +51,6 @@ describe('CallNextClientOfDeskUsecase', () => {
 
   it('should be able to call next client when there is one service with two queues with different priorities', async () => {
     // arrange
-
     jest
       .spyOn(serviceRepository, 'findByDeskId')
       .mockImplementation(async () => {
@@ -74,13 +77,19 @@ describe('CallNextClientOfDeskUsecase', () => {
       });
 
     jest.spyOn(queueRepository, 'callClient');
+    jest.spyOn(deskRepository, 'findById').mockImplementation(async () => {
+      return VALID_DESK;
+    });
 
     // act
     const response = await useCase.execute(VALID_DESK.id, 'valid_uuid');
 
     // assert
     expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual(VALID_CLIENT);
+    expect(response.value).toEqual({
+      client: { ...VALID_CLIENT },
+      desk: VALID_DESK,
+    } as DeskWithCalledClient);
     expect(queueRepository.callClient).toBeCalledTimes(1);
     expect(queueRepository.callClient).toBeCalledWith(
       'valid_uuid',
@@ -91,13 +100,11 @@ describe('CallNextClientOfDeskUsecase', () => {
 
   it('should be able to call next client when there is one service with two queues with same priorities but the second one has entered earlier', async () => {
     // arrange
-
     jest
       .spyOn(serviceRepository, 'findByDeskId')
       .mockImplementation(async () => {
         return [VALID_SERVICE];
       });
-
     jest
       .spyOn(queueRepository, 'findByServiceId')
       .mockImplementation(async () => {
@@ -118,15 +125,20 @@ describe('CallNextClientOfDeskUsecase', () => {
           },
         ];
       });
-
     jest.spyOn(queueRepository, 'callClient');
+    jest.spyOn(deskRepository, 'findById').mockImplementation(async () => {
+      return VALID_DESK;
+    });
 
     // act
     const response = await useCase.execute(VALID_DESK.id, 'valid_uuid');
 
     // assert
     expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual({ ...VALID_CLIENT, id: 'another_id' });
+    expect(response.value).toEqual({
+      client: { ...VALID_CLIENT, id: 'another_id' },
+      desk: VALID_DESK,
+    } as DeskWithCalledClient);
     expect(queueRepository.callClient).toBeCalledTimes(1);
     expect(queueRepository.callClient).toBeCalledWith(
       'valid_uuid',
@@ -137,13 +149,11 @@ describe('CallNextClientOfDeskUsecase', () => {
 
   it('should be able to call next client when there is one service with two queues with different priorities but first queue is empty', async () => {
     // arrange
-
     jest
       .spyOn(serviceRepository, 'findByDeskId')
       .mockImplementation(async () => {
         return [VALID_SERVICE];
       });
-
     jest
       .spyOn(queueRepository, 'findByServiceId')
       .mockImplementation(async () => {
@@ -162,15 +172,20 @@ describe('CallNextClientOfDeskUsecase', () => {
           },
         ];
       });
-
     jest.spyOn(queueRepository, 'callClient');
+    jest.spyOn(deskRepository, 'findById').mockImplementation(async () => {
+      return VALID_DESK;
+    });
 
     // act
     const response = await useCase.execute(VALID_DESK.id, 'valid_uuid');
 
     // assert
     expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual({ ...VALID_CLIENT, id: 'another_id' });
+    expect(response.value).toEqual({
+      client: { ...VALID_CLIENT, id: 'another_id' },
+      desk: VALID_DESK,
+    } as DeskWithCalledClient);
     expect(queueRepository.callClient).toBeCalledTimes(1);
     expect(queueRepository.callClient).toBeCalledWith(
       'valid_uuid',
@@ -213,13 +228,19 @@ describe('CallNextClientOfDeskUsecase', () => {
       });
 
     jest.spyOn(queueRepository, 'callClient');
+    jest.spyOn(deskRepository, 'findById').mockImplementation(async () => {
+      return VALID_DESK;
+    });
 
     // act
     const response = await useCase.execute(VALID_DESK.id, 'valid_uuid');
 
     // assert
     expect(response.isRight()).toBeTruthy();
-    expect(response.value).toEqual({ ...VALID_CLIENT, id: 'another_id' });
+    expect(response.value).toEqual({
+      client: { ...VALID_CLIENT, id: 'another_id' },
+      desk: VALID_DESK,
+    } as DeskWithCalledClient);
     expect(queueRepository.callClient).toBeCalledTimes(1);
     expect(queueRepository.callClient).toBeCalledWith(
       'valid_uuid',

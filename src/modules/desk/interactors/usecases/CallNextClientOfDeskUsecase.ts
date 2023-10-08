@@ -64,27 +64,20 @@ export class CallNextClientOfDeskUsecase implements UseCase {
         client.id,
       );
 
-      // TODO: notify queue subscriber
-      // await this.notificationService.sendNotification(
-      //   client.queueId,
-      //   'A fila andou',
-      //   'A fila andou',
-      //   NotificationTypes.TO_TOPIC,
-      // );
+      await this.notificationService.sendNotification(
+        client.queueId,
+        'A fila andou',
+        'A fila andou',
+        NotificationTypes.TO_TOPIC,
+      );
 
-      // TODO: notify client when he is called
       const tokenFromClient = await this.clientRepository.getTokenFromClient(
         client.id,
       );
 
-      console.log('tokenFromClient', tokenFromClient);
-
       if (tokenFromClient) {
-        const hardcodedToken =
-          'dVuCJfDRQ4OfogF1pn8Zjw:APA91bHwDtV4HdR1QUk_HKVR4xN15rcMHbbYtKXxiFe3SR4D_lZWGyeYrssxbf0wPkKgYDAyHHqCxMmrCubS9gGhMfhjc1H79IcD5Wx0c_gogX22-uA1YzviE0ubQA1yDNXzkboeWycC';
-
         await this.notificationService.sendNotification(
-          hardcodedToken,
+          tokenFromClient,
           'Você foi chamado',
           'Você foi chamado',
           NotificationTypes.TO_TOKEN,
