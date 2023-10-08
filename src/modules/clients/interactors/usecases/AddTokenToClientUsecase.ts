@@ -22,8 +22,8 @@ export class AddTokenToClientUsecase implements UseCase {
 
     const client =
       await this.clientRepository.findByRegistrationIdFromOrganization(
-        registrationId,
         organizationId,
+        registrationId,
       );
 
     if (!client) return left(new ClientNotFoundError());

@@ -9,6 +9,9 @@ import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/d
 import { EnterServiceRequest } from '../../src/modules/services/presentation/http/dto/EnterService';
 import { CreateDeskRequest } from '../../src/modules/desk/presentation/http/dto/CreateDesk';
 import { UpdateDeskRequest } from '../../src/modules/desk/presentation/http/dto/UpdateDesk';
+import { CreateClientRequest } from '../../src/modules/clients/presentation/http/dto/CreateClient';
+import { UserEntityTypes } from '../../src/modules/users/domain/entities/User.entity';
+import { UpdateClientRequest } from '../../src/modules/clients/presentation/http/dto/UpdateClient';
 
 let app = null;
 let USER = null;
@@ -16,6 +19,7 @@ let opensAt = null;
 let closesAt = null;
 
 let organization = null;
+let client = null;
 let service = null;
 let group = null;
 let queue = null;
@@ -33,17 +37,93 @@ export const _init = (
   closesAt = _closesAt;
 };
 
-export async function createOrganization() {
+export async function createOrganization(
+  { name, code } = {
+    name: 'BSI',
+    code: 'BSI',
+  } as {
+    name?: string;
+    code?: string;
+  },
+) {
   organization = await request(app.getHttpServer())
-    .post('/v1/organizations')
+    .post('/v1/admin/organizations')
     .set('Authorization', USER.token)
     .send({
-      name: 'Instituto de Computação',
-      code: 'ICUFBA',
+      name,
+      code,
     } as CreateOrganizationRequest)
     .set('Accept', 'application/json')
     .expect(201);
-  return organization;
+  return organization.body;
+}
+
+export async function createClient(
+  { name, organizationId, registrationId } = {
+    name: 'client',
+    organizationId: organization.body.id,
+    registrationId: '12345678',
+  } as {
+    name?: string;
+    organizationId?: string;
+    registrationId?: string;
+  },
+) {
+  client = await request(app.getHttpServer())
+    .post('/v1/clients')
+    .set('Authorization', USER.token)
+    .send({
+      name,
+      organizationId,
+      registrationId,
+    } as CreateClientRequest)
+    .set('Accept', 'application/json')
+    .expect(201);
+  return client.body;
+}
+
+export async function setUserRoleInOrganization(
+  { userId, organizationId, role } = {
+    userId: USER.id,
+    organizationId: organization.body.id,
+    role: UserEntityTypes.TYPE_COORDINATOR,
+  } as {
+    userId?: string;
+    organizationId?: string;
+    role?: UserEntityTypes;
+  },
+) {
+  return await request(app.getHttpServer())
+    .patch(`/v1/users/${userId}/organizations/${organizationId}`)
+    .set('Authorization', USER.token)
+    .send({
+      role,
+    })
+    .set('Accept', 'application/json')
+    .expect(200);
+}
+
+export async function updateClient(
+  { name, organizationId, clientId } = {
+    name: 'client',
+    organizationId: organization.body.id,
+    clientId: client.body.id,
+  } as {
+    name?: string;
+    organizationId?: string;
+    clientId?: string;
+  },
+) {
+  client = await request(app.getHttpServer())
+    .patch(`/v1/clients/${clientId}/organizations/${organizationId}`)
+    .set('Authorization', USER.token)
+    .send({
+      name,
+    } as UpdateClientRequest)
+    .set('Accept', 'application/json')
+    .expect(200);
+
+  return client;
 }
 
 export async function createService() {

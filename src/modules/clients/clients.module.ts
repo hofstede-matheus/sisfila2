@@ -3,6 +3,7 @@ import {
   Module,
   NestModule,
   RequestMethod,
+  forwardRef,
 } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client } from './data/typeorm/entities/clients.typeorm-entity';
@@ -19,9 +20,15 @@ import { UpdateClientUsecase } from './interactors/usecases/UpdateClientUsecase'
 import { AddTokenToClientUsecase } from './interactors/usecases/AddTokenToClientUsecase';
 import { SubscribeToQueueUsecase } from './interactors/usecases/SubscribeToQueueUsecase';
 import { ClientNotificationController } from './presentation/http/controllers/v1/ClientNotificationController';
+import { OrganizationsModule } from '../organizations/organizations.module';
 
 @Module({
-  imports: [CommonModule, TypeOrmModule.forFeature([Client]), UsersModule],
+  imports: [
+    CommonModule,
+    forwardRef(() => UsersModule),
+    forwardRef(() => OrganizationsModule),
+    TypeOrmModule.forFeature([Client]),
+  ],
   controllers: [ClientController, ClientNotificationController],
   providers: [
     {
@@ -50,7 +57,20 @@ export class ClientsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
-      .exclude('v1/clients/notification*')
+      .exclude(
+        {
+          path: 'v1/clients/notification/:registrationId/organizations/:organizationId',
+          method: RequestMethod.PATCH,
+        },
+        {
+          path: 'v1/clients/notification/subscribe',
+          method: RequestMethod.PATCH,
+        },
+        {
+          path: 'v1/clients/notification/unsubscribe',
+          method: RequestMethod.PATCH,
+        },
+      )
       .forRoutes({ path: 'v1/clients*', method: RequestMethod.ALL });
   }
 }
