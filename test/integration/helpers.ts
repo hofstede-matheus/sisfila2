@@ -165,7 +165,7 @@ export async function createService(
     } as CreateServiceRequest)
     .set('Accept', 'application/json')
     .expect(201);
-  return service;
+  return service.body;
 }
 
 export async function updateQueue(
@@ -203,40 +203,58 @@ export async function updateQueue(
   return queue.body;
 }
 
-export async function createGroup() {
+export async function createGroup(
+  { name, organizationId } = {
+    name: 'BSI_GRUPO_1',
+    organizationId: organization.body.id,
+  } as {
+    name?: string;
+    organizationId?: string;
+  },
+) {
   group = await request(app.getHttpServer())
     .post('/v1/groups')
     .set('Authorization', USER.token)
     .send({
-      name: 'BSI_GRUPO_1',
-      organizationId: organization.body.id,
+      name,
+      organizationId,
     } as CreateGroupRequest)
     .set('Accept', 'application/json')
     .expect(201);
-  return group;
+  return group.body;
 }
 
-export async function importStudentsToGroup() {
+export async function importStudentsToGroup(
+  { organizationId, groupId, clients } = {
+    organizationId: organization.body.id,
+    groupId: group.body.id,
+    clients: [
+      {
+        name: VALID_CLIENT.name,
+        registrationId: '12345678',
+      },
+      {
+        name: VALID_CLIENT.name,
+        registrationId: '123456789',
+      },
+      {
+        name: VALID_CLIENT.name,
+        registrationId: '1234567890',
+      },
+    ],
+  } as {
+    organizationId?: string;
+    groupId?: string;
+    clients?: { name: string; registrationId: string }[];
+  },
+) {
   const importResult = await request(app.getHttpServer())
     .post(`/v1/groups/import`)
     .set('Authorization', USER.token)
     .send({
-      groupId: group.body.id,
-      clients: [
-        {
-          name: VALID_CLIENT.name,
-          registrationId: '12345678',
-        },
-        {
-          name: VALID_CLIENT.name,
-          registrationId: '123456789',
-        },
-        {
-          name: VALID_CLIENT.name,
-          registrationId: '1234567890',
-        },
-      ],
-      organizationId: organization.body.id,
+      organizationId,
+      groupId,
+      clients,
     } as ImportClientsRequest)
     .set('Accept', 'application/json')
     .expect(201);
@@ -256,7 +274,7 @@ export async function createDesk() {
   return desk;
 }
 
-export async function attachDeskToService() {
+export async function attachServiceToDesk() {
   const attachDeskToServiceResponse = await request(app.getHttpServer())
     .patch(`/v1/desks/${desk.body.id}`)
     .set('Authorization', USER.token)
@@ -269,18 +287,36 @@ export async function attachDeskToService() {
   return attachDeskToServiceResponse;
 }
 
-export async function createQueue() {
+export async function createQueue(
+  { name, description, priority, code, organizationId, serviceId, groupIds } = {
+    name: 'queue',
+    description: 'queue',
+    priority: 1,
+    code: 'queue',
+    organizationId: organization.body.id,
+    serviceId: service.body.id,
+    groupIds: [group.body.id],
+  } as {
+    name?: string;
+    description?: string;
+    priority?: number;
+    code?: string;
+    organizationId?: string;
+    serviceId?: string;
+    groupIds?: string[];
+  },
+) {
   queue = await request(app.getHttpServer())
     .post(`/v1/queues/`)
     .set('Authorization', USER.token)
     .send({
-      name: 'queue',
-      description: 'queue',
-      priority: 1,
-      code: 'queue',
-      organizationId: organization.body.id,
-      serviceId: service.body.id,
-      groupIds: [group.body.id],
+      name,
+      description,
+      priority,
+      code,
+      organizationId,
+      serviceId,
+      groupIds,
     } as CreateQueueRequest)
     .set('Accept', 'application/json')
     .expect(201);
