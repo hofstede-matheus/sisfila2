@@ -18,7 +18,7 @@ import { AuthenticationMiddleware } from '../common/presentation/http/middleware
 import { ClientsModule } from '../clients/clients.module';
 import { CommonModule } from '../common/common.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
-import { GetClientPositionInServiceUsecase } from './interactors/usecases/GetClientPositionInQueueUsecase';
+import { GetClientPositionInServiceUsecase } from './interactors/usecases/GetClientPositionInServiceUsecase';
 import { RemoveQueueUsecase } from './interactors/usecases/RemoveQueueUsecase';
 
 @Module({

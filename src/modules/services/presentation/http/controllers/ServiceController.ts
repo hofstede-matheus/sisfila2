@@ -5,7 +5,7 @@ import { Service } from '../../../../common/presentation/http/dto/_shared';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { EnterServiceRequest, EnterServiceResponse } from '../dto/EnterService';
 import { AttachClientToServiceUsecase } from '../../../interactors/usecases/AttachClientToServiceUsecase';
-import { GetClientPositionInServiceUsecase } from '../../../../queues/interactors/usecases/GetClientPositionInQueueUsecase';
+import { GetClientPositionInServiceUsecase } from '../../../../queues/interactors/usecases/GetClientPositionInServiceUsecase';
 import { GetClientPositionInQueueResponse } from '../../../../queues/presentation/http/dto/GetClientPositionInQueue';
 
 @Controller({ path: 'services', version: '1' })
