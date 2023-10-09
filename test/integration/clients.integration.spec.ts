@@ -28,10 +28,6 @@ describe('clients', () => {
     USER = await generateUser(app);
     USER2 = await generateUser(app);
     _init(app, USER, opensAt, closesAt);
-    // await connectionSource.query(
-    //   `UPDATE users SET is_super_admin = true where id = $1`,
-    //   [USER2.id],
-    // );
   });
 
   afterAll(async () => {

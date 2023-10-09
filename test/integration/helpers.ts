@@ -123,7 +123,7 @@ export async function updateClient(
     .set('Accept', 'application/json')
     .expect(200);
 
-  return client;
+  return client.body;
 }
 
 export async function createService() {
