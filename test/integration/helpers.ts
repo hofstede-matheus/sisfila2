@@ -12,6 +12,8 @@ import { UpdateDeskRequest } from '../../src/modules/desk/presentation/http/dto/
 import { CreateClientRequest } from '../../src/modules/clients/presentation/http/dto/CreateClient';
 import { UserEntityTypes } from '../../src/modules/users/domain/entities/User.entity';
 import { UpdateClientRequest } from '../../src/modules/clients/presentation/http/dto/UpdateClient';
+import moment from 'moment';
+import { UpdateQueueRequest } from '../../src/modules/queues/presentation/http/dto/UpdateQueue';
 
 let app = null;
 let USER = null;
@@ -126,21 +128,79 @@ export async function updateClient(
   return client.body;
 }
 
-export async function createService() {
+export async function createService(
+  {
+    name,
+    subscriptionToken,
+    guestEnrollment,
+    opensAt,
+    closesAt,
+    organizationId,
+  } = {
+    name: 'BSI',
+    subscriptionToken: 'BSI',
+    guestEnrollment: true,
+    opensAt: moment().toString(),
+    closesAt: moment().add(1, 'day').add(1, 'hour').toString(),
+    organizationId: organization.body.id,
+  } as {
+    name?: string;
+    subscriptionToken?: string;
+    guestEnrollment?: boolean;
+    opensAt?: string;
+    closesAt?: string;
+    organizationId?: string;
+  },
+) {
   service = await request(app.getHttpServer())
-    .post('/v1/services')
+    .post('/v1/admin/services')
     .set('Authorization', USER.token)
     .send({
-      name: 'Matrícula BSI',
-      subscriptionToken: 'BSI-2023-2',
-      guestEnrollment: true,
-      opensAt: opensAt.toISOString(),
-      closesAt: closesAt.toISOString(),
-      organizationId: organization.body.id,
+      name,
+      subscriptionToken,
+      guestEnrollment,
+      opensAt,
+      closesAt,
+      organizationId,
     } as CreateServiceRequest)
     .set('Accept', 'application/json')
     .expect(201);
   return service;
+}
+
+export async function updateQueue(
+  { name, description, code, priority, groups, serviceId, organizationId } = {
+    name: queue.body.name,
+    description: queue.body.description,
+    code: queue.body.code,
+    priority: queue.body.priority,
+    groups: [group.body.id],
+    serviceId: service.body.id,
+    organizationId: organization.body.id,
+  } as {
+    name?: string;
+    description?: string;
+    code?: string;
+    priority?: number;
+    groups?: string[];
+    serviceId?: string;
+    organizationId?: string;
+  },
+) {
+  queue = await request(app.getHttpServer())
+    .patch(`/v1/queues/${queue.body.id}/organizations/${organizationId}`)
+    .set('Authorization', USER.token)
+    .send({
+      name,
+      description,
+      code,
+      priority,
+      groups,
+      serviceId,
+    } as UpdateQueueRequest)
+    .set('Accept', 'application/json')
+    .expect(200);
+  return queue.body;
 }
 
 export async function createGroup() {
@@ -256,4 +316,55 @@ export async function callNextOnDesk() {
     .expect(200);
 
   return callNextOnDeskResponse;
+}
+// /v1/services/{serviceId}/position/{registrationId}": {
+//   "get": {
+//     "operationId": "ServiceController_getClientPositionInService",
+//     "parameters": [
+//       {
+//         "name": "serviceId",
+//         "required": true,
+//         "in": "path",
+//         "schema": {
+//           "type": "string"
+//         }
+//       },
+//       {
+//         "name": "registrationId",
+//         "required": true,
+//         "in": "path",
+//         "schema": {
+//           "type": "string"
+//         }
+//       }
+//     ],
+//     "responses": {
+//       "default": {
+//         "description": "",
+//         "content": {
+//           "application/json": {
+//             "schema": {
+//               "type": "number"
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// },
+export async function getClientPositionInService(
+  { serviceId, registrationId } = {
+    serviceId: service.body.id,
+    registrationId: client.body.registrationId,
+  } as {
+    serviceId?: string;
+    registrationId?: string;
+  },
+) {
+  const getClientPositionInServiceResponse = await request(app.getHttpServer())
+    .get(`/v1/services/${serviceId}/position/${registrationId}`)
+    .set('Accept', 'application/json')
+    .expect(200);
+
+  return getClientPositionInServiceResponse.body;
 }

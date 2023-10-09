@@ -1,20 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { generateTestingApp, generateUser, VALID_CLIENT } from '../helpers';
+import { generateTestingApp, generateUser } from '../helpers';
 import { connectionSource } from '../../ormconfig-test';
-import { CreateOrganizationRequest } from '../../src/modules/organizations/presentation/http/dto/CreateOrganization';
-import { CreateServiceRequest } from '../../src/modules/services/presentation/http/dto/CreateService';
-import { CreateGroupRequest } from '../../src/modules/groups/presentation/http/dto/CreateGroup';
-import { ImportClientsRequest } from '../../src/modules/groups/presentation/http/dto/ImportClients';
-import { SetUserRoleInOrganizationRequest } from '../../src/modules/users/presentation/http/dto/SetUserRoleInOrganization';
-import { CreateQueueRequest } from '../../src/modules/queues/presentation/http/dto/CreateQueue';
-import { AttachGroupsToQueueRequest } from '../../src/modules/queues/presentation/http/dto/UpdateQueue';
-import { EnterQueueRequest } from '../../src/modules/queues/presentation/http/dto/EnterQueue';
-import { CallNextOnQueueRequest } from '../../src/modules/queues/presentation/http/dto/CallNextOnQueue';
 import moment from 'moment';
-import { EnterServiceRequest } from '../../src/modules/services/presentation/http/dto/EnterService';
 import {
-  attachGroupToQueue,
   createGroup,
   createOrganization,
   createQueue,
@@ -26,6 +14,8 @@ import {
   createDesk,
   attachDeskToService,
   callNextOnDesk,
+  updateQueue,
+  getClientPositionInService,
 } from './helpers';
 
 describe('flows', () => {
@@ -58,14 +48,14 @@ describe('flows', () => {
   it('should able to do a complete flow simple', async () => {
     /* ------------------COORDINATOR------------------*/
 
-    await createOrganization();
-    await createService();
-    await createGroup();
-    await createDesk();
-    await createQueue();
+    const organization = await createOrganization();
+    const service = await createService();
+    const group = await createGroup();
+    const desk = await createDesk();
+    const queue = await createQueue();
 
     await importStudentsToGroup();
-    await attachGroupToQueue();
+    await updateQueue();
     await attachDeskToService();
 
     /* ------------------ALUNOS------------------*/
@@ -73,6 +63,23 @@ describe('flows', () => {
     await enterService('12345678');
     await enterService('123456789');
     await enterService('1234567890');
+
+    const position1 = await getClientPositionInService({
+      registrationId: '12345678',
+      serviceId: service.body.id,
+    });
+    let position2 = await getClientPositionInService({
+      registrationId: '123456789',
+      serviceId: service.body.id,
+    });
+    let position3 = await getClientPositionInService({
+      registrationId: '1234567890',
+      serviceId: service.body.id,
+    });
+
+    expect(position1.position).toBe(1);
+    expect(position2.position).toBe(2);
+    expect(position3.position).toBe(3);
 
     /* ------------------COORDINATOR------------------*/
 
@@ -85,6 +92,18 @@ describe('flows', () => {
 
     await callNextOnDesk();
 
+    position2 = await getClientPositionInService({
+      registrationId: '123456789',
+      serviceId: service.body.id,
+    });
+    position3 = await getClientPositionInService({
+      registrationId: '1234567890',
+      serviceId: service.body.id,
+    });
+
+    expect(position2.position).toBe(1);
+    expect(position3.position).toBe(2);
+
     const getQueueResponse2 = await getQueue();
 
     expect(getQueueResponse2.body.clients.length).toBe(2);
@@ -92,6 +111,23 @@ describe('flows', () => {
     expect(getQueueResponse2.body.clients[1].registrationId).toBe('1234567890');
     expect(getQueueResponse2.body.lastClientCalled.registrationId).toBe(
       '12345678',
+    );
+
+    await callNextOnDesk();
+
+    position3 = await getClientPositionInService({
+      registrationId: '1234567890',
+      serviceId: service.body.id,
+    });
+
+    expect(position3.position).toBe(1);
+
+    const getQueueResponse3 = await getQueue();
+
+    expect(getQueueResponse3.body.clients.length).toBe(1);
+    expect(getQueueResponse3.body.clients[0].registrationId).toBe('1234567890');
+    expect(getQueueResponse3.body.lastClientCalled.registrationId).toBe(
+      '123456789',
     );
   });
 
