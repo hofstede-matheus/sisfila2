@@ -6,6 +6,8 @@ import { DomainError } from '../../../common/shared/helpers/errors';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { Validator } from '../../../common/shared/helpers/validator';
 import { ServiceRepository } from '../../../services/domain/repositories/ServiceRepository';
+import { PositionInQueueWithDesk } from '../../domain/entities/Queue.entity';
+import { DeskRepository } from '../../../desk/domain/repositories/DeskRepository';
 
 @Injectable()
 export class GetClientPositionInServiceUsecase implements UseCase {
@@ -19,7 +21,7 @@ export class GetClientPositionInServiceUsecase implements UseCase {
   async execute(
     serviceId: string,
     registrationId: string,
-  ): Promise<Either<DomainError, number>> {
+  ): Promise<Either<DomainError, PositionInQueueWithDesk>> {
     const validation = Validator.validate({ id: [serviceId] });
     if (validation.isLeft()) return left(validation.value);
 
@@ -37,7 +39,11 @@ export class GetClientPositionInServiceUsecase implements UseCase {
       registrationId,
     );
 
-    if (position === -1) return left(new ClientNotInQueueError());
-    return right(position + 1);
+    if (position.position === -1) return left(new ClientNotInQueueError());
+
+    return right({
+      position: position.position,
+      desk: position.desk,
+    });
   }
 }

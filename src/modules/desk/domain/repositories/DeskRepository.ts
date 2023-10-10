@@ -1,4 +1,3 @@
-import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
 import { ClientInQueue } from '../../../queues/domain/entities/Queue.entity';
 import { DeskEntity } from '../entities/Desk.entity';
 

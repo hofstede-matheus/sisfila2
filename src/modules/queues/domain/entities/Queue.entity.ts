@@ -13,6 +13,10 @@ import {
   InvalidDescriptionError,
 } from '../../../common/domain/errors';
 import { GroupEntity } from '../../../groups/domain/entities/Group.entity';
+import {
+  DeskEntity,
+  DeskWithoutServicesAndAttendant,
+} from '../../../desk/domain/entities/Desk.entity';
 
 export interface QueueEntity {
   readonly id: string;
@@ -42,6 +46,11 @@ export interface ClientInQueue {
   readonly updatedAt: Date;
   readonly calledDate?: Date;
   readonly attendedByUserId?: string;
+}
+
+export interface PositionInQueueWithDesk {
+  readonly position: number;
+  readonly desk?: DeskWithoutServicesAndAttendant;
 }
 
 @staticImplements<DomainEntity<QueueEntity>>()

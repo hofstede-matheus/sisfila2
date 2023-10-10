@@ -62,6 +62,7 @@ export class CallNextClientOfDeskUsecase implements UseCase {
         attendentId,
         client.queueId,
         client.id,
+        deskId,
       );
 
       await this.notificationService.sendNotification(

@@ -61,7 +61,7 @@ export class ServiceController {
   }
 
   @Get(':serviceId/position/:registrationId')
-  @ApiResponse({ type: Number })
+  @ApiResponse({ type: GetClientPositionInQueueResponse })
   async getClientPositionInService(
     @Param('serviceId') serviceId: string,
     @Param('registrationId') registrationId: string,
@@ -73,7 +73,8 @@ export class ServiceController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
     return {
-      position: result.value,
+      position: result.value.position,
+      desk: result.value.desk,
     };
   }
 }

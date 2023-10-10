@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import {
   ClientInQueue,
+  PositionInQueueWithDesk,
   QueueEntity,
 } from '../../../domain/entities/Queue.entity';
 import { QueueRepository } from '../../../domain/repositories/QueueRepository';
@@ -151,20 +152,36 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     callerId: string,
     queueId: string,
     clientId: string,
+    deskId: string,
   ): Promise<void> {
-    await this.queuesRepository.query(
-      `
+    // open transaction
+    await this.queuesRepository.manager.transaction(async (transaction) => {
+      const clientsPositionInQueuesId = await transaction.query(
+        `
+        SELECT
+          clients_position_in_queues.id
+        FROM clients_position_in_queues
+        WHERE clients_position_in_queues.queue_id = $1
+        AND clients_position_in_queues.client_id = $2
+        AND clients_position_in_queues.called_at IS NULL
+        `,
+        [queueId, clientId],
+      );
+
+      // update
+      await transaction.query(
+        `
         UPDATE clients_position_in_queues
         SET
           attended_by_user = $1,
-          called_at = now()
+          called_at = now(),
+          desk_id = $2
         WHERE
-          queue_id = $2
-        AND
-          client_id = $3;
+          id = $3;
         `,
-      [callerId, queueId, clientId],
-    );
+        [callerId, deskId, clientsPositionInQueuesId[0].id],
+      );
+    });
   }
 
   async attachClientToQueueByServiceIdOrganizationIdRegistrationId(
@@ -286,14 +303,14 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     return right({
       queueId: queuesOrderedByPriority[0].id,
       queueName: queuesOrderedByPriority[0].name,
-      position: position + 1,
+      position: position.position,
     });
   }
 
   async getPositionOfClient(
     queueId: string,
     registrationId: string,
-  ): Promise<number> {
+  ): Promise<PositionInQueueWithDesk> {
     const clientsInQueueFromDatabase = await this.queuesRepository.query(
       `
       SELECT 
@@ -314,6 +331,57 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       [queueId],
     );
 
+    const lastClientCalledFromQueue = await this.queuesRepository.query(
+      `
+      SELECT 
+        clients.id, 
+        clients.name, 
+        clients.organization_id, 
+        clients.registration_id,
+        clients_position_in_queues.called_at,
+        clients_position_in_queues.attended_by_user,
+        clients.created_at, 
+        clients.updated_at,
+        clients_position_in_queues.desk_id
+      FROM clients
+      INNER JOIN clients_position_in_queues ON clients.id = clients_position_in_queues.client_id
+      WHERE clients_position_in_queues.queue_id = $1
+      AND clients_position_in_queues.called_at IS NOT NULL
+      ORDER BY clients_position_in_queues.called_at DESC
+      LIMIT 1
+      `,
+      [queueId],
+    );
+
+    if (
+      lastClientCalledFromQueue.length > 0 &&
+      lastClientCalledFromQueue[0].registration_id === registrationId
+    ) {
+      const desk = await this.queuesRepository.query(
+        `
+        SELECT
+          desks.id,
+          desks.name,
+          desks.organization_id,
+          desks.created_at,
+          desks.updated_at
+        FROM desks
+        WHERE desks.id = $1
+        `,
+        [lastClientCalledFromQueue[0].desk_id],
+      );
+      return {
+        position: 0,
+        desk: {
+          id: desk[0].id,
+          name: desk[0].name,
+          organizationId: desk[0].organization_id,
+          createdAt: desk[0].created_at,
+          updatedAt: desk[0].updated_at,
+        },
+      };
+    }
+
     const clientsInQueue: ClientInQueue[] = clientsInQueueFromDatabase.map(
       (client) => {
         return {
@@ -332,36 +400,47 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     const position = clientsInQueue.findIndex(
       (client) => client.registrationId === registrationId,
     );
-    return position;
+
+    if (position === -1) {
+      return {
+        position: -1,
+      };
+    }
+    return {
+      position: position + 1,
+    };
+    // -1 -> not in queue
+    //  0 -> last called client
+    //  1 -> first client in queue not called
   }
 
-  async callNextClient(queueId: string): Promise<void> {
-    await this.queuesRepository.manager.transaction(async (transaction) => {
-      const firstClientFromQueue = await transaction.query(
-        `
-        select 
-          id
-        FROM clients_position_in_queues
-        WHERE queue_id = $1
-        and called_at is null
-        ORDER BY clients_position_in_queues.created_at ASC
-        LIMIT 1
-        `,
-        [queueId],
-      );
+  // async callNextClient(queueId: string): Promise<void> {
+  //   await this.queuesRepository.manager.transaction(async (transaction) => {
+  //     const firstClientFromQueue = await transaction.query(
+  //       `
+  //       select
+  //         id
+  //       FROM clients_position_in_queues
+  //       WHERE queue_id = $1
+  //       and called_at is null
+  //       ORDER BY clients_position_in_queues.created_at ASC
+  //       LIMIT 1
+  //       `,
+  //       [queueId],
+  //     );
 
-      await transaction.query(
-        `
-        UPDATE clients_position_in_queues 
-        SET 
-          called_at = now() 
-        WHERE 
-          id = $1;
-        `,
-        [firstClientFromQueue[0].id],
-      );
-    });
-  }
+  //     await transaction.query(
+  //       `
+  //       UPDATE clients_position_in_queues
+  //       SET
+  //         called_at = now()
+  //       WHERE
+  //         id = $1;
+  //       `,
+  //       [firstClientFromQueue[0].id],
+  //     );
+  //   });
+  // }
 
   async findById(queueId: string): Promise<QueueEntity> {
     const queue = await this.queuesRepository.findOne({

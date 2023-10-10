@@ -25,6 +25,15 @@ export interface DeskEntity {
   readonly updatedAt: Date;
 }
 
+export interface DeskWithoutServicesAndAttendant {
+  readonly id: string;
+  readonly name: string;
+  readonly organizationId: string;
+
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+}
+
 export interface DeskWithCalledClient {
   desk: DeskEntity;
   client: ClientEntity | null;

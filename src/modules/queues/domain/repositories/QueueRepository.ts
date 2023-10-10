@@ -1,6 +1,6 @@
 import { Either } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
-import { QueueEntity } from '../entities/Queue.entity';
+import { PositionInQueueWithDesk, QueueEntity } from '../entities/Queue.entity';
 
 export interface QueueRepository {
   findByServiceId(serviceId: string): Promise<QueueEntity[] | undefined>;
@@ -16,13 +16,17 @@ export interface QueueRepository {
   attachGroupsToQueue(groupIds: string[], queueId: string): Promise<void>;
   attachServiceToQueue(serviceId: string, queueId: string): Promise<void>;
   attachClientToQueue(userId: string, queueId: string): Promise<void>;
-  callNextClient(queueId: string): Promise<void>;
+  // callNextClient(queueId: string): Promise<void>;
   callClient(
     callerId: string,
     queueId: string,
     clientId: string,
+    deskId: string,
   ): Promise<void>;
-  getPositionOfClient(queueId: string, clientId: string): Promise<number>;
+  getPositionOfClient(
+    queueId: string,
+    clientId: string,
+  ): Promise<PositionInQueueWithDesk>;
   attachClientToQueueByServiceIdOrganizationIdRegistrationId(
     serviceId: string,
     organizationId: string,

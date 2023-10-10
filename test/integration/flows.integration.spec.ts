@@ -62,15 +62,15 @@ describe('flows', () => {
 
     const position1 = await getClientPositionInService({
       registrationId: '12345678',
-      serviceId: service.body.id,
+      serviceId: service.id,
     });
     let position2 = await getClientPositionInService({
       registrationId: '123456789',
-      serviceId: service.body.id,
+      serviceId: service.id,
     });
     let position3 = await getClientPositionInService({
       registrationId: '1234567890',
-      serviceId: service.body.id,
+      serviceId: service.id,
     });
 
     expect(position1.position).toBe(1);
@@ -88,11 +88,11 @@ describe('flows', () => {
 
     position2 = await getClientPositionInService({
       registrationId: '123456789',
-      serviceId: service.body.id,
+      serviceId: service.id,
     });
     position3 = await getClientPositionInService({
       registrationId: '1234567890',
-      serviceId: service.body.id,
+      serviceId: service.id,
     });
 
     expect(position2.position).toBe(1);
@@ -111,7 +111,7 @@ describe('flows', () => {
 
     position3 = await getClientPositionInService({
       registrationId: '1234567890',
-      serviceId: service.body.id,
+      serviceId: service.id,
     });
 
     expect(position3.position).toBe(1);

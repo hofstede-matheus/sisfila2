@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserEntityTypes } from '../../../../users/domain/entities/User.entity';
+import exp from 'constants';
 
 export class RolesInOrganizations {
   @ApiProperty({
@@ -358,6 +359,33 @@ export class Desk {
     type: [Service],
   })
   services: Service[];
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    example: '2022-12-19T23:03:44.662Z',
+  })
+  updatedAt: Date;
+}
+
+export class DeskWithoutServicesAndAttendant {
+  @ApiProperty({
+    example: 'valid_uuid',
+  })
+  id: string;
+
+  @ApiProperty({
+    example: 'Desk 1',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: 'valid_uuid',
+  })
+  organizationId: string;
 
   @ApiProperty({
     example: '2022-12-19T23:03:44.662Z',

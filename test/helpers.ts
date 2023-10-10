@@ -214,6 +214,7 @@ export const ALL_REPOSITORIES_PROVIDERS: Provider[] = [
       removeFromOrganization: jest.fn(),
       update: jest.fn(),
       findById: jest.fn(),
+      getLastClientCalledFromDesk: jest.fn(),
     } as DeskRepository,
   },
 ];
