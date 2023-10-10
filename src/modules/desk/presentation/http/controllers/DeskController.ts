@@ -19,7 +19,10 @@ import { UpdateDeskUsecase } from '../../../interactors/usecases/UpdateDeskUseca
 import { CallNextOnDeskResponse } from '../dto/CallNextOnDesk';
 import { CallNextClientOfDeskUsecase } from '../../../interactors/usecases/CallNextClientOfDeskUsecase';
 import { Request } from 'express';
-import { DeskEntity } from '../../../domain/entities/Desk.entity';
+import {
+  DeskEntity,
+  DeskWithCalledClient,
+} from '../../../domain/entities/Desk.entity';
 import { FindAllDesksFromOrganizationUsecase } from '../../../interactors/usecases/FindAllDesksFromOrganizationUsecase';
 import { FindOneDeskFromOrganizationUsecase } from '../../../interactors/usecases/FindOneDeskFromOrganizationUsecase';
 import { GetDeskResponse } from '../dto/GetDesk';
@@ -135,7 +138,7 @@ export class DeskController {
   }
 
   @Get(':deskId/organizations/:organizationId')
-  @ApiResponse({ type: Desk })
+  @ApiResponse({ type: GetDeskResponse })
   @ApiBearerAuth()
   async getDesk(
     @Param('organizationId') organizationId: string,
@@ -149,13 +152,15 @@ export class DeskController {
     if (result.isLeft()) throw toPresentationError(result.value);
 
     return {
-      lastCalledClient: {
+      lastClientCalled: {
         id: result.value.client.id,
         name: result.value.client.name,
         organizationId: result.value.client.organizationId,
         registrationId: result.value.client.registrationId,
         createdAt: result.value.client.createdAt,
         updatedAt: result.value.client.updatedAt,
+        calledDate: result.value.client.calledDate,
+        attendedByUserId: result.value.client.attendedByUserId,
       },
       desk: {
         id: result.value.desk.id,

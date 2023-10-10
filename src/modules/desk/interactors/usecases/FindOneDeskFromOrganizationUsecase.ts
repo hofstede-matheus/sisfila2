@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { DeskRepository } from '../../domain/repositories/DeskRepository';
-import { DeskWithCalledClient } from '../../domain/entities/Desk.entity';
+import { DeskWithCalledClientInQueue } from '../../domain/entities/Desk.entity';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { Validator } from '../../../common/shared/helpers/validator';
@@ -19,7 +19,7 @@ export class FindOneDeskFromOrganizationUsecase implements UseCase {
   }: {
     organizationId: string;
     id?: string;
-  }): Promise<Either<DomainError, DeskWithCalledClient>> {
+  }): Promise<Either<DomainError, DeskWithCalledClientInQueue>> {
     const validation = Validator.validate({ id: [organizationId] });
     if (validation.isLeft()) return left(validation.value);
 

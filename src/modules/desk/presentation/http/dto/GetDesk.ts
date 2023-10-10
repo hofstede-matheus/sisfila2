@@ -10,5 +10,5 @@ export class GetDeskResponse {
   @ApiProperty({
     type: Client,
   })
-  lastCalledClient: Client;
+  lastClientCalled: Client;
 }

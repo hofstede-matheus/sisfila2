@@ -7,8 +7,7 @@ import { ServiceEntity } from '../../../../services/domain/entities/Service.enti
 import { isServiceOpen } from '../../../../common/shared/helpers/moment';
 import { QueueRepository } from '../../../../queues/domain/repositories/QueueRepository';
 import { Inject } from '@nestjs/common';
-import { UserEntity } from '../../../../users/domain/entities/User.entity';
-import { ClientEntity } from '../../../../clients/domain/entities/Client.entity';
+import { ClientInQueue } from '../../../../queues/domain/entities/Queue.entity';
 
 export class TypeOrmDesksRepository implements DeskRepository {
   constructor(
@@ -19,7 +18,7 @@ export class TypeOrmDesksRepository implements DeskRepository {
     private queueRepository: QueueRepository,
   ) {}
 
-  async getLastClientCalledFromDesk(deskId: string): Promise<ClientEntity> {
+  async getLastClientCalledFromDesk(deskId: string): Promise<ClientInQueue> {
     const servicesFromDesk = await this.desksRepository.query(
       `
       SELECT services.id as service_id
@@ -41,41 +40,37 @@ export class TypeOrmDesksRepository implements DeskRepository {
     );
 
     const lastClientCalled = await this.desksRepository.query(
-      `SELECT
-        clients_position_in_queues.client_id as client_id
-        FROM clients_position_in_queues
-        WHERE clients_position_in_queues.queue_id = ANY($1)
-        ORDER BY clients_position_in_queues.created_at DESC
-        LIMIT 1
+      `
+      SELECT 
+        clients.id, 
+        clients.name, 
+        clients.organization_id, 
+        clients.registration_id,
+        clients_position_in_queues.called_at,
+        clients_position_in_queues.attended_by_user,
+        clients.created_at, 
+        clients.updated_at
+      FROM clients
+      INNER JOIN clients_position_in_queues ON clients.id = clients_position_in_queues.client_id
+      WHERE clients_position_in_queues.queue_id = ANY($1)
+      AND clients_position_in_queues.called_at IS NOT NULL
+      ORDER BY clients_position_in_queues.called_at DESC
+      LIMIT 1
       `,
       [queuesThatBelongsToServices.map((queue) => queue.queue_id)],
     );
 
     if (lastClientCalled.length === 0) return undefined;
 
-    // clients
-    const client = await this.desksRepository.query(
-      `
-      SELECT
-        clients.id as client_id,
-        clients.name as client_name,
-        clients.registration_id as client_registration_id,
-        clients.organization_id as client_organization_id,
-        clients.created_at as client_created_at,
-        clients.updated_at as client_updated_at
-      FROM clients
-      WHERE clients.id = $1
-      `,
-      [lastClientCalled[0].client_id],
-    );
-
     return {
-      id: client[0].client_id,
-      name: client[0].client_name,
-      registrationId: client[0].client_registration_id,
-      organizationId: client[0].client_organization_id,
-      createdAt: client[0].client_created_at,
-      updatedAt: client[0].client_updated_at,
+      id: lastClientCalled[0].id,
+      name: lastClientCalled[0].name,
+      organizationId: lastClientCalled[0].organization_id,
+      registrationId: lastClientCalled[0].registration_id,
+      calledDate: lastClientCalled[0].called_at,
+      attendedByUserId: lastClientCalled[0].attended_by_user,
+      createdAt: lastClientCalled[0].created_at,
+      updatedAt: lastClientCalled[0].updated_at,
     };
   }
 

@@ -11,6 +11,7 @@ import {
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { ServiceEntity } from '../../../services/domain/entities/Service.entity';
 import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
+import { ClientInQueue } from '../../../queues/domain/entities/Queue.entity';
 
 export interface DeskEntity {
   readonly id: string;
@@ -27,6 +28,11 @@ export interface DeskEntity {
 export interface DeskWithCalledClient {
   desk: DeskEntity;
   client: ClientEntity | null;
+}
+
+export interface DeskWithCalledClientInQueue {
+  desk: DeskEntity;
+  client: ClientInQueue | null;
 }
 
 @staticImplements<DomainEntity<DeskEntity>>()

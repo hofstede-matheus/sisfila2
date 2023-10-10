@@ -1,4 +1,5 @@
 import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
+import { ClientInQueue } from '../../../queues/domain/entities/Queue.entity';
 import { DeskEntity } from '../entities/Desk.entity';
 
 export interface DeskRepository {
@@ -12,7 +13,7 @@ export interface DeskRepository {
     services: string[],
   ): Promise<DeskEntity>;
   findById(id: string): Promise<DeskEntity>;
-  getLastClientCalledFromDesk(deskId: string): Promise<ClientEntity>;
+  getLastClientCalledFromDesk(deskId: string): Promise<ClientInQueue>;
 }
 
 export const DeskRepository = Symbol('DeskRepository');
