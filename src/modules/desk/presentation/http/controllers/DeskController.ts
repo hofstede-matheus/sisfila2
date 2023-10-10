@@ -19,10 +19,7 @@ import { UpdateDeskUsecase } from '../../../interactors/usecases/UpdateDeskUseca
 import { CallNextOnDeskResponse } from '../dto/CallNextOnDesk';
 import { CallNextClientOfDeskUsecase } from '../../../interactors/usecases/CallNextClientOfDeskUsecase';
 import { Request } from 'express';
-import {
-  DeskEntity,
-  DeskWithCalledClient,
-} from '../../../domain/entities/Desk.entity';
+import { DeskEntity } from '../../../domain/entities/Desk.entity';
 import { FindAllDesksFromOrganizationUsecase } from '../../../interactors/usecases/FindAllDesksFromOrganizationUsecase';
 import { FindOneDeskFromOrganizationUsecase } from '../../../interactors/usecases/FindOneDeskFromOrganizationUsecase';
 import { GetDeskResponse } from '../dto/GetDesk';
@@ -152,7 +149,7 @@ export class DeskController {
     if (result.isLeft()) throw toPresentationError(result.value);
 
     return {
-      client: {
+      lastCalledClient: {
         id: result.value.client.id,
         name: result.value.client.name,
         organizationId: result.value.client.organizationId,
