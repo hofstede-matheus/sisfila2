@@ -1,3 +1,4 @@
+import { ClientEntity } from '../../../clients/domain/entities/Client.entity';
 import { DeskEntity } from '../entities/Desk.entity';
 
 export interface DeskRepository {
@@ -11,6 +12,7 @@ export interface DeskRepository {
     services: string[],
   ): Promise<DeskEntity>;
   findById(id: string): Promise<DeskEntity>;
+  getLastClientCalledFromDesk(deskId: string): Promise<ClientEntity>;
 }
 
 export const DeskRepository = Symbol('DeskRepository');

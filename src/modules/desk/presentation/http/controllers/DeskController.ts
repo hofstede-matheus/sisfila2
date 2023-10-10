@@ -12,7 +12,6 @@ import { CreateDeskRequest, CreateDeskResponse } from '../dto/CreateDesk';
 import { toPresentationError } from '../../../../common/presentation/http/errors';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { CreateDeskUsecase } from '../../../interactors/usecases/CreateDeskUsecase';
-import { FindOneOrAllDesksFromOrganizationUsecase } from '../../../interactors/usecases/FindOneOrAllDesksFromOrganizationUsecase';
 import { Desk } from '../../../../common/presentation/http/dto/_shared';
 import { RemoveDeskUsecase } from '../../../interactors/usecases/RemoveDeskUsecase';
 import { UpdateDeskRequest, UpdateDeskResponse } from '../dto/UpdateDesk';
@@ -20,13 +19,20 @@ import { UpdateDeskUsecase } from '../../../interactors/usecases/UpdateDeskUseca
 import { CallNextOnDeskResponse } from '../dto/CallNextOnDesk';
 import { CallNextClientOfDeskUsecase } from '../../../interactors/usecases/CallNextClientOfDeskUsecase';
 import { Request } from 'express';
-import { DeskEntity } from '../../../domain/entities/Desk.entity';
+import {
+  DeskEntity,
+  DeskWithCalledClient,
+} from '../../../domain/entities/Desk.entity';
+import { FindAllDesksFromOrganizationUsecase } from '../../../interactors/usecases/FindAllDesksFromOrganizationUsecase';
+import { FindOneDeskFromOrganizationUsecase } from '../../../interactors/usecases/FindOneDeskFromOrganizationUsecase';
+import { GetDeskResponse } from '../dto/GetDesk';
 
 @Controller({ path: 'desks', version: '1' })
 export class DeskController {
   constructor(
     private readonly createDeskUsecase: CreateDeskUsecase,
-    private readonly findDesksFromOrganizationUsecase: FindOneOrAllDesksFromOrganizationUsecase,
+    private readonly findAllDesksFromOrganizationUsecase: FindAllDesksFromOrganizationUsecase,
+    private readonly findOneDeskFromOrganizationUsecase: FindOneDeskFromOrganizationUsecase,
     private readonly removeDeskUsecase: RemoveDeskUsecase,
     private readonly updateDeskUsecase: UpdateDeskUsecase,
     private readonly callNextClientOfDeskUsecase: CallNextClientOfDeskUsecase,
@@ -76,7 +82,7 @@ export class DeskController {
   async getAllDesks(
     @Param('organizationId') organizationId: string,
   ): Promise<Desk[]> {
-    const result = await this.findDesksFromOrganizationUsecase.execute({
+    const result = await this.findAllDesksFromOrganizationUsecase.execute({
       organizationId,
     });
 
@@ -137,59 +143,67 @@ export class DeskController {
   async getDesk(
     @Param('organizationId') organizationId: string,
     @Param('deskId') deskId: string,
-  ): Promise<Desk> {
-    const result = await this.findDesksFromOrganizationUsecase.execute({
+  ): Promise<GetDeskResponse> {
+    const result = await this.findOneDeskFromOrganizationUsecase.execute({
       organizationId,
       id: deskId,
     });
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    const desk = result.value as DeskEntity;
-
     return {
-      id: desk.id,
-      name: desk.name,
-      organizationId: desk.organizationId,
-      attendantId: desk.attendantId,
-      services: desk.services.map((service) => ({
-        id: service.id,
-        name: service.name,
-        subscriptionToken: service.subscriptionToken,
-        guestEnroll: service.guestEnrollment,
-        organizationId: service.organizationId,
-        isOpened: service.isOpened,
-        opensAt: service.opensAt,
-        closesAt: service.closesAt,
-        queues: service.queues.map((queue) => ({
-          id: queue.id,
-          name: queue.name,
-          description: queue.description,
-          code: queue.code,
-          organizationId: queue.organizationId,
-          priority: queue.priority,
-          serviceId: queue.serviceId,
-          createdAt: queue.createdAt,
-          updatedAt: queue.updatedAt,
-          clients: queue.clientsInQueue.map((client) => {
-            return {
-              id: client.id,
-              name: client.name,
-              organizationId: client.organizationId,
-              registrationId: client.registrationId,
-              createdAt: client.createdAt,
-              updatedAt: client.updatedAt,
-            };
-          }),
-          lastClientCalled: queue.lastClientCalled,
-          groups: queue.groups,
-        })),
+      client: {
+        id: result.value.client.id,
+        name: result.value.client.name,
+        organizationId: result.value.client.organizationId,
+        registrationId: result.value.client.registrationId,
+        createdAt: result.value.client.createdAt,
+        updatedAt: result.value.client.updatedAt,
+      },
+      desk: {
+        id: result.value.desk.id,
+        name: result.value.desk.name,
+        organizationId: result.value.desk.organizationId,
+        attendantId: result.value.desk.attendantId,
+        services: result.value.desk.services.map((service) => ({
+          id: service.id,
+          name: service.name,
+          subscriptionToken: service.subscriptionToken,
+          guestEnroll: service.guestEnrollment,
+          organizationId: service.organizationId,
+          isOpened: service.isOpened,
+          opensAt: service.opensAt,
+          closesAt: service.closesAt,
+          queues: service.queues.map((queue) => ({
+            id: queue.id,
+            name: queue.name,
+            description: queue.description,
+            code: queue.code,
+            organizationId: queue.organizationId,
+            priority: queue.priority,
+            serviceId: queue.serviceId,
+            createdAt: queue.createdAt,
+            updatedAt: queue.updatedAt,
+            clients: queue.clientsInQueue.map((client) => {
+              return {
+                id: client.id,
+                name: client.name,
+                organizationId: client.organizationId,
+                registrationId: client.registrationId,
+                createdAt: client.createdAt,
+                updatedAt: client.updatedAt,
+              };
+            }),
+            lastClientCalled: queue.lastClientCalled,
+            groups: queue.groups,
+          })),
 
-        createdAt: desk.createdAt,
-        updatedAt: desk.updatedAt,
-      })),
-      createdAt: desk.createdAt,
-      updatedAt: desk.updatedAt,
+          createdAt: result.value.desk.createdAt,
+          updatedAt: result.value.desk.updatedAt,
+        })),
+        createdAt: result.value.desk.createdAt,
+        updatedAt: result.value.desk.updatedAt,
+      },
     };
   }
 

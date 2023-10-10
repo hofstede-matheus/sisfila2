@@ -182,6 +182,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     >
   > {
     let queuesOrderedByPriority = [];
+    let error: DomainError = undefined;
     await this.queuesRepository.manager.transaction(async (transaction) => {
       const groupsThatUserBelongs = await transaction.query(
         `
@@ -199,7 +200,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       );
 
       if (groupsThatUserBelongsIds.length === 0) {
-        return left(new UserNotInAnyGroupError());
+        error = new UserNotInAnyGroupError();
+        return;
       }
 
       const queuesAssociatedWithGroups = await transaction.query(
@@ -213,7 +215,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       );
 
       if (queuesAssociatedWithGroups.length === 0) {
-        return left(new NoQueueAvaliabeError());
+        error = new NoQueueAvaliabeError();
+        return;
       }
 
       const queuesAssociatedWithGroupsIds = queuesAssociatedWithGroups.map(
@@ -255,6 +258,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         );
       }
     });
+
+    if (error) {
+      return left(error);
+    }
 
     // TODO: ver se esse check realmente é necessário, comentado pra ver se quebra
     // if (queuesOrderedByPriority.length === 0) {

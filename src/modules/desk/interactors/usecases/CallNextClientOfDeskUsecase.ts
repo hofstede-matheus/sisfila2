@@ -76,12 +76,16 @@ export class CallNextClientOfDeskUsecase implements UseCase {
       );
 
       if (tokenFromClient) {
-        await this.notificationService.sendNotification(
-          tokenFromClient,
-          'Você foi chamado',
-          'Você foi chamado',
-          NotificationTypes.TO_TOKEN,
-        );
+        try {
+          await this.notificationService.sendNotification(
+            tokenFromClient,
+            'Você foi chamado',
+            'Você foi chamado',
+            NotificationTypes.TO_TOKEN,
+          );
+        } catch (error) {
+          console.log(error);
+        }
       }
 
       const desk = await this.deskRepository.findById(deskId);

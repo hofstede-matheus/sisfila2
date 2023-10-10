@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '../../../common/shared/helpers/usecase';
 import { DeskRepository } from '../../domain/repositories/DeskRepository';
-import { DeskEntity } from '../../domain/entities/Desk.entity';
+import { DeskWithCalledClient } from '../../domain/entities/Desk.entity';
 import { Either, left, right } from '../../../common/shared/helpers/either';
 import { DomainError } from '../../../common/shared/helpers/errors';
 import { Validator } from '../../../common/shared/helpers/validator';
 
 @Injectable()
-export class FindOneOrAllDesksFromOrganizationUsecase implements UseCase {
+export class FindOneDeskFromOrganizationUsecase implements UseCase {
   constructor(
     @Inject(DeskRepository)
     private deskRepository: DeskRepository,
@@ -19,23 +19,17 @@ export class FindOneOrAllDesksFromOrganizationUsecase implements UseCase {
   }: {
     organizationId: string;
     id?: string;
-  }): Promise<Either<DomainError, DeskEntity[] | DeskEntity>> {
+  }): Promise<Either<DomainError, DeskWithCalledClient>> {
     const validation = Validator.validate({ id: [organizationId] });
     if (validation.isLeft()) return left(validation.value);
 
     // TODO: check if desk is from organization
 
-    const isFindAll = !id;
-
-    if (isFindAll) {
-      const desks = await this.deskRepository.findAllByOrganizationId(
-        organizationId,
-      );
-
-      return right(desks);
-    } else {
-      const desk = await this.deskRepository.findById(id);
-      return right(desk);
-    }
+    const desk = await this.deskRepository.findById(id);
+    const client = await this.deskRepository.getLastClientCalledFromDesk(id);
+    return right({
+      desk,
+      client,
+    });
   }
 }

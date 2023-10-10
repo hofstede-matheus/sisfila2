@@ -13,13 +13,14 @@ import { DeskRepository } from './domain/repositories/DeskRepository';
 import { TypeOrmDesksRepository } from './data/typeorm/repositories/TypeOrmDesksRepository';
 import { Desk } from './data/typeorm/entities/desks.typeorm-entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FindOneOrAllDesksFromOrganizationUsecase } from './interactors/usecases/FindOneOrAllDesksFromOrganizationUsecase';
 import { RemoveDeskUsecase } from './interactors/usecases/RemoveDeskUsecase';
 import { UpdateDeskUsecase } from './interactors/usecases/UpdateDeskUsecase';
 import { CallNextClientOfDeskUsecase } from './interactors/usecases/CallNextClientOfDeskUsecase';
 import { ServicesModule } from '../services/services.module';
 import { QueuesModule } from '../queues/queues.module';
 import { ClientsModule } from '../clients/clients.module';
+import { FindOneDeskFromOrganizationUsecase } from './interactors/usecases/FindOneDeskFromOrganizationUsecase';
+import { FindAllDesksFromOrganizationUsecase } from './interactors/usecases/FindAllDesksFromOrganizationUsecase';
 
 @Module({
   imports: [
@@ -34,8 +35,12 @@ import { ClientsModule } from '../clients/clients.module';
     { provide: DeskRepository, useClass: TypeOrmDesksRepository },
     { provide: CreateDeskUsecase, useClass: CreateDeskUsecase },
     {
-      provide: FindOneOrAllDesksFromOrganizationUsecase,
-      useClass: FindOneOrAllDesksFromOrganizationUsecase,
+      provide: FindOneDeskFromOrganizationUsecase,
+      useClass: FindOneDeskFromOrganizationUsecase,
+    },
+    {
+      provide: FindAllDesksFromOrganizationUsecase,
+      useClass: FindAllDesksFromOrganizationUsecase,
     },
     { provide: RemoveDeskUsecase, useClass: RemoveDeskUsecase },
     { provide: UpdateDeskUsecase, useClass: UpdateDeskUsecase },

@@ -7,6 +7,8 @@ import { ServiceEntity } from '../../../../services/domain/entities/Service.enti
 import { isServiceOpen } from '../../../../common/shared/helpers/moment';
 import { QueueRepository } from '../../../../queues/domain/repositories/QueueRepository';
 import { Inject } from '@nestjs/common';
+import { UserEntity } from '../../../../users/domain/entities/User.entity';
+import { ClientEntity } from '../../../../clients/domain/entities/Client.entity';
 
 export class TypeOrmDesksRepository implements DeskRepository {
   constructor(
@@ -16,6 +18,66 @@ export class TypeOrmDesksRepository implements DeskRepository {
     @Inject(QueueRepository)
     private queueRepository: QueueRepository,
   ) {}
+
+  async getLastClientCalledFromDesk(deskId: string): Promise<ClientEntity> {
+    const servicesFromDesk = await this.desksRepository.query(
+      `
+      SELECT services.id as service_id
+      FROM desks
+      LEFT JOIN desks_has_services dhs ON dhs.desk_id = desks.id
+      LEFT JOIN services ON services.id = dhs.service_id
+      WHERE desks.id = $1
+    `,
+      [deskId],
+    );
+
+    const queuesThatBelongsToServices = await this.desksRepository.query(
+      `
+      SELECT queues.id as queue_id
+      FROM queues
+      WHERE queues.service_id = ANY($1)
+    `,
+      [servicesFromDesk.map((service) => service.service_id)],
+    );
+
+    const lastClientCalled = await this.desksRepository.query(
+      `SELECT
+        clients_position_in_queues.client_id as client_id
+        FROM clients_position_in_queues
+        WHERE clients_position_in_queues.queue_id = ANY($1)
+        ORDER BY clients_position_in_queues.created_at DESC
+        LIMIT 1
+      `,
+      [queuesThatBelongsToServices.map((queue) => queue.queue_id)],
+    );
+
+    if (lastClientCalled.length === 0) return undefined;
+
+    // clients
+    const client = await this.desksRepository.query(
+      `
+      SELECT
+        clients.id as client_id,
+        clients.name as client_name,
+        clients.registration_id as client_registration_id,
+        clients.organization_id as client_organization_id,
+        clients.created_at as client_created_at,
+        clients.updated_at as client_updated_at
+      FROM clients
+      WHERE clients.id = $1
+      `,
+      [lastClientCalled[0].client_id],
+    );
+
+    return {
+      id: client[0].client_id,
+      name: client[0].client_name,
+      registrationId: client[0].client_registration_id,
+      organizationId: client[0].client_organization_id,
+      createdAt: client[0].client_created_at,
+      updatedAt: client[0].client_updated_at,
+    };
+  }
 
   async findById(id: string): Promise<DeskEntity> {
     const desksWithServicesByOrganizationId = await this.desksRepository.query(
