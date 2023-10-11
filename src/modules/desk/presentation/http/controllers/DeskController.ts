@@ -152,7 +152,7 @@ export class DeskController {
     if (result.isLeft()) throw toPresentationError(result.value);
 
     return {
-      lastClientCalled: {
+      lastClientCalled: result.value.client ?? {
         id: result.value.client.id,
         name: result.value.client.name,
         organizationId: result.value.client.organizationId,
