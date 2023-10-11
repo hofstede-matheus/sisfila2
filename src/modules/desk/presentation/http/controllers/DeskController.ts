@@ -152,16 +152,18 @@ export class DeskController {
     if (result.isLeft()) throw toPresentationError(result.value);
 
     return {
-      lastClientCalled: result.value.client ?? {
-        id: result.value.client.id,
-        name: result.value.client.name,
-        organizationId: result.value.client.organizationId,
-        registrationId: result.value.client.registrationId,
-        createdAt: result.value.client.createdAt,
-        updatedAt: result.value.client.updatedAt,
-        calledDate: result.value.client.calledDate,
-        attendedByUserId: result.value.client.attendedByUserId,
-      },
+      lastClientCalled: result.value.client
+        ? {
+            id: result.value.client.id,
+            name: result.value.client.name,
+            organizationId: result.value.client.organizationId,
+            registrationId: result.value.client.registrationId,
+            createdAt: result.value.client.createdAt,
+            updatedAt: result.value.client.updatedAt,
+            calledDate: result.value.client.calledDate,
+            attendedByUserId: result.value.client.attendedByUserId,
+          }
+        : undefined,
       desk: {
         id: result.value.desk.id,
         name: result.value.desk.name,
