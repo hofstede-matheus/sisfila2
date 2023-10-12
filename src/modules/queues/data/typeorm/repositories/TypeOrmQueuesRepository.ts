@@ -285,8 +285,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       console.log('occurrenceOfUserInQueue', occurrenceOfUserInQueue);
 
       const isUserAlreadyInQueue = occurrenceOfUserInQueue.length !== 0;
+      console.log('isUserAlreadyInQueue', isUserAlreadyInQueue);
 
-      // check if user is last client called
       const lastClientCalledFromQueue = await this.queuesRepository.query(
         `
         SELECT 
