@@ -56,6 +56,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     );
     const userId = user[0].id;
 
+    console.log('userId', userId);
+
     let queuesOrderedByPriority = [];
     const groupsThatUserBelongs = await this.queuesRepository.query(
       `
@@ -68,9 +70,13 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       [userId],
     );
 
+    console.log('groupsThatUserBelongs', groupsThatUserBelongs);
+
     const groupsThatUserBelongsIds = groupsThatUserBelongs.map(
       (group) => group.id,
     );
+
+    console.log('groupsThatUserBelongsIds', groupsThatUserBelongsIds);
 
     const queuesAssociatedWithGroups = await this.queuesRepository.query(
       `
@@ -82,9 +88,13 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       [groupsThatUserBelongsIds],
     );
 
+    console.log('queuesAssociatedWithGroups', queuesAssociatedWithGroups);
+
     const queuesAssociatedWithGroupsIds = queuesAssociatedWithGroups.map(
       (queue) => queue.queue_id,
     );
+
+    console.log('queuesAssociatedWithGroupsIds', queuesAssociatedWithGroupsIds);
 
     queuesOrderedByPriority = await this.queuesRepository.query(
       `
@@ -99,6 +109,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
       [serviceId, organizationId, queuesAssociatedWithGroupsIds],
     );
+
+    console.log('queuesOrderedByPriority', queuesOrderedByPriority);
 
     return {
       id: queuesOrderedByPriority[0].id,
