@@ -226,26 +226,33 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         return;
       }
 
-      const queuesAssociatedWithGroups = await transaction.query(
-        `
+      const queuesAssociatedWithGroupsWhichMatchService =
+        await transaction.query(
+          `
       SELECT
         groups_from_queues.queue_id
       FROM groups_from_queues
+      INNER JOIN queues ON groups_from_queues.queue_id = queues.id
       WHERE groups_from_queues.group_id = ANY($1)
+      AND queues.service_id = $2
       `,
-        [groupsThatUserBelongsIds],
+          [groupsThatUserBelongsIds, serviceId],
+        );
+
+      console.log(
+        'queuesAssociatedWithGroups',
+        queuesAssociatedWithGroupsWhichMatchService,
       );
 
-      console.log('queuesAssociatedWithGroups', queuesAssociatedWithGroups);
-
-      if (queuesAssociatedWithGroups.length === 0) {
+      if (queuesAssociatedWithGroupsWhichMatchService.length === 0) {
         error = new NoQueueAvaliabeError();
         return;
       }
 
-      const queuesAssociatedWithGroupsIds = queuesAssociatedWithGroups.map(
-        (queue) => queue.queue_id,
-      );
+      const queuesAssociatedWithGroupsIds =
+        queuesAssociatedWithGroupsWhichMatchService.map(
+          (queue) => queue.queue_id,
+        );
 
       queuesOrderedByPriority = await transaction.query(
         `
@@ -270,9 +277,10 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       FROM clients_position_in_queues
       WHERE clients_position_in_queues.client_id = $1
       AND clients_position_in_queues.called_at IS NULL
+      AND clients_position_in_queues.queue_id = $2
 
       `,
-        [userId],
+        [userId, queuesOrderedByPriority[0].id],
       );
 
       console.log('occurrenceOfUserInQueue', occurrenceOfUserInQueue);
