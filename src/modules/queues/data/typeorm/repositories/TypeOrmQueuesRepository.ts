@@ -316,7 +316,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
 
       console.log('isUserLastClientCalled', isUserLastClientCalled);
 
-      if (!isUserAlreadyInQueue || !isUserLastClientCalled) {
+      if (!isUserAlreadyInQueue && !isUserLastClientCalled) {
         await transaction.query(
           `INSERT INTO clients_position_in_queues (client_id, queue_id) VALUES ($1, $2)`,
           [userId, queuesOrderedByPriority[0].id],
