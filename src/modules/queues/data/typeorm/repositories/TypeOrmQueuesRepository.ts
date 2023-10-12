@@ -312,7 +312,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
 
       const isUserLastClientCalled =
         lastClientCalledFromQueue.length > 0 &&
-        lastClientCalledFromQueue[0].registration_id === userId;
+        lastClientCalledFromQueue[0].id === userId;
 
       console.log('isUserLastClientCalled', isUserLastClientCalled);
 
