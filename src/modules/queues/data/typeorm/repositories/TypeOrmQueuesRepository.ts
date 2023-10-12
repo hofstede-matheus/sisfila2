@@ -375,10 +375,6 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       'lastClientCalledFromQueue.length',
       lastClientCalledFromQueue.length,
     );
-    console.log(
-      'lastClientCalledFromQueue[0].registration_id',
-      lastClientCalledFromQueue[0].registration_id,
-    );
 
     if (
       lastClientCalledFromQueue.length > 0 &&
