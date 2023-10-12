@@ -37,7 +37,8 @@ export class FindOneOrAllOrganizationsUsecase implements UseCase {
           userId,
         });
 
-    if (!organizations) return left(new OrganizationNotFoundError());
+    if (organizations.length === 0)
+      return left(new OrganizationNotFoundError());
 
     if (!userId) {
       return right([
