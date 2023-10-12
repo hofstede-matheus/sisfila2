@@ -272,7 +272,11 @@ export class DeskController {
 
     if (result.isLeft()) throw toPresentationError(result.value);
 
-    if (result.value === null) return null;
+    if (result.value === null)
+      return {
+        client: null,
+        desk: null,
+      };
 
     return {
       client: {
