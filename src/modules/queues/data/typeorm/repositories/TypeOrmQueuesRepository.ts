@@ -214,6 +214,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
   > {
     let queuesOrderedByPriority = [];
     let error: DomainError = undefined;
+
     await this.queuesRepository.manager.transaction(async (transaction) => {
       const groupsThatUserBelongs = await transaction.query(
         `
@@ -225,6 +226,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
         [userId],
       );
+
+      console.log('groupsThatUserBelongs', groupsThatUserBelongs);
 
       const groupsThatUserBelongsIds = groupsThatUserBelongs.map(
         (group) => group.id,
@@ -244,6 +247,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
         [groupsThatUserBelongsIds],
       );
+
+      console.log('queuesAssociatedWithGroups', queuesAssociatedWithGroups);
 
       if (queuesAssociatedWithGroups.length === 0) {
         error = new NoQueueAvaliabeError();
@@ -268,6 +273,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         [serviceId, organizationId, queuesAssociatedWithGroupsIds],
       );
 
+      console.log('queuesOrderedByPriority', queuesOrderedByPriority);
+
       const occurrenceOfUserInQueue = await transaction.query(
         `
       SELECT
@@ -279,6 +286,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
         [userId],
       );
+
+      console.log('occurrenceOfUserInQueue', occurrenceOfUserInQueue);
 
       const isUserAlreadyInQueue = occurrenceOfUserInQueue.length !== 0;
 
@@ -309,10 +318,14 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       [userId],
     );
 
+    console.log('user', user);
+
     const position = await this.getPositionOfClient(
       queuesOrderedByPriority[0].id,
       user[0].registration_id,
     );
+
+    console.log('position', position);
 
     return right({
       queueId: queuesOrderedByPriority[0].id,
