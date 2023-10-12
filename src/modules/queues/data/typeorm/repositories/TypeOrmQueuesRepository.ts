@@ -51,8 +51,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         clients.id
       FROM clients
       WHERE clients.registration_id = $1
+      AND clients.organization_id = $2
       `,
-      [registrationId],
+      [registrationId, organizationId],
     );
     const userId = user[0].id;
 
@@ -66,8 +67,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       FROM groups
       INNER JOIN clients_in_groups ON groups.id = clients_in_groups.group_id
       WHERE clients_in_groups.client_id = $1
+      AND groups.organization_id = $2
       `,
-      [userId],
+      [userId, organizationId],
     );
 
     console.log('groupsThatUserBelongs', groupsThatUserBelongs);
