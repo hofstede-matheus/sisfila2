@@ -18,6 +18,7 @@ import {
   InvalidValueError,
   NoQueueAvaliabeError,
   OrganizationCodeAlreadyUsedError,
+  OrganizationNotFoundError,
   QueueNotFoundError,
   ServiceNotOpenError,
   UserNotFoundError,
@@ -109,6 +110,9 @@ export function toPresentationError(error: DomainError): HttpException {
 
     case InvalidDateError:
       return new PresentationException(error, 400);
+
+    case OrganizationNotFoundError:
+      return new PresentationException(error, 404);
 
     default:
       console.error('ERROR NOT MAPPED', error);
