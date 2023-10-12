@@ -314,7 +314,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         lastClientCalledFromQueue.length > 0 &&
         lastClientCalledFromQueue[0].registration_id === userId;
 
-      console.log('isUserAlreadyInQueue', isUserAlreadyInQueue);
+      console.log('isUserLastClientCalled', isUserLastClientCalled);
 
       if (!isUserAlreadyInQueue || !isUserLastClientCalled) {
         await transaction.query(
