@@ -325,6 +325,9 @@ export class TypeOrmQueuesRepository implements QueueRepository {
     queueId: string,
     registrationId: string,
   ): Promise<PositionInQueueWithDesk> {
+    console.log('queueId', queueId);
+    console.log('registrationId', registrationId);
+
     const clientsInQueueFromDatabase = await this.queuesRepository.query(
       `
       SELECT 
@@ -344,6 +347,7 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
       [queueId],
     );
+    console.log('clientsInQueueFromDatabase', clientsInQueueFromDatabase);
 
     const lastClientCalledFromQueue = await this.queuesRepository.query(
       `
@@ -366,6 +370,15 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
       [queueId],
     );
+    console.log('lastClientCalledFromQueue', lastClientCalledFromQueue);
+    console.log(
+      'lastClientCalledFromQueue.length',
+      lastClientCalledFromQueue.length,
+    );
+    console.log(
+      'lastClientCalledFromQueue[0].registration_id',
+      lastClientCalledFromQueue[0].registration_id,
+    );
 
     if (
       lastClientCalledFromQueue.length > 0 &&
@@ -384,6 +397,8 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         `,
         [lastClientCalledFromQueue[0].desk_id],
       );
+      console.log('desk', desk);
+
       return {
         position: 0,
         desk: {
@@ -410,16 +425,19 @@ export class TypeOrmQueuesRepository implements QueueRepository {
         } as ClientInQueue;
       },
     );
+    console.log('clientsInQueue', clientsInQueue);
 
     const position = clientsInQueue.findIndex(
       (client) => client.registrationId === registrationId,
     );
+    console.log('position', position);
 
     if (position === -1) {
       return {
         position: -1,
       };
     }
+
     return {
       position: position + 1,
     };
