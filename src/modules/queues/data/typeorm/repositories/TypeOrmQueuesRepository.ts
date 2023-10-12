@@ -282,12 +282,41 @@ export class TypeOrmQueuesRepository implements QueueRepository {
       `,
         [userId, queuesOrderedByPriority[0].id],
       );
-
       console.log('occurrenceOfUserInQueue', occurrenceOfUserInQueue);
 
       const isUserAlreadyInQueue = occurrenceOfUserInQueue.length !== 0;
 
-      if (!isUserAlreadyInQueue) {
+      // check if user is last client called
+      const lastClientCalledFromQueue = await this.queuesRepository.query(
+        `
+        SELECT 
+          clients.id, 
+          clients.name, 
+          clients.organization_id, 
+          clients.registration_id,
+          clients_position_in_queues.called_at,
+          clients_position_in_queues.attended_by_user,
+          clients.created_at, 
+          clients.updated_at,
+          clients_position_in_queues.desk_id
+        FROM clients
+        INNER JOIN clients_position_in_queues ON clients.id = clients_position_in_queues.client_id
+        WHERE clients_position_in_queues.queue_id = $1
+        AND clients_position_in_queues.called_at IS NOT NULL
+        ORDER BY clients_position_in_queues.called_at DESC
+        LIMIT 1
+        `,
+        [queuesOrderedByPriority[0].id],
+      );
+      console.log('lastClientCalledFromQueue', lastClientCalledFromQueue);
+
+      const isUserLastClientCalled =
+        lastClientCalledFromQueue.length > 0 &&
+        lastClientCalledFromQueue[0].registration_id === userId;
+
+      console.log('isUserAlreadyInQueue', isUserAlreadyInQueue);
+
+      if (!isUserAlreadyInQueue || !isUserLastClientCalled) {
         await transaction.query(
           `INSERT INTO clients_position_in_queues (client_id, queue_id) VALUES ($1, $2)`,
           [userId, queuesOrderedByPriority[0].id],
