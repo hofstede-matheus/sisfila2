@@ -56,14 +56,12 @@ C4Container
     UpdateRelStyle(sendgridSDK, user, $offsetX="120")
 ```
 
-## Configuração inicial
+## Initial setup
 
 ```bash
-## não necessário caso o banco e a aplicação sejam inicializadas pelo docker-compose
-
-## algumas variáveis do .env podem precisar de modificação
-
-## preencha o arquivo serviceAccountKey.json com as credenciais do firebase
+## not necessary if the database and the application are initialized by docker-compose
+## some variables in the .env may need modification
+## fill in the serviceAccountKey.json file with the firebase credentials
 
 cp .env.example .env
 cp .env.test.example .env.test
@@ -74,21 +72,23 @@ touch serviceAccountKey.json
 ## Subir ambiente de desenvolvimento
 
 ```bash
+## to start the database and the application
 docker-compose up --build
 ```
 
 ou
 
 ```bash
+## to start only the database and run the application manually
 docker-compose up db
 npm run start:dev
 ```
 
-## Documentação swagger
+## Swagger Docs
 
 <http:localhost:3000/docs>
 
-## Teste
+## Running the tests
 
 ```bash
 # all tests
@@ -104,4 +104,74 @@ $ npm run test:integration
 $ npm run test:cov
 ```
 
-![alt text](sisfila_v11.JPG)
+## Database
+
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    ORGANIZATIONS ||--o{ CLIENTS : "has"
+    ORGANIZATIONS ||--o{ GROUPS : "has"
+    ORGANIZATIONS ||--o{ QUEUES : "has"
+    ORGANIZATIONS ||--o{ SERVICES : "has"
+    ORGANIZATIONS ||--o{ DESKS : "has"
+    ORGANIZATIONS }|--|{ USERS : "has roles in"
+
+    USERS }|--|{ ORGANIZATIONS : "works in"
+
+    USERS ||--o{ DESKS : "assigned to"
+
+    CLIENTS ||--o{ FCM_TOKENS : "has"
+    CLIENTS }|--|{ GROUPS : "member of"
+    CLIENTS }|--|{ QUEUES : "is in"
+
+    GROUPS }|--|{ QUEUES : "associated with"
+
+    SERVICES ||--o{ QUEUES : "has"
+    SERVICES }|--|{ DESKS : "provided by"
+
+    DESKS ||--o{ CLIENTS : "serves"
+
+    USERS ||--o{ CLIENTS : "attends"
+
+    USERS {
+        varchar email
+        varchar name
+        text password
+        boolean is_super_admin
+    }
+    ORGANIZATIONS {
+        varchar name
+        varchar code
+    }
+    CLIENTS {
+        varchar name
+        varchar registration_id
+    }
+    GROUPS {
+        varchar name
+    }
+    QUEUES {
+        varchar name
+        varchar description
+        int priority
+        varchar code
+    }
+    SERVICES {
+        varchar subscription_token
+        varchar name
+        boolean guest_enroll
+        timestamp opens_at
+        timestamp closes_at
+    }
+    DESKS {
+        varchar name
+    }
+    FCM_TOKENS {
+        varchar fcm_token PK
+    }
+```
+
+### Relational Database Model
+
+![alt text](sisfila_v11.png)
