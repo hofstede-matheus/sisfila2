@@ -69,7 +69,7 @@ npm ci
 touch serviceAccountKey.json
 ```
 
-## Subir ambiente de desenvolvimento
+## Start development environment
 
 ```bash
 ## to start the database and the application
